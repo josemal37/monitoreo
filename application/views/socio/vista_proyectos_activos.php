@@ -20,7 +20,7 @@
             ?>
             <?php if($proyectos): ?>
                 <div class="table-responsive">
-                    <h2>Lista de proyectos activos</h2>
+                    <h4>Lista de proyectos activos</h4>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -41,7 +41,7 @@
                     </table>
                 </div>
             <?php else: ?>
-            <h1>No se existen proyectos activos actualmente.</h1>
+                <h4>No se existen proyectos activos actualmente.</h4>
             <?php endif; ?>
         </div>
         <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>

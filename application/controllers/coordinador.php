@@ -28,7 +28,7 @@ class coordinador extends CI_Controller {
             redirect(base_url() . 'login');
         }
         $data['titulo'] = 'Bienvenido Coordinador';
-        $this->load->view('vista_coordinador', $data);
+        $this->load->view('coordinador/vista_inicio', $data);
     }
 
 }

@@ -28,38 +28,47 @@
                     <?php foreach ($datos_actividades as $actividad): ?>
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <strong><?= $actividad->nombre_actividad ?> (<?= $actividad->fecha_inicio_actividad ?>, <?= $actividad->fecha_fin_actividad ?>)</strong>
+                                <a data-toggle="collapse" href="#collapse_<?=$actividad->id_actividad?>"><strong><?= $actividad->nombre_actividad ?></strong></a>
                             </div>
-                            <div class="panel-body">
-                                <p><?= $actividad->descripcion_actividad ?></p>
-                                <?php
-                                $id_actividad = $actividad->id_actividad;
-                                $indicadores_actividad = $datos_indicadores[$actividad->nombre_actividad];
-                                ?>
-                                <?php if (sizeof($indicadores_actividad) > 0): ?>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre del indicador</th>
-                                                    <th>Avance del indicador</th>
-                                                    <th>Registrar avance</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php foreach ($indicadores_actividad as $indicador_actividad): ?>
+                            <div class="panel-collapse collapse in" id="collapse_<?=$actividad->id_actividad?>">
+                                <div class="panel-body">
+                                    <p><?= $actividad->descripcion_actividad ?></p>
+                                    <?php
+                                    $id_actividad = $actividad->id_actividad;
+                                    $indicadores_actividad = $datos_indicadores[$actividad->nombre_actividad];
+                                    ?>
+                                    <?php if (sizeof($indicadores_actividad) > 0): ?>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <strong>Indicadores operativos</strong>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
                                                     <tr>
-                                                        <td><?= $indicador_actividad->nombre_indicador_op ?></td>
-                                                        <td><?= $indicador_actividad->avance_indicador_op ?></td>
-                                                        <td><?= $indicador_actividad->id_indicador_op ?></td>
+                                                        <th>Nombre del indicador</th>
+                                                        <th>Avance del indicador</th>
+                                                        <th>Acciones</th>
                                                     </tr>
-                                                <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($indicadores_actividad as $indicador_actividad): ?>
+                                                        <tr>
+                                                            <td><?= $indicador_actividad->nombre_indicador_op ?></td>
+                                                            <td><?= $indicador_actividad->avance_indicador_op ?></td>
+                                                            <td>
+                                                                <?= anchor(base_url().'socio/registrar_avance_indicador_operativo/'.$datos_proyecto->id_proyecto.'/'.$indicador_actividad->id_indicador_op, 'Registrar avance', Array('class' => 'btn btn-default btn-xs btn-block')) ?>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                <?php else: ?>
-                                    <h3>No se registraron indicadores</h3>
-                                <?php endif; ?>
+                                    <?php else: ?>
+                                        <h3>No se registraron indicadores</h3>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>

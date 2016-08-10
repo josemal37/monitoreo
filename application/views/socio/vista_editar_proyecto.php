@@ -20,7 +20,7 @@
             ?>
             <div>
                 <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <?= $datos_proyecto->presupuesto_proyecto ?>)</h4>
-                <p><?= $datos_proyecto->descripcion_proyecto ?></p>
+                <p class="text-justify"><?= $datos_proyecto->descripcion_proyecto ?></p>
                 <p class="text-left"><?= anchor('socio/modificar_proyecto/'.$datos_proyecto->id_proyecto, 'Modificar datos generales', Array('class' => 'btn btn-default'))?></p>
             </div>
             <div>
@@ -33,11 +33,12 @@
                             </div>
                             <div class="panel-collapse collapse in" id="collapse_<?=$actividad->id_actividad?>">
                                 <div class="panel-body">
-                                    <p><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
+                                    <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
                                     <div>
                                     <?= anchor(base_url('socio/modificar_actividad/'.$actividad->id_actividad), 'Modificar actividad', Array('class' => 'btn btn-default')) ?>
+                                        <?= anchor(base_url('socio/eliminar_actividad/'.$datos_proyecto->id_proyecto.'/'.$actividad->id_actividad), 'Eliminar actividad', Array('class' => 'btn btn-danger')) ?>
                                     </div>
                                     <br>
                                     <?php
@@ -73,7 +74,10 @@
                                                             <td><?= $indicador_actividad->limitado_op ?></td>
                                                             <td><?= $indicador_actividad->no_aceptable_op ?></td>
                                                             <td><?= $indicador_actividad->fecha_limite_indicador_op ?></td>
-                                                            <td><?= anchor(base_url().'socio/modificar_indicador/'.$datos_proyecto->id_proyecto.'/'.$indicador_actividad->id_indicador_op, 'Modificar indicador', Array('class' => 'btn btn-default btn-xs')) ?></td>
+                                                            <td>
+                                                                <?= anchor(base_url().'socio/modificar_indicador_operativo/'.$datos_proyecto->id_proyecto.'/'.$indicador_actividad->id_indicador_op, 'Modificar indicador', Array('class' => 'btn btn-default btn-xs btn-block')) ?>
+                                                                <?= anchor(base_url().'socio/eliminar_indicador_operativo/'.$datos_proyecto->id_proyecto.'/'.$indicador_actividad->id_indicador_op, 'Eliminar indicador', Array('class' => 'btn btn-danger btn-xs btn-block')) ?>
+                                                            </td>
                                                         </tr>
                                                     <?php endforeach; ?>
                                                 </tbody>
@@ -93,6 +97,12 @@
                 <?php endif; ?>
             </div>
             <?= anchor(base_url('socio/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto), 'Registrar actividad', Array('class' => 'btn btn-default')) ?>
+            <div>
+                <p class="text-right">
+                    <?= anchor('socio/terminar_edicion_proyecto/'.$datos_proyecto->id_proyecto, 'Activar proyecto', Array('class' => 'btn btn-primary'))?>
+                    <?= anchor('socio/eliminar_proyecto/'.$datos_proyecto->id_proyecto, 'Eliminar proyecto', Array('class' => 'btn btn-danger'))?>
+                </p>
+            </div>
         </div>
         <div class="container footer">
             <p class="text-center text-muted">Sistema de monitoreo</p>

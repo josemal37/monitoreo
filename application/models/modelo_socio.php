@@ -414,5 +414,54 @@ class modelo_socio extends CI_Model {
             $query = $this->db->query($sql);
         }
     }
+    
+    public function delete_proyecto($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url().'socio');
+        } else {
+            $sql = "DELETE FROM PROYECTO
+                    WHERE
+                        id_proyecto = $id_proyecto
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+    
+    public function delete_actividad($id_actividad) {
+        if(!is_numeric($id_actividad)) {
+            redirect(base_url().'socio');
+        } else {
+            $sql = "DELETE FROM ACTIVIDAD
+                    WHERE
+                        id_actividad = $id_actividad
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+    
+    public function delete_indicador_operativo($id_indicador) {
+        if(!is_numeric($id_indicador)) {
+            redirect(base_url().'socio');
+        } else {
+            $sql = "DELETE FROM INDICADOR_OPERATIVO
+                    WHERE
+                        id_indicador_op = $id_indicador
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+    
+    public function terminar_edicion_proyecto($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url().'socio');
+        } else {
+            $sql = "UPDATE PROYECTO SET
+                        PROYECTO.en_edicion = false
+                    WHERE
+                        PROYECTO.id_proyecto = $id_proyecto
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
 
 }

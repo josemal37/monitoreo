@@ -28,7 +28,7 @@
                 $no_aceptable_op = array('name' => 'no_aceptable_op', 'placeholder' => 'Valor no aceptable', 'type' => 'number', 'class' => 'form-control');
                 $submit = array('name' => 'submit', 'value' => 'Modificar indicador', 'title' => 'Modificar indicador', 'class' => 'btn btn-primary');
                 ?>
-                <?= form_open(base_url() . 'socio/modificar_indicador/' . $id_proyecto.'/'.$indicador->id_indicador_op, Array('role' => 'form')) ?>
+                <?= form_open(base_url() . 'socio/modificar_indicador_operativo/' . $id_proyecto.'/'.$indicador->id_indicador_op, Array('role' => 'form')) ?>
                 <div class="form-group">
                     <label for="nombre_indicador_op">Nombre del indicador</label>
                     <?= form_input($nombre_indicador_op, $indicador->nombre_indicador_op) ?><p><?= form_error('nombre_indicador_op') ?></p>

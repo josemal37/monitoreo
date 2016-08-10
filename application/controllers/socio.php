@@ -39,7 +39,7 @@ class socio extends CI_Controller {
         $this->verificar_sesion();
 
         $datos['proyectos'] = $this->modelo_socio->get_proyectos_socio();
-        $this->load->view('socio/vista_inicio', $datos);
+        $this->load->view('socio/vista_proyectos_activos', $datos);
     }
 
     public function ver_proyecto($id_proyecto) {
@@ -73,7 +73,7 @@ class socio extends CI_Controller {
                 $descripcion_proyecto = $this->input->post('descripcion_proyecto');
                 $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
                 $this->modelo_socio->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto);
-                redirect(base_url() . 'socio/registrar_proyecto');
+                redirect(base_url() . 'socio/proyectos_en_edicion');
             }
         } else {
             $datos = NULL;
@@ -86,6 +86,15 @@ class socio extends CI_Controller {
 
         $datos = $this->modelo_socio->get_proyecto_completo($id_proyecto);
         $this->load->view('socio/vista_editar_proyecto', $datos);
+    }
+    
+    public function terminar_edicion_proyecto($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url().'socio');
+        } else {
+            $this->modelo_socio->terminar_edicion_proyecto($id_proyecto);
+            redirect(base_url().'socio/proyectos_en_edicion');
+        }
     }
 
     public function registrar_nueva_actividad($id_proyecto) {
@@ -232,7 +241,7 @@ class socio extends CI_Controller {
         }
     }
     
-    public function modificar_indicador($id_proyecto, $id_indicador) {
+    public function modificar_indicador_operativo($id_proyecto, $id_indicador) {
         if(!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
             redirect(base_url().'socio');
         } else {
@@ -246,7 +255,7 @@ class socio extends CI_Controller {
                 $this->form_validation->set_rules('no_aceptable_op', 'no_aceptable_op', 'required|numeric');
                 if ($this->form_validation->run() == FALSE) {
                     unset($_POST['id_indicador_op']);
-                    $this->registrar_nuevo_indicador();
+                    $this->modificar_indicador_operativo($id_proyecto, $id_indicador);
                 } else {
                     if ($id_indicador == $this->input->post('id_indicador_op')) {
                         $id_tipo_indicador_op = $this->input->post('id_tipo_indicador_op');
@@ -270,6 +279,45 @@ class socio extends CI_Controller {
                 $datos['indicador'] = $this->modelo_socio->get_indicador_operativo($id_indicador);
                 $this->load->view('socio/vista_modificar_indicador_op', $datos);
             }
+        }
+    }
+    
+    public function eliminar_proyecto($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url().'socio');
+        } else {
+            $this->modelo_socio->delete_proyecto($id_proyecto);
+            redirect(base_url() . 'socio/proyectos_en_edicion');
+        }
+    }
+    
+    public function eliminar_actividad($id_proyecto, $id_actividad) {
+        if(!is_numeric($id_actividad) || !is_numeric($id_proyecto)) {
+            redirect(base_url().'socio');
+        } else {
+            $this->modelo_socio->delete_actividad($id_actividad);
+            redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+        }
+    }
+    
+    public function eliminar_indicador_operativo($id_proyecto, $id_indicador) {
+        if(!is_numeric($id_indicador || !is_numeric($id_proyecto))) {
+            redirect(base_url().'socio');
+        } else {
+            $this->modelo_socio->delete_indicador_operativo($id_indicador);
+            redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+        }
+    }
+    
+    public function registrar_avance_indicador_operativo($id_proyecto, $id_indicador) {
+        if(!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
+            redirect(base_url().'socio');
+        } else {
+            $datos_indicador = $this->modelo_socio->get_indicador_operativo($id_indicador);
+            $datos = Array();
+            $datos['id_proyecto'] = $id_proyecto;
+            $datos['indicador'] = $datos_indicador;
+            $this->load->view('socio/vista_registrar_avance_indicador_op', $datos);
         }
     }
 

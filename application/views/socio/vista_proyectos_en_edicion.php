@@ -20,7 +20,7 @@
             ?>
             <?php if($proyectos): ?>
                 <div class="table-responsive">
-                <h2>Lista de proyectos en edición</h2>
+                <h4>Lista de proyectos en edición</h4>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -34,14 +34,18 @@
                             <tr>
                                 <td><?= $proyecto->nombre_proyecto ?></td>
                                 <td><?= $proyecto->descripcion_proyecto ?></td>
-                                <td><?= anchor(base_url() . 'socio/editar_proyecto/' . $proyecto->id_proyecto, 'Editar proyecto',Array('class'=>'btn btn-default btn-xs')) ?></td>
+                                <td>
+                                    <?= anchor(base_url() . 'socio/editar_proyecto/' . $proyecto->id_proyecto, 'Editar proyecto',Array('class'=>'btn btn-default btn-xs btn-block')) ?>
+                                    <?= anchor('socio/terminar_edicion_proyecto/'.$proyecto->id_proyecto, 'Activar proyecto', Array('class' => 'btn btn-primary btn-xs btn-block'))?>
+                                    <?= anchor(base_url() . 'socio/eliminar_proyecto/' . $proyecto->id_proyecto, 'Eliminar proyecto',Array('class'=>'btn btn-danger btn-xs btn-block')) ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
             <?php else: ?>
-                <h1>No existen proyectos en edición actualmente.</h1>
+                <h4>No existen proyectos en edición actualmente.</h4>
             <?php endif; ?>
             <?= anchor(base_url() . 'socio/registrar_nuevo_proyecto', 'Registrar nuevo proyecto', Array('class' => 'btn btn-primary')) ?>
         </div>	
