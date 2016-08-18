@@ -2,58 +2,106 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="<?php echo base_url("assets/css/bootstrap.css"); ?>" />
+        <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+        <title>Registrar actividad</title>
     </head>
     <body>
         <div class="container">
             <h1 style="text-align: center">Bienvenido socio</h1>
             <?php
-            $nombre_usuario = $this->session->userdata('nombre_usuario');
-            $apellido_usuario = $this->session->userdata('apellido_usuario');
-            $nombre_institucion = $this->session->userdata('nombre_institucion');
-            $data = Array();
-            $data['nombre_usuario'] = $nombre_usuario;
-            $data['apellido_usuario'] = $apellido_usuario;
-            $data['nombre_institucion'] = $nombre_institucion;
-            $data['activo'] = "Registrar proyecto";
-            $this->load->view('socio/nav', $data);
+            $datos = Array();
+            $datos['activo'] = "Registrar proyecto";
+            $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <?php
-                $nombre_actividad = array('name' => 'nombre_actividad', 'placeholder' => 'Nombre de la actividad', 'class' => 'form-control', 'required');
-                $descripcion_actividad = array('name' => 'descripcion_actividad', 'placeholder' => 'Descripción', 'class' => 'form-control', 'rows' => '4');
-                $fecha_inicio_actividad = array('name' => 'fecha_inicio_actividad', 'placeholder' => 'Fecha de inicio', 'type' => 'date', 'class' => 'form-control');
-                $fecha_fin_actividad = array('name' => 'fecha_fin_actividad', 'placeholder' => 'Fecha de fin', 'type' => 'date', 'class' => 'form-control');
-                $presupuesto_actividad = array('name' => 'presupuesto_actividad', 'placeholder' => 'Presupuesto', 'type' => 'number', 'class' => 'form-control');
-                $submit = array('name' => 'submit', 'value' => 'Registrar actividad', 'title' => 'Registrar actividad', 'class' => 'btn btn-primary');
-                ?>
-                <?= form_open(base_url() . 'socio/registrar_nueva_actividad/' . $id_proyecto, Array('role' => 'form')) ?>
-                <div class="form-group">
-                    <label for="nombre_actividad">Nombre de la actividad</label>
-                    <?= form_input($nombre_actividad) ?><p><?= form_error('nombre_actividad') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="descripcion_actividad">Descripción</label>
-                    <?= form_textarea($descripcion_actividad) ?><p><?= form_error('descripcion_actividad') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="fecha_inicio_actividad">Fecha de inicio</label>
-                    <?= form_input($fecha_inicio_actividad) ?><p><?= form_error('fecha_inicio_actividad') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="fecha_fin_actividad">Fecha de fin</label>
-                    <?= form_input($fecha_fin_actividad) ?><p><?= form_error('fecha_fin_actividad') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="presupuesto_actividad">Presupuesto</label>
-                    <?= form_input($presupuesto_actividad) ?><p><?= form_error('presupuesto_actividad') ?></p>
-                </div>
-                <?= form_input(Array('type' => 'hidden', 'name' => 'id_proyecto', 'id' => 'id_proyecto', 'value' => $id_proyecto)) ?>
-                <?= form_submit($submit) ?>
-                <?= form_close() ?>
+                <form action="<?= base_url() . 'socio/registrar_nueva_actividad/' . $id_proyecto ?>" id="actividad" role="form" method="post" accept-charset="utf-8">
+                    <div class="form-group">
+                        <label for="nombre_actividad">Nombre de la actividad</label>
+                        <input type="text" name="nombre_actividad" placeholder="Nombre de la actividad" class="form-control" required>
+                        <p><?= form_error('nombre_actividad') ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion_actividad">Descripción</label>
+                        <textarea name="descripcion_actividad" rows="4" placeholder="Descripción" class="form-control" required></textarea>
+                        <p><?= form_error('descripcion_actividad') ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_inicio_actividad">Fecha de inicio</label>
+                        <input type="date" name="fecha_inicio_actividad" id="fecha_inicio_actividad" min="" max="" class="form-control" required>
+                        <p><?= form_error('fecha_inicio_actividad') ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_fin_actividad">Fecha de fin</label>
+                        <input type="date" name="fecha_fin_actividad" id="fecha_fin_actividad" min="" max="" class="form-control" required>
+                        <p><?= form_error('fecha_fin_actividad') ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="presupuesto_actividad">Presupuesto</label>
+                        <input type="number" name="presupuesto_actividad" placeholder="Presupuesto" class="form-control" required>
+                        <p><?= form_error('presupuesto_actividad') ?></p>
+                    </div>
+                    <input type="hidden" name="id_proyecto" value="<?= $id_proyecto ?>" id="id_proyecto">
+                    <input type="submit" name="submit" value="Registrar actividad" title="Registrar actividad" class="btn btn-primary">
+                </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#actividad').validate({
+                    errorClass: 'has-error',
+                    validClass: 'has-success',
+                    rules: {
+                        nombre_actividad: {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 128
+                        },
+                        descripcion_actividad: {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 1024
+                        },
+                        fecha_inicio_actividad: {
+                            required: true,
+                            date: true
+                        },
+                        fecha_fin_actividad: {
+                            required: true,
+                            date: true
+                        },
+                        presupuesto_actividad: {
+                            required: true,
+                            number: true,
+                            min: 0
+                        }
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
+                        $(element).addClass('control-label');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
+                    },
+                    errorPlacement: function(error, element) {
+                        $(error).addClass('control-label');
+                        error.insertAfter(element);
+                    }
+                });
+            });
+        </script>
+        <script>
+            $(function() {
+                $('#fecha_inicio_actividad').change(function() {
+                    $('#fecha_fin_actividad').attr('min', $('#fecha_inicio_actividad').val());
+                });
+                $('#fecha_fin_actividad').change(function() {
+                    $('#fecha_inicio_actividad').attr('max', $('#fecha_fin_actividad').val());
+                });
+            });
+        </script>
     </body>
 </html>

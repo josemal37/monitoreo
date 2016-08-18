@@ -6760,3 +6760,23 @@ button.close {
 .vertical-center {
     vertical-align: middle;
 }
+
+.vertical-top {
+    vertical-align: top;
+}
+
+.noresize {
+    resize: none; 
+}
+
+.vresize {
+    resize: vertical; 
+}
+  
+.hresize {
+    resize: horizontal;  
+}
+
+.error {
+    color: #a94442
+}

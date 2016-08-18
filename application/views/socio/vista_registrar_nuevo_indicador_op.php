@@ -2,72 +2,116 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="<?php echo base_url("assets/css/bootstrap.css"); ?>" />
+        <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+        <title>Registrar indicador</title>
     </head>
     <body>
         <div class="container">
             <h1 style="text-align: center">Bienvenido socio</h1>
             <?php
-            $nombre_usuario = $this->session->userdata('nombre_usuario');
-            $apellido_usuario = $this->session->userdata('apellido_usuario');
-            $nombre_institucion = $this->session->userdata('nombre_institucion');
-            $data = Array();
-            $data['nombre_usuario'] = $nombre_usuario;
-            $data['apellido_usuario'] = $apellido_usuario;
-            $data['nombre_institucion'] = $nombre_institucion;
-            $data['activo'] = "Registrar proyecto";
-            $this->load->view('socio/nav', $data);
+            $datos = Array();
+            $datos['activo'] = "Registrar proyecto";
+            $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <?php
-                $nombre_indicador_op = array('name' => 'nombre_indicador_op', 'placeholder' => 'Nombre del indicador', 'class' => 'form-control', 'required');
-                $fecha_limite_indicador_op = array('name' => 'fecha_limite_indicador_op', 'placeholder' => 'Fecha limite', 'type' => 'date', 'class' => 'form-control');
-                $meta_op = array('name' => 'meta_op', 'placeholder' => 'Meta del indicador', 'type' => 'number', 'class' => 'form-control');
-                $aceptable_op = array('name' => 'aceptable_op', 'placeholder' => 'Valor aceptable', 'type' => 'number', 'class' => 'form-control');
-                $limitado_op = array('name' => 'limitado_op', 'placeholder' => 'Valor limitado', 'type' => 'number', 'class' => 'form-control');
-                $no_aceptable_op = array('name' => 'no_aceptable_op', 'placeholder' => 'Valor no aceptable', 'type' => 'number', 'class' => 'form-control');
-                $submit = array('name' => 'submit', 'value' => 'Registrar indicador', 'title' => 'Registrar indicador', 'class' => 'btn btn-primary');
-                ?>
-                <?= form_open(base_url() . 'socio/registrar_nuevo_indicador/' . $id_proyecto.'/'.$id_actividad, Array('role' => 'form')) ?>
+                <form action="<?= base_url() . 'socio/registrar_nuevo_indicador/' . $id_proyecto . '/' . $id_actividad ?>" id="indicador_operativo" role="form" method="post" accept-charset="utf-8">
                 <div class="form-group">
                     <label for="nombre_indicador_op">Nombre del indicador</label>
-                    <?= form_input($nombre_indicador_op) ?><p><?= form_error('nombre_indicador_op') ?></p>
+                    <input type="text" name="nombre_indicador_op" placeholder="Nombre del indicador" class="form-control" required>
+                    <p><?= form_error('nombre_indicador_op') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="tipos_indicador_op">Tipo de indicador</label>
                     <select name="id_tipo_indicador_op" id="id_tipo_indicador_op" class="form-control">
                         <?php foreach ($tipos_indicador_op as $tipo_indicador_op): ?>
-                        <option value="<?= $tipo_indicador_op->id_tipo_indicador_op ?>"><?= $tipo_indicador_op->nombre_tipo_indicador_op ?></option>
+                            <option value="<?= $tipo_indicador_op->id_tipo_indicador_op ?>"><?= $tipo_indicador_op->nombre_tipo_indicador_op ?></option>
                         <?php endforeach; ?>
                     </select>
                     <p><?= form_error('tipo_indicador_op') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="fecha_limite_indicador_op">Fecha limite</label>
-                    <?= form_input($fecha_limite_indicador_op) ?><p><?= form_error('fecha_limite_indicador_op') ?></p>
+                    <input type="date" name="fecha_limite_indicador_op" class="form-control" required>
+                    <p><?= form_error('fecha_limite_indicador_op') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="meta_op">Meta del indicador</label>
-                    <?= form_input($meta_op) ?><p><?= form_error('meta_op') ?></p>
+                    <input type="number" name="meta_op" placeholder="Meta del indicador" class="form-control" required>
+                    <p><?= form_error('meta_op') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="aceptable_op">Valor aceptable</label>
-                    <?= form_input($aceptable_op) ?><p><?= form_error('aceptable_op') ?></p>
+                    <input type="number" name="aceptable_op" placeholder="Valor aceptable" class="form-control" required>
+                    <p><?= form_error('aceptable_op') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="limitado_op">Valor limitado</label>
-                    <?= form_input($limitado_op) ?><p><?= form_error('limitado_op') ?></p>
+                    <input type="number" name="limitado_op" placeholder="Valor limitado" class="form-control" required>
+                    <p><?= form_error('limitado_op') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="no_aceptable_op">Valor no aceptable</label>
-                    <?= form_input($no_aceptable_op) ?><p><?= form_error('no_aceptable_op') ?></p>
+                    <input type="number" name="no_aceptable_op" placeholder="Valor no aceptable" class="form-control" required>
+                    <p><?= form_error('no_aceptable_op') ?></p>
                 </div>
-                <?= form_input(Array('type' => 'hidden', 'name' => 'id_actividad', 'id' => 'id_actividad', 'value' => $id_actividad)) ?>
-                <?= form_submit($submit) ?>
-                <?= form_close() ?>
+                    <input type="hidden" name="id_actividad" value="<?= $id_actividad ?>" id="id_actividad">
+                <input type="submit" name="submit" value="Registrar indicador" title="Registrar indicador" class="btn btn-primary">
+                </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#indicador_operativo').validate({
+                    errorClass: 'has-error',
+                    validClass: 'has-success',
+                    rules: {
+                        nombre_indicador_op: {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 128
+                        },
+                        fecha_limite_indicador_op: {
+                            required: true,
+                            date: true
+                        },
+                        meta_op: {
+                            required: true,
+                            number: true,
+                            min: 0
+                        },
+                        aceptable_op: {
+                            required: true,
+                            number: true,
+                            min: 0
+                        },
+                        limitado_op: {
+                            required: true,
+                            number: true,
+                            min: 0
+                        },
+                        no_aceptable_op: {
+                            required: true,
+                            number: true,
+                            min: 0
+                        }
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
+                        $(element).addClass('control-label');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
+                    },
+                    errorPlacement: function(error, element) {
+                        $(error).addClass('control-label');
+                        error.insertAfter(element);
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

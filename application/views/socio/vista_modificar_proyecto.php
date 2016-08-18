@@ -3,48 +3,77 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="<?php echo base_url("assets/css/bootstrap.css"); ?>" />
+        <title>Modificar proyecto</title>
     </head>
     <body>
         <div class="container">
             <h1 style="text-align: center">Bienvenido socio</h1>
             <?php
-            $nombre_usuario = $this->session->userdata('nombre_usuario');
-            $apellido_usuario = $this->session->userdata('apellido_usuario');
-            $nombre_institucion = $this->session->userdata('nombre_institucion');
-            $data = Array();
-            $data['nombre_usuario'] = $nombre_usuario;
-            $data['apellido_usuario'] = $apellido_usuario;
-            $data['nombre_institucion'] = $nombre_institucion;
-            $data['activo'] = "Registrar proyecto";
-            $this->load->view('socio/nav', $data);
+            $datos = Array();
+            $datos['activo'] = "Proyectos activos";
+            $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <?php
-                $nombre_proyecto = array('name' => 'nombre_proyecto', 'placeholder' => 'Nombre del proyecto', 'class' => 'form-control');
-                $descripcion_proyecto = array('name' => 'descripcion_proyecto', 'placeholder' => 'Descripción', 'class' => 'form-control', 'rows' => '4');
-                $presupuesto_proyecto = array('name' => 'presupuesto_proyecto', 'placeholder' => 'Presupuesto', 'type' => 'number', 'class' => 'form-control');
-                $submit = array('name' => 'submit', 'value' => 'Modificar proyecto', 'title' => 'Modificar proyecto', 'class' => 'btn btn-primary');
-                ?>
-                <?= form_open(base_url() . 'socio/modificar_proyecto/'.$proyecto->id_proyecto, Array('role' => 'form')) ?>
-                <div class="form-group">
-                    <label for="nombre_proyecto">Nombre del proyecto</label>
-                    <?= form_input($nombre_proyecto, $proyecto->nombre_proyecto) ?><p><?= form_error('nombre_proyecto') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="descripcion_proyecto">Descripción</label>
-                    
-                    <?= form_textarea($descripcion_proyecto, $proyecto->descripcion_proyecto) ?><p><?= form_error('descripcion_proyecto') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="presupuesto_proyecto">Presupuesto (Bs.)</label>
-                    <?= form_input($presupuesto_proyecto, $proyecto->presupuesto_proyecto) ?><p><?= form_error('presupuesto_proyecto') ?></p>
-                </div>
-                <?= form_input(Array('type' => 'hidden', 'name' => 'id_proyecto', 'id' => 'id_proyecto', 'value' => $proyecto->id_proyecto)) ?>
-                <?= form_submit($submit) ?>
-                <?= form_close() ?>
+                <form action="<?= base_url() . 'socio/modificar_proyecto/' . $proyecto->id_proyecto ?>" id="modificar_proyecto" role="form" method="post" accept-charset="utf-8">
+                    <div class="form-group">
+                        <label for="nombre_proyecto">Nombre del proyecto</label>
+                        <input type="text" name="nombre_proyecto" value="<?= $proyecto->nombre_proyecto ?>" placeholder="Nombre del proyecto" class="form-control">
+                        <p><?= form_error('nombre_proyecto') ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion_proyecto">Descripción</label>
+                        <textarea name="descripcion_proyecto" rows="4" placeholder="Descripción" class="form-control"><?= $proyecto->descripcion_proyecto ?></textarea>
+                        <p><?= form_error('descripcion_proyecto') ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="presupuesto_proyecto">Presupuesto (Bs.)</label>
+                        <input type="number" name="presupuesto_proyecto" value="<?= $proyecto->presupuesto_proyecto ?>" placeholder="Presupuesto" class="form-control">
+                        <p><?= form_error('presupuesto_proyecto') ?></p>
+                    </div>
+                    <input type="hidden" name="id_proyecto" value="<?= $proyecto->id_proyecto ?>" id="id_proyecto">
+                    <input type="submit" name="submit" value="Modificar proyecto" title="Modificar proyecto" class="btn btn-primary">
+                </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#modificar_proyecto').validate({
+                    errorClass: 'has-error',
+                    validClass: 'has-success',
+                    rules: {
+                        nombre_proyecto: {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 128
+                        },
+                        descripcion_proyecto: {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 1024
+                        },
+                        presupuesto_proyecto: {
+                            required: true,
+                            number: true,
+                            min: 0
+                        }
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
+                        $(element).addClass('control-label');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
+                    },
+                    errorPlacement: function(error, element) {
+                        $(error).addClass('control-label');
+                        error.insertAfter(element);
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

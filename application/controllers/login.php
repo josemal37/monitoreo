@@ -29,7 +29,7 @@ class login extends CI_Controller {
         switch ($this->session->userdata('nombre_rol')) {
             case '':
                 $data['token'] = $this->token();
-                $data['titulo'] = 'Login con roles de usuario en codeigniter';
+                $data['titulo'] = 'Inicio de sesión';
                 $this->load->view('vista_login', $data);
                 break;
             case 'financiador':
@@ -45,7 +45,7 @@ class login extends CI_Controller {
                 redirect(base_url() . 'coordinador');
                 break;
             default:
-                $data['titulo'] = 'Login con roles de usuario en codeigniter';
+                $data['titulo'] = 'Inicio de sesión';
                 $this->load->view('vista_login', $data);
                 break;
         }
@@ -53,8 +53,8 @@ class login extends CI_Controller {
 
     public function iniciar_sesion() {
         if ($this->input->post('token') && $this->input->post('token') == $this->session->userdata('token')) {
-            $this->form_validation->set_rules('login_usuario', 'login_usuario', 'required|trim|min_length[2]|max_length[64]');
-            $this->form_validation->set_rules('password_usuario', 'password_usuario', 'required|trim|min_length[2]|max_length[32]');
+            $this->form_validation->set_rules('login_usuario', 'login_usuario', 'required|trim|max_length[32]');
+            $this->form_validation->set_rules('password_usuario', 'password_usuario', 'required|trim|max_length[32]');
 
             if ($this->form_validation->run() == FALSE) {
                 $this->index();
