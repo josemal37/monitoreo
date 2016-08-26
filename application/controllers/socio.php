@@ -456,7 +456,7 @@ class socio extends CI_Controller {
         $this->verificar_sesion();
 
         $data = file_get_contents('./files/' . $this->session->userdata('carpeta_institucion') . '/' . $nombre);
-        force_download($name, $data);
+        force_download($nombre, $data);
     }
 
     private function sanitizar_cadena($cadena) {

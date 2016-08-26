@@ -75,7 +75,7 @@
                                                         <td width="15%"><?= $gasto_avance->fecha_gasto_avance ?></td>
                                                         <td width="70%">
                                                             <?= $gasto_avance->concepto_gasto_avance ?>
-                                                            <a href="<?= 'socio/descarga/' . $gasto_avance->respaldo_gasto_avance, $gasto_avance->respaldo_gasto_avance ?>" class="btn btn-success btn-xs pull-right">Ver respaldo</a>
+                                                            <a href="<?= base_url() . 'coordinador/descarga/' . $gasto_avance->respaldo_gasto_avance ?>" class="btn btn-success btn-xs pull-right">Ver respaldo</a>
                                                         </td>
                                                         <td width="15%"><?= $gasto_avance->importe_gasto_avance ?></td>
                                                         <?php $total_importe = $total_importe + $gasto_avance->importe_gasto_avance; ?>

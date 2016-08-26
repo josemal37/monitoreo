@@ -89,8 +89,8 @@ class coordinador extends CI_Controller {
     public function descarga($nombre) {
         $this->verificar_sesion();
 
-        $data = file_get_contents('./files/'.$nombre);
-        force_download($name, $data);
+        $data = file_get_contents('./files/' . $this->session->userdata('carpeta_institucion') . '/' . $nombre);
+        force_download($nombre, $data);
     }
 
 }
