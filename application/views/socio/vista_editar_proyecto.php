@@ -31,7 +31,7 @@
                                     <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
-                                    <p><strong>Presupuesto: </strong><?= $actividad->presupuesto_actividad ?></p>
+                                    <p><strong>Presupuesto: </strong>Bs. <?= $actividad->presupuesto_actividad ?></p>
                                     <div>
                                         <a href="<?= base_url() . 'socio/modificar_actividad/' . $actividad->id_actividad ?>" class="btn btn-default">Modificar actividad</a>
                                         <a href="<?= base_url() . 'socio/eliminar_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-danger">Eliminar actividad</a>
@@ -52,10 +52,10 @@
                                                         <tr>
                                                             <th>Nombre del indicador</th>
                                                             <th>Tipo de indicador</th>
-                                                            <th>Meta del indicador</th>
-                                                            <th>Valor aceptable</th>
-                                                            <th>Valor limitado</th>
                                                             <th>Valor no aceptable</th>
+                                                            <th>Valor limitado</th>
+                                                            <th>Valor aceptable</th>
+                                                            <th>Meta del indicador</th>
                                                             <th>Fecha limite</th>
                                                             <th>Acciones</th>
                                                         </tr>
@@ -65,10 +65,10 @@
                                                             <tr>
                                                                 <td><?= $indicador_actividad->nombre_indicador_op ?></td>
                                                                 <td><?= $indicador_actividad->nombre_tipo_indicador_op ?></td>
+                                                                <td><?= '0 - ' . $indicador_actividad->no_aceptable_op ?></td>
+                                                                <td><?= $indicador_actividad->no_aceptable_op . ' - ' . $indicador_actividad->limitado_op ?></td>
+                                                                <td><?= $indicador_actividad->limitado_op.' - '.$indicador_actividad->aceptable_op ?></td>
                                                                 <td><?= $indicador_actividad->meta_op ?></td>
-                                                                <td><?= $indicador_actividad->aceptable_op ?></td>
-                                                                <td><?= $indicador_actividad->limitado_op ?></td>
-                                                                <td><?= $indicador_actividad->no_aceptable_op ?></td>
                                                                 <td><?= $indicador_actividad->fecha_limite_indicador_op ?></td>
                                                                 <td>
                                                                     <a href="<?= base_url() . 'socio/modificar_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-default btn-xs btn-block">Modificar indicador</a>
@@ -81,7 +81,7 @@
                                             </div>
                                         </div>
                                     <?php else: ?>
-                                        <h3>No se registraron indicadores</h3>
+                                        <h4>No se registraron indicadores</h4>
                                     <?php endif; ?>
                                     <a href="<?= base_url() . 'socio/registrar_nuevo_indicador/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar indicador operativo</a>
                                 </div>
@@ -89,7 +89,7 @@
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <h2>No se registraron actividades</h2>
+                    <h4>No se registraron actividades</h4>
                 <?php endif; ?>
             </div>
             <a href="<?= base_url() . 'socio/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Registrar actividad</a>

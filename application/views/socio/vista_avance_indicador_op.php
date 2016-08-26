@@ -2,20 +2,21 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
-        <title>Detalle de avance indicador</title>
+        <link rel="stylesheet" href="<?php echo base_url("assets/css/bootstrap.css"); ?>" />
+        <title>Ver avance indicador</title>
     </head>
     <body>
         <div class="container">
-            <h1 style="text-align: center">Bienvenido coordinador</h1>
+            <h1 style="text-align: center">Bienvenido socio</h1>
             <?php
             $datos = Array();
             $datos['activo'] = "Proyectos activos";
-            $this->load->view('coordinador/nav', $datos);
+            $this->load->view('socio/nav', $datos);
             ?>
             <div>
                 <div>
                     <h4><?= $indicador->nombre_indicador_op ?></h4>
+                    <p><strong>Meta del indicador: </strong><?= $indicador->meta_op ?></p>
                     <div>
                         <?php if (!$avances_indicador): ?>
                             <div class="panel panel-warning">
@@ -59,6 +60,13 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Detalle de gastos
+                                </div>
+                                <div class="panel-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <thead>
@@ -92,6 +100,7 @@
                                 </div>
                             </div>
                         <?php endif; ?>
+                        <a href="<?= base_url() . 'socio/registrar_avance_indicador_operativo/' . $id_proyecto . '/' . $id_indicador ?>" class="btn btn-primary">Registrar avance</a>
                     </div>
                 </div>
             </div>

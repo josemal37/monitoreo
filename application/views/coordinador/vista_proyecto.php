@@ -41,16 +41,32 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th width="85%">Nombre del indicador</th>
+                                                            <th width="65%">Nombre del indicador</th>
+                                                            <th width="20%">Estado</th>
                                                             <th width="15%">Acciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($indicadores_actividad as $indicador_actividad): ?>
-                                                            <tr>
+                                                            <?php
+                                                            $color_indicador = 'ffffff';
+                                                            switch ($indicador_actividad->estado_indicador_op) {
+                                                                case 'Aceptable':
+                                                                    $color_indicador = "CDFDC3";
+                                                                    break;
+                                                                case 'Limitado':
+                                                                    $color_indicador = "FDFCBF";
+                                                                    break;
+                                                                case 'No aceptable':
+                                                                    $color_indicador = "FDBFBF";
+                                                                    break;
+                                                            }
+                                                            ?>
+                                                            <tr bgColor = "#<?= $color_indicador ?>">
                                                                 <td><?= $indicador_actividad->nombre_indicador_op ?></td>
+                                                                <td><?= $indicador_actividad->estado_indicador_op ?></td>
                                                                 <td>
-                                                                    <a href="<?= base_url() . 'coordinador/detalle_avance_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-default btn-xs btn-block">Ver detalle de avance</a>
+                                                                    <a href="<?= base_url() . 'coordinador/detalle_avance_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-success btn-xs btn-block">Ver detalle de avance</a>
                                                                 </td>
                                                             </tr>
                                                         <?php endforeach; ?>

@@ -36,7 +36,7 @@
                         <input type="number" name="presupuesto_proyecto" placeholder="Presupuesto" class="form-control">
                         <p><?= form_error('presupuesto_proyecto') ?></p>
                     </div>
-                    <input type="submit" name="submit" value="Modificar proyecto" title="Modificar proyecto" class="btn btn-primary">
+                    <input type="submit" name="submit" value="Registrar proyecto" title="Registrar proyecto" class="btn btn-primary">
                 </form>
             </div>
         </div>

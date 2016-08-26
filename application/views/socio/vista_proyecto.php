@@ -14,12 +14,12 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h2><?= $datos_proyecto->nombre_proyecto ?></h2>
+                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <?= $datos_proyecto->presupuesto_proyecto ?>)</h4>
                 <p><?= $datos_proyecto->descripcion_proyecto ?></p>
             </div>
             <div>
                 <?php if (sizeof($datos_actividades) > 0): ?>
-                    <h2>Actividades</h2>
+                    <h4>Actividades</h4>
                     <?php foreach ($datos_actividades as $actividad): ?>
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -41,16 +41,33 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th width="85%">Nombre del indicador</th>
+                                                            <th width="65%">Nombre del indicador</th>
+                                                            <th width="20%">Estado</th>
                                                             <th width="15%">Acciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($indicadores_actividad as $indicador_actividad): ?>
-                                                            <tr>
+                                                            <?php
+                                                            $color_indicador = 'ffffff';
+                                                            switch ($indicador_actividad->estado_indicador_op) {
+                                                                case 'Aceptable':
+                                                                    $color_indicador = "CDFDC3";
+                                                                    break;
+                                                                case 'Limitado':
+                                                                    $color_indicador = "FDFCBF";
+                                                                    break;
+                                                                case 'No aceptable':
+                                                                    $color_indicador = "FDBFBF";
+                                                                    break;
+                                                            }
+                                                            ?>
+                                                            <tr bgColor = "#<?= $color_indicador ?>">
                                                                 <td><?= $indicador_actividad->nombre_indicador_op ?></td>
+                                                                <td><?= $indicador_actividad->estado_indicador_op ?></td>
                                                                 <td>
-                                                                    <a href="<?= base_url() . 'socio/registrar_avance_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-default btn-xs btn-block">Registrar avance</a>
+                                                                    <a href="<?= base_url() . 'socio/ver_avance_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>
+                                                                    <a href="<?= base_url() . 'socio/registrar_avance_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-primary btn-xs btn-block">Registrar avance</a>
                                                                 </td>
                                                             </tr>
                                                         <?php endforeach; ?>
@@ -66,7 +83,7 @@
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <h2>No se registraron actividades</h2>
+                    <h4>No se registraron actividades</h4>
                 <?php endif; ?>
             </div>
         </div>	

@@ -85,7 +85,7 @@ class modelo_socio extends CI_Model {
             }
         } else {
             $this->session->set_flashdata('no_existe_proyecto', 'El proyecto al que intenta acceder no existe.');
-            redirect(base_url() . 'socio/ver_proyectos', 'refresh');
+            redirect(base_url() . 'socio');
         }
 
         return $datos;

@@ -30,7 +30,8 @@ class modelo_login extends CI_Model {
                     USUARIO.apellido_materno_usuario,
                     ROL.nombre_rol,
                     INSTITUCION.id_institucion,
-                    INSTITUCION.nombre_institucion
+                    INSTITUCION.nombre_institucion,
+                    INSTITUCION.carpeta_institucion
                 FROM
                     USUARIO,
                     ROL,

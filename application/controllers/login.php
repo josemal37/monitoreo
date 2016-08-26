@@ -71,7 +71,8 @@ class login extends CI_Controller {
                         'nombre_usuario' => $datos_usuario->nombre_usuario,
                         'apellido_usuario' => $datos_usuario->apellido_paterno_usuario . " " . $datos_usuario->apellido_materno_usuario,
                         'id_institucion' => $datos_usuario->id_institucion,
-                        'nombre_institucion' => $datos_usuario->nombre_institucion
+                        'nombre_institucion' => $datos_usuario->nombre_institucion,
+                        'carpeta_institucion' => $datos_usuario->carpeta_institucion
                     );
                     $this->session->set_userdata($datos);
                     $this->index();

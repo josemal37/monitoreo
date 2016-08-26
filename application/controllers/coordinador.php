@@ -19,7 +19,7 @@ class coordinador extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('modelo_coordinador');
+        $this->load->model(Array('modelo_coordinador', 'modelo_indicador_operativo', 'modelo_indicador_acumulativo', 'modelo_indicador_promedio_menor_que', 'modelo_indicador_porcentaje'));
         $this->load->library(array('session', 'form_validation', 'encrypt'));
         $this->load->helper(array('url', 'form', 'download'));
         $this->load->database('default');
@@ -46,6 +46,24 @@ class coordinador extends CI_Controller {
         $this->verificar_sesion();
 
         $datos = $this->modelo_coordinador->get_proyecto_completo($id_proyecto);
+        foreach ($datos['datos_indicadores'] as $key => $indicadores) {
+            for ($i = 0; $i < sizeof($indicadores); $i = $i + 1) {
+                switch ($datos['datos_indicadores'][$key][$i]->nombre_tipo_indicador_op) {
+                    case 'Acumulativo':
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_acumulativo->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+                        break;
+                    case 'Promedio (menor que)':
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_promedio_menor_que->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+                        break;
+                    case 'Porcentaje':
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_porcentaje->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+                        break;
+                    default :
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = 'Indicador no definido';
+                        break;
+                }
+            }
+        }
         $this->load->view('coordinador/vista_proyecto', $datos);
     }
 

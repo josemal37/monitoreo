@@ -29,7 +29,7 @@
                                 <tr>
                                     <td><?= $proyecto->nombre_proyecto ?></td>
                                     <td><?= $proyecto->descripcion_proyecto ?></td>
-                                    <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block">Ver proyecto</a></td>
+                                    <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver proyecto</a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

@@ -30,7 +30,7 @@
                                     <td><?= $proyecto->nombre_proyecto ?></td>
                                     <td><?= $proyecto->descripcion_proyecto ?></td>
                                     <td>
-                                        <a href="<?= base_url() . 'socio/editar_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block">Editar proyecto</a>
+                                        <a href="<?= base_url() . 'socio/editar_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Editar proyecto</a>
                                         <a href="<?= base_url() . 'socio/terminar_edicion_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-primary btn-xs btn-block">Activar proyecto</a>
                                         <a href="<?= base_url() . 'socio/eliminar_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-danger btn-xs btn-block">Eliminar proyecto</a>
                                     </td>

@@ -19,15 +19,11 @@ class socio extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('modelo_socio');
+        $this->load->model(array('modelo_socio', 'modelo_indicador_operativo', 'modelo_indicador_acumulativo', 'modelo_indicador_promedio_menor_que', 'modelo_indicador_porcentaje'));
         $this->load->library(array('session', 'form_validation', 'encrypt'));
         $this->load->helper(array('url', 'form', 'download'));
         $this->load->database('default');
-        $config = Array();
-        $config['upload_path'] = './files/';
-        $config['allowed_types'] = 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx';
-        $config['max_size'] = '800000000';
-        $this->load->library('upload', $config);
+        $this->load->library('upload');
     }
 
     public function index() {
@@ -51,6 +47,24 @@ class socio extends CI_Controller {
         $this->verificar_sesion();
 
         $datos = $this->modelo_socio->get_proyecto_completo($id_proyecto);
+        foreach ($datos['datos_indicadores'] as $key => $indicadores) {
+            for ($i = 0; $i < sizeof($indicadores); $i = $i + 1) {
+                switch ($datos['datos_indicadores'][$key][$i]->nombre_tipo_indicador_op) {
+                    case 'Acumulativo':
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_acumulativo->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+                        break;
+                    case 'Promedio (menor que)':
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_promedio_menor_que->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+                        break;
+                    case 'Porcentaje':
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_porcentaje->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+                        break;
+                    default :
+                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = 'Indicador no definido';
+                        break;
+                }
+            }
+        }
         $this->load->view('socio/vista_proyecto', $datos);
     }
 
@@ -95,7 +109,7 @@ class socio extends CI_Controller {
 
     public function terminar_edicion_proyecto($id_proyecto) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio');
         } else {
@@ -117,7 +131,7 @@ class socio extends CI_Controller {
 
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['id_proyecto']);
-                $this->registrar_nueva_actividad();
+                $this->registrar_nueva_actividad($id_proyecto);
             } else {
                 if ($id_proyecto == $this->input->post('id_proyecto')) {
                     $nombre_actividad = $this->input->post('nombre_actividad');
@@ -125,8 +139,13 @@ class socio extends CI_Controller {
                     $fecha_inicio_actividad = $this->input->post('fecha_inicio_actividad');
                     $fecha_fin_actividad = $this->input->post('fecha_fin_actividad');
                     $presupuesto_actividad = $this->input->post('presupuesto_actividad');
-                    $this->modelo_socio->insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad);
-                    redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+                    if ($this->comparar_fechas($fecha_inicio_actividad, $fecha_fin_actividad) <= 0) {
+                        $this->modelo_socio->insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad);
+                        redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
+                    } else {
+                        //fechas incoherentes
+                        $this->registrar_nueva_actividad($id_actividad);
+                    }
                 } else {
                     redirect(base_url() . 'socio');
                 }
@@ -151,7 +170,7 @@ class socio extends CI_Controller {
             $this->form_validation->set_rules('no_aceptable_op', 'no_aceptable_op', 'required|numeric');
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['id_actividad']);
-                $this->registrar_nuevo_indicador();
+                $this->registrar_nuevo_indicador($id_proyecto, $id_actividad);
             } else {
                 if ($id_actividad == $this->input->post('id_actividad')) {
                     $id_tipo_indicador_op = $this->input->post('id_tipo_indicador_op');
@@ -170,7 +189,12 @@ class socio extends CI_Controller {
             }
         } else {
             $tipos_indicador_op = $this->modelo_socio->get_tipos_indicador_op();
-            $datos = Array('id_proyecto' => $id_proyecto, 'id_actividad' => $id_actividad, 'tipos_indicador_op' => $tipos_indicador_op);
+            $actividad = $this->modelo_socio->get_actividad($id_actividad);
+            $datos = Array();
+            $datos['id_proyecto'] = $id_proyecto;
+            $datos['id_actividad'] = $id_actividad;
+            $datos['tipos_indicador_op'] = $tipos_indicador_op;
+            $datos['actividad'] = $actividad;
             $this->load->view('socio/vista_registrar_nuevo_indicador_op', $datos);
         }
     }
@@ -226,7 +250,7 @@ class socio extends CI_Controller {
 
                 if ($this->form_validation->run() == FALSE) {
                     unset($_POST['id_actividad']);
-                    $this->modificar_actividad();
+                    $this->modificar_actividad($id_actividad);
                 } else {
                     if ($id_actividad == $this->input->post('id_actividad')) {
                         $id_actividad = $this->input->post('id_actividad');
@@ -235,8 +259,13 @@ class socio extends CI_Controller {
                         $fecha_inicio_actividad = $this->input->post('fecha_inicio_actividad');
                         $fecha_fin_actividad = $this->input->post('fecha_fin_actividad');
                         $presupuesto_actividad = $this->input->post('presupuesto_actividad');
-                        $this->modelo_socio->update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad);
-                        redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
+                        if ($this->comparar_fechas($fecha_inicio_actividad, $fecha_fin_actividad) <= 0) {
+                            $this->modelo_socio->update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad);
+                            redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
+                        } else {
+                            //fechas incoherentes
+                            $this->modificar_actividad($id_actividad);
+                        }
                     } else {
                         redirect(base_url() . 'socio');
                     }
@@ -250,7 +279,7 @@ class socio extends CI_Controller {
 
     public function modificar_indicador_operativo($id_proyecto, $id_indicador) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
             redirect(base_url() . 'socio');
         } else {
@@ -286,7 +315,11 @@ class socio extends CI_Controller {
                 $datos = Array();
                 $datos['tipos_indicador_op'] = $this->modelo_socio->get_tipos_indicador_op();
                 $datos['id_proyecto'] = $id_proyecto;
-                $datos['indicador'] = $this->modelo_socio->get_indicador_operativo($id_indicador);
+                $indicador = $this->modelo_socio->get_indicador_operativo($id_indicador);
+                $datos['indicador'] = $indicador;
+                if ($indicador) {
+                    $datos['actividad'] = $this->modelo_socio->get_actividad($indicador->id_actividad);
+                }
                 $this->load->view('socio/vista_modificar_indicador_op', $datos);
             }
         }
@@ -294,7 +327,7 @@ class socio extends CI_Controller {
 
     public function eliminar_proyecto($id_proyecto) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio');
         } else {
@@ -305,7 +338,7 @@ class socio extends CI_Controller {
 
     public function eliminar_actividad($id_proyecto, $id_actividad) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_actividad) || !is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio');
         } else {
@@ -316,8 +349,8 @@ class socio extends CI_Controller {
 
     public function eliminar_indicador_operativo($id_proyecto, $id_indicador) {
         $this->verificar_sesion();
-        
-        if (!is_numeric($id_indicador || !is_numeric($id_proyecto))) {
+
+        if (!is_numeric($id_indicador) || !is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio');
         } else {
             $this->modelo_socio->delete_indicador_operativo($id_indicador);
@@ -325,13 +358,30 @@ class socio extends CI_Controller {
         }
     }
 
-    public function registrar_avance_indicador_operativo($id_proyecto, $id_indicador) {
-        $this->verificar_sesion();
-        
+    public function ver_avance_indicador_operativo($id_proyecto, $id_indicador) {
         if (!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
             redirect(base_url() . 'socio');
         } else {
-            if (isset($_POST['id_indicador_op']) && isset($_POST['avance_op']) && isset($_POST['descripcion_avance_op']) && isset($_POST['fecha_gasto_avance[]']) && isset($_POST['concepto_gasto_avance[]']) && isset($_POST['importe_gasto_avance[]'])) {
+            $datos_indicador = $this->modelo_socio->get_indicador_operativo($id_indicador);
+            $avances_indicador = $this->modelo_socio->get_avances_indicador_operativo($id_indicador);
+            $gastos_avances = $this->modelo_socio->get_gastos_avance($id_indicador);
+            $datos = Array();
+            $datos['id_proyecto'] = $id_proyecto;
+            $datos['id_indicador'] = $id_indicador;
+            $datos['indicador'] = $datos_indicador;
+            $datos['avances_indicador'] = $avances_indicador;
+            $datos['gastos_avances'] = $gastos_avances;
+            $this->load->view('socio/vista_avance_indicador_op', $datos);
+        }
+    }
+
+    public function registrar_avance_indicador_operativo($id_proyecto, $id_indicador) {
+        $this->verificar_sesion();
+
+        if (!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_indicador_op']) && isset($_POST['avance_op']) && isset($_POST['descripcion_avance_op']) && isset($_POST['fecha_gasto_avance']) && isset($_POST['concepto_gasto_avance']) && isset($_POST['importe_gasto_avance'])) {
                 $this->form_validation->set_rules('avance_op', 'avance_op', 'required|numeric');
                 $this->form_validation->set_rules('descripcion_avance_op', 'descripcion_avance_op', 'required|trim|min_length[2]|max_length[512]');
                 $this->form_validation->set_rules('fecha_gasto_avance[]', 'fecha_gasto_avance[]', 'required');
@@ -352,6 +402,11 @@ class socio extends CI_Controller {
                         $archivos = Array();
                         $errores = FALSE;
                         $indice_respaldos = 0;
+                        $config = Array();
+                        $config['upload_path'] = './files/' . $this->session->userdata('carpeta_institucion') . '/';
+                        $config['allowed_types'] = 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx';
+                        $config['max_size'] = '800000000';
+                        $this->upload->initialize($config);
                         foreach ($_FILES as $key => $value) {
                             if (!empty($value['name'])) {
                                 $nombre_archivo = $_FILES[$key]['name'];
@@ -370,11 +425,13 @@ class socio extends CI_Controller {
                             foreach ($archivos as $key => $file) {
                                 @unlink($file['full_path']);
                             }
+                            //error en los archivos
+                            redirect(base_url() . 'socio/ver_avance_indicador_operativo/' . $id_proyecto . '/' . $id_indicador);
                         } else {
                             if (!empty($archivos)) {
                                 //guardamos el la base de datos
                                 $this->modelo_socio->guardar_avance_indicador_operativo($id_indicador_op, $avance_op, $descripcion_avance_op, $fecha_gasto_avance, $concepto_gasto_avance, $importe_gasto_avance, $respaldo_gasto_avance);
-                                redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
+                                redirect(base_url() . 'socio/ver_avance_indicador_operativo/' . $id_proyecto . '/' . $id_indicador);
                             } else {
                                 //error en los archivos
                                 redirect(base_url() . 'socio');
@@ -386,14 +443,10 @@ class socio extends CI_Controller {
                 }
             } else {
                 $datos_indicador = $this->modelo_socio->get_indicador_operativo($id_indicador);
-                $avances_indicador = $this->modelo_socio->get_avances_indicador_operativo($id_indicador);
-                $gastos_avances = $this->modelo_socio->get_gastos_avance($id_indicador);
                 $datos = Array();
                 $datos['id_proyecto'] = $id_proyecto;
                 $datos['id_indicador'] = $id_indicador;
                 $datos['indicador'] = $datos_indicador;
-                $datos['avances_indicador'] = $avances_indicador;
-                $datos['gastos_avances'] = $gastos_avances;
                 $this->load->view('socio/vista_registrar_avance_indicador_op', $datos);
             }
         }
@@ -402,7 +455,7 @@ class socio extends CI_Controller {
     public function descarga($nombre) {
         $this->verificar_sesion();
 
-        $data = file_get_contents('./files/'.$nombre);
+        $data = file_get_contents('./files/' . $this->session->userdata('carpeta_institucion') . '/' . $nombre);
         force_download($name, $data);
     }
 
@@ -425,6 +478,24 @@ class socio extends CI_Controller {
         $cadena = str_replace("Ý", "Y", $cadena);
         $cadena = str_replace("ý", "y", $cadena);
         return $cadena;
+    }
+
+    private function comparar_fechas($primera, $segunda) {
+        $valoresPrimera = explode("-", $primera);
+        $valoresSegunda = explode("-", $segunda);
+        $anioPrimera = $valoresPrimera[0];
+        $mesPrimera = $valoresPrimera[1];
+        $diaPrimera = $valoresPrimera[2];
+        $anioSegunda = $valoresSegunda[0];
+        $mesSegunda = $valoresSegunda[1];
+        $diaSegunda = $valoresSegunda[2];
+        if (!checkdate($mesPrimera, $diaPrimera, $anioPrimera) || !checkdate($mesSegunda, $diaSegunda, $anioSegunda)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $diasPrimeraJuliano = gregoriantojd($mesPrimera, $diaPrimera, $anioPrimera);
+            $diasSegundaJuliano = gregoriantojd($mesSegunda, $diaSegunda, $anioSegunda);
+            return $diasPrimeraJuliano - $diasSegundaJuliano;
+        }
     }
 
 }

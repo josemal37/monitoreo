@@ -3,6 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+        <link rel="stylesheet" href="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.css' ?>" />
         <title>Registrar actividad</title>
     </head>
     <body>
@@ -27,16 +28,16 @@
                     </div>
                     <div class="form-group">
                         <label for="fecha_inicio_actividad">Fecha de inicio</label>
-                        <input type="date" name="fecha_inicio_actividad" id="fecha_inicio_actividad" min="" max="" class="form-control" required>
+                        <input type="text" name="fecha_inicio_actividad" id="fecha_inicio_actividad" class="form-control" required>
                         <p><?= form_error('fecha_inicio_actividad') ?></p>
                     </div>
                     <div class="form-group">
                         <label for="fecha_fin_actividad">Fecha de fin</label>
-                        <input type="date" name="fecha_fin_actividad" id="fecha_fin_actividad" min="" max="" class="form-control" required>
+                        <input type="text" name="fecha_fin_actividad" id="fecha_fin_actividad" class="form-control" required>
                         <p><?= form_error('fecha_fin_actividad') ?></p>
                     </div>
                     <div class="form-group">
-                        <label for="presupuesto_actividad">Presupuesto</label>
+                        <label for="presupuesto_actividad">Presupuesto (Bs.)</label>
                         <input type="number" name="presupuesto_actividad" placeholder="Presupuesto" class="form-control" required>
                         <p><?= form_error('presupuesto_actividad') ?></p>
                     </div>
@@ -45,10 +46,11 @@
                 </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#actividad').validate({
@@ -93,13 +95,19 @@
                 });
             });
         </script>
-        <script>
+        <script type="text/javascript">
+            $("#fecha_inicio_actividad").datepicker({dateFormat: 'yy-mm-dd'});
+            $("#fecha_fin_actividad").datepicker({dateFormat: 'yy-mm-dd'});
+        </script>
+        <script type="text/javascript">
             $(function() {
                 $('#fecha_inicio_actividad').change(function() {
-                    $('#fecha_fin_actividad').attr('min', $('#fecha_inicio_actividad').val());
+                    var fecha_inicio = $("#fecha_inicio_actividad").datepicker("getDate");
+                    $("#fecha_fin_actividad").datepicker("option", "minDate", fecha_inicio);
                 });
                 $('#fecha_fin_actividad').change(function() {
-                    $('#fecha_inicio_actividad').attr('max', $('#fecha_fin_actividad').val());
+                    var fecha_fin = $("#fecha_fin_actividad").datepicker("getDate");
+                    $("#fecha_inicio_actividad").datepicker("option", "maxDate", fecha_fin);
                 });
             });
         </script>

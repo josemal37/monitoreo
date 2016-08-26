@@ -16,114 +16,51 @@
             <div>
                 <div>
                     <h4><?= $indicador->nombre_indicador_op ?></h4>
-                    <div>
-                        <?php if (!$avances_indicador): ?>
-                            <div class="panel panel-warning">
-                                <div class="panel-heading">
-                                    Advertencia
-                                </div>
-                                <div class="panel-body">
-                                    Todavia no se registraron avances.
-                                </div>
-                            </div>
-                        <?php else: ?>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    Detalle de avances
-                                </div>
-                                <div class="panel-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th width="15%">Fecha de avance</th>
-                                                    <th width="70%">Descripción</th>
-                                                    <th width="15%">Avance</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php foreach ($avances_indicador as $avance) : ?>
-                                                    <tr>
-                                                        <td><?= $avance->fecha_avance_op ?></td>
-                                                        <td><?= $avance->descripcion_avance_op ?></td>
-                                                        <td><?= $avance->avance_op ?></td>
-                                                    </tr>
-                                                <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th width="15%">Fecha del gasto</th>
-                                                    <th width="50%">Concepto</th>
-                                                    <th width="12%">Importe (Bs.)</th>
-                                                    <th width="23%">Respaldo</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php foreach ($gastos_avances as $gasto_avance) : ?>
-                                                    <tr>
-                                                        <td><?= $gasto_avance->fecha_gasto_avance ?></td>
-                                                        <td><?= $gasto_avance->concepto_gasto_avance ?></td>
-                                                        <td><?= $gasto_avance->importe_gasto_avance ?></td>
-                                                        <td><?= anchor('socio/descarga/'. $gasto_avance->respaldo_gasto_avance, $gasto_avance->respaldo_gasto_avance) ?></td>
-                                                    </tr>
-                                                <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                        <div>
-                            <h4>Registrar nuevo avance</h4>
-                            <?php
-                            $avance_op = array('name' => 'avance_op', 'placeholder' => 'Avance', 'type' => 'number', 'class' => 'form-control', 'required' => 'required');
-                            $descripcion_avance_op = array('name' => 'descripcion_avance_op', 'placeholder' => 'Descripción', 'class' => 'form-control', 'rows' => '4', 'required' => 'required');
-                            $submit = array('name' => 'submit', 'value' => 'Registrar avance', 'title' => 'Registrar avance', 'class' => 'btn btn-primary');
-                            ?>
-                            <?= form_open(base_url() . 'socio/registrar_avance_indicador_operativo/'.$id_proyecto.'/'.$indicador->id_indicador_op, Array('role' => 'form','enctype' => 'multipart/form-data')) ?>
-                            <div class="form-group">
-                                <label for="avance_op">Cantidad de avance</label>
-                                <?= form_input($avance_op) ?><p><?= form_error('avance_op') ?></p>
-                            </div>
-                            <div class="form-group">
-                                <label for="descripcion_avance_op">Descripción</label>
-                                <?= form_textarea($descripcion_avance_op) ?><p><?= form_error('descripcion_avance_op') ?></p>
-                            </div>
-                            <div class="form-group">
-                                <label>Gastos</label>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="tabla_gastos">
-                                        <thead>
-                                            <tr class="ajaxTitle">
-                                                <th width="15%">Fecha del gasto</th>
-                                                <th width="50%">Concepto</th>
-                                                <th width="13%">Importe (Bs.)</th>
-                                                <th width="12%">Respaldo</th>
-                                                <th width="10%">Borrar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="vertical-top"><input type="date" name="fecha_gasto_avance[]" class="form-control" required></td>
-                                                <td><textarea name="concepto_gasto_avance[]" placeholder="Concepto" class="form-control vresize" rows="2" required></textarea></td>
-                                                <td class="vertical-top"><input type="number" name="importe_gasto_avance[]" placeholder="Importe" class="form-control" required></td>
-                                                <td class="vertical-top"><input type="file" name="respaldo_gasto_avance_1" required></td>
-                                                <td class="vertical-top"><input type="button" id="borrar_fila" value="Borrar" /></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <button type="button" class="btn btn-default" id="nueva_fila">Nueva fila</button>
-                            </div>
-                            <?= form_input(Array('type' => 'hidden', 'name' => 'id_indicador_op', 'id' => 'id_indicador_op', 'value' => $id_indicador)) ?>
-                            <?= form_submit($submit) ?>
-                            <?= form_close() ?>
+                    <?php
+                    $avance_op = array('name' => 'avance_op', 'placeholder' => 'Avance', 'type' => 'number', 'class' => 'form-control', 'required' => 'required');
+                    $descripcion_avance_op = array('name' => 'descripcion_avance_op', 'placeholder' => 'Descripción', 'class' => 'form-control', 'rows' => '4', 'required' => 'required');
+                    $submit = array('name' => 'submit', 'value' => 'Registrar avance', 'title' => 'Registrar avance', 'class' => 'btn btn-primary');
+                    ?>
+                    <form action="<?= base_url() . 'socio/registrar_avance_indicador_operativo/' . $id_proyecto . '/' . $indicador->id_indicador_op ?>" role="form" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                        <div class="form-group">
+                            <label for="avance_op">Cantidad de avance</label>
+                            <input type="number" name="avance_op" placeholder="Avance" class="form-control" required="required">
+                            <p><?= form_error('avance_op') ?></p>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="descripcion_avance_op">Descripción</label>
+                            <textarea name="descripcion_avance_op" rows="4" placeholder="Descripción" class="form-control" required="required"></textarea>
+                            <?= form_error('descripcion_avance_op') ?>
+                        </div>
+                        <div class="form-group">
+                            <label>Gastos</label>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="tabla_gastos">
+                                    <thead>
+                                        <tr class="ajaxTitle">
+                                            <th width="15%">Fecha del gasto</th>
+                                            <th width="50%">Concepto</th>
+                                            <th width="13%">Importe (Bs.)</th>
+                                            <th width="12%">Respaldo</th>
+                                            <th width="10%">Borrar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="vertical-top"><input type="date" name="fecha_gasto_avance[]" class="form-control" required></td>
+                                            <td><textarea name="concepto_gasto_avance[]" placeholder="Concepto" class="form-control vresize" rows="2" required></textarea></td>
+                                            <td class="vertical-top"><input type="number" name="importe_gasto_avance[]" placeholder="Importe" class="form-control" required></td>
+                                            <td class="vertical-top"><input type="file" name="respaldo_gasto_avance_1" required></td>
+                                            <td class="vertical-top"><input type="button" id="borrar_fila" value="Borrar"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" class="btn btn-default" id="nueva_fila">Nueva fila</button>
+                        </div>
+                        <input type="hidden" name="id_indicador_op" value="<?= $id_indicador ?>" id="id_indicador_op">
+                        <input type="submit" name="submit" value="Registrar avance" title="Registrar avance" class="btn btn-primary">
+                    </form>
                 </div>
             </div>
         </div>
@@ -132,21 +69,21 @@
         <script>
             var num_filas = 2;
             $('#nueva_fila').click(function() {
-                var fila =  '<tr>'+
-                            '<td class="vertical-top"><input type="date" name="fecha_gasto_avance[]" placeholder="Fecha del gasto" class="form-control" required></td>' +
-                            '<td><textarea name="concepto_gasto_avance[]" placeholder="Concepto" class="form-control vresize" rows="2" required></textarea></td>' +
-                            '<td class="vertical-top"><input type="number" name="importe_gasto_avance[]" placeholder="Importe" class="form-control" required></td>' +
-                            '<td class="vertical-top"><input type="file" name="respaldo_gasto_avance_'+num_filas+'" required></td>'+
-                            '<td class="vertical-top"><input type="button" id="borrar_fila" value="Borrar" /></td>'+
-                            '</tr>';
+                var fila = '<tr>' +
+                        '<td class="vertical-top"><input type="date" name="fecha_gasto_avance[]" placeholder="Fecha del gasto" class="form-control" required></td>' +
+                        '<td><textarea name="concepto_gasto_avance[]" placeholder="Concepto" class="form-control vresize" rows="2" required></textarea></td>' +
+                        '<td class="vertical-top"><input type="number" name="importe_gasto_avance[]" placeholder="Importe" class="form-control" required></td>' +
+                        '<td class="vertical-top"><input type="file" name="respaldo_gasto_avance_' + num_filas + '" required></td>' +
+                        '<td class="vertical-top"><input type="button" id="borrar_fila" value="Borrar" /></td>' +
+                        '</tr>';
                 $('#tabla_gastos >tbody').append(fila);
                 num_filas = num_filas + 1;
             });
         </script>
         <script>
-            $(function () {
-                $(document).on('click', '#borrar_fila', function (event) {
-                    if($('#tabla_gastos >tbody >tr').length > 1) {
+            $(function() {
+                $(document).on('click', '#borrar_fila', function(event) {
+                    if ($('#tabla_gastos >tbody >tr').length > 1) {
                         event.preventDefault();
                         $(this).closest('tr').remove();
                     }
