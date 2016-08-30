@@ -28,27 +28,169 @@ class Administrador extends CI_Controller {
     public function index() {
         $this->usuarios();
     }
-    
+
     private function verificar_sesion() {
         if ($this->session->userdata('nombre_rol') == FALSE || $this->session->userdata('nombre_rol') != 'administrador') {
             redirect(base_url() . 'login');
         }
     }
-    
+
     public function usuarios() {
         $this->verificar_sesion();
-        
+
         $datos['usuarios'] = $this->modelo_administrador->get_usuarios();
         $this->load->view('administrador/vista_usuarios', $datos);
     }
-    
+
+    public function ver_usuario($id_usuario) {
+        $this->verificar_sesion();
+
+        $datos['usuario'] = $this->modelo_administrador->get_usuario($id_usuario);
+        $this->load->view('administrador/vista_ver_usuario', $datos);
+    }
+
     public function nuevo_usuario() {
         $this->verificar_sesion();
-        
-        $datos = Array();
+
+        if (isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario'])) {
+            $this->form_validation->set_rules('nombre_usuario', 'nombre_usuario', 'required|trim|min_length[1]|max_length[64]');
+            $this->form_validation->set_rules('apellido_paterno_usuario', 'apellido_paterno_usuario', 'required|trim|min_length[1]|max_length[32]');
+            $this->form_validation->set_rules('apellido_materno_usuario', 'apellido_materno_usuario', 'required|trim|min_length[1]|max_length[32]');
+            $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
+            $this->form_validation->set_rules('id_rol', 'id_rol', 'required|numeric');
+            $this->form_validation->set_rules('login_usuario', 'login_usuario', 'required|trim|min_length[5]|max_length[32]');
+            $this->form_validation->set_rules('password_usuario', 'password_usuario', 'required|trim|min_length[5]|max_length[32]');
+            if (isset($_POST['telefono_usuario'])) {
+                $this->form_validation->set_rules('telefono_usuario', 'telefono_usuario', 'numeric');
+            }
+            if (isset($_POST['correo_usuario'])) {
+                $this->form_validation->set_rules('correo_usuario', 'correo_usuario', 'trim|valid_email|min_length[5]|max_length[64]');
+            }
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['password_usuario']);
+                $this->nuevo_usuario();
+            } else {
+                $id_institucion = $this->input->post('id_institucion');
+                $id_rol = $this->input->post('id_rol');
+                $nombre_usuario = $this->input->post('nombre_usuario');
+                $apellido_paterno_usuario = $this->input->post('apellido_paterno_usuario');
+                $apellido_materno_usuario = $this->input->post('apellido_materno_usuario');
+                $login_usuario = $this->input->post('login_usuario');
+                $password_usuario = $this->input->post('password_usuario');
+                $telefono_usuario = $this->input->post('telefono_usuario');
+                if ($telefono_usuario == "") {
+                    $telefono_usuario = 0;
+                }
+                $correo_usuario = $this->input->post('correo_usuario');
+                $this->modelo_administrador->insert_usuario($id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario);
+                redirect(base_url() . 'administrador/usuarios');
+            }
+        } else {
+            $datos = Array();
+            $datos['instituciones'] = $this->modelo_administrador->get_instituciones();
+            $datos['roles'] = $this->modelo_administrador->get_roles();
+            $this->load->view('administrador/vista_registrar_nuevo_usuario', $datos);
+        }
+    }
+    
+    public function activar_usuario($id_usuario) {
+        if (!is_numeric($id_usuario)) {
+            redirect(base_url() . 'administrador');
+        } else {
+            $this->modelo_administrador->activar_usuario($id_usuario);
+            redirect(base_url() . 'administrador/usuarios');
+        }
+    }
+
+    public function desactivar_usuario($id_usuario) {
+        if (!is_numeric($id_usuario)) {
+            redirect(base_url() . 'administrador');
+        } else {
+            $this->modelo_administrador->desactivar_usuario($id_usuario);
+            redirect(base_url() . 'administrador/usuarios');
+        }
+    }
+
+    public function instituciones() {
+        $this->verificar_sesion();
+
         $datos['instituciones'] = $this->modelo_administrador->get_instituciones();
-        $datos['roles'] = $this->modelo_administrador->get_roles();
-        $this->load->view('administrador/vista_registrar_nuevo_usuario', $datos);
+        $this->load->view('administrador/vista_instituciones', $datos);
+    }
+
+    public function nueva_institucion() {
+        $this->verificar_sesion();
+
+        if (isset($_POST['nombre_institucion']) && isset($_POST['sigla_institucion']) && isset($_POST['presupuesto_institucion'])) {
+            $this->form_validation->set_rules('nombre_institucion', 'nombre_institucion', 'required|trim|min_length[3]|max_length[128]');
+            $this->form_validation->set_rules('sigla_institucion', 'sigla_institucion', 'required|trim|alpha|min_length[3]|max_length[8]');
+            $this->form_validation->set_rules('presupuesto_institucion', 'presupuesto_institucion', 'required|numeric');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['nombre_institucion']);
+                $this->nueva_institucion();
+            } else {
+                $nombre_institucion = $this->input->post('nombre_institucion');
+                $sigla_institucion = $this->input->post('sigla_institucion');
+                $presupuesto_institucion = $this->input->post('presupuesto_institucion');
+                $carpeta_institucion = strtolower($sigla_institucion);
+                $carpeta = mkdir('./files/' . $carpeta_institucion);
+                $this->modelo_administrador->insert_institucion($nombre_institucion, $sigla_institucion, $presupuesto_institucion, $carpeta_institucion);
+                redirect(base_url() . 'administrador/instituciones');
+            }
+        } else {
+            $this->load->view('administrador/vista_registrar_nueva_institucion');
+        }
+    }
+
+    public function modificar_institucion($id_institucion) {
+        $this->verificar_sesion();
+
+        if (!is_numeric($id_institucion)) {
+            redirect(base_url() . 'administrador');
+        } else {
+            if (isset($_POST['id_institucion']) && isset($_POST['nombre_institucion']) && isset($_POST['sigla_institucion']) && isset($_POST['presupuesto_institucion'])) {
+                $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
+                $this->form_validation->set_rules('nombre_institucion', 'nombre_institucion', 'required|trim|min_length[3]|max_length[128]');
+                $this->form_validation->set_rules('sigla_institucion', 'sigla_institucion', 'required|trim|alpha|min_length[3]|max_length[8]');
+                $this->form_validation->set_rules('presupuesto_institucion', 'presupuesto_institucion', 'required|numeric');
+                if ($this->form_validation->run() == FALSE) {
+                    unset($_POST['id_institucion']);
+                    $this->modificar_institucion($id_institucion);
+                } else {
+                    if ($id_institucion == $this->input->post('id_institucion')) {
+                        $id_institucion = $this->input->post('id_institucion');
+                        $nombre_institucion = $this->input->post('nombre_institucion');
+                        $sigla_institucion = $this->input->post('sigla_institucion');
+                        $presupuesto_institucion = $this->input->post('presupuesto_institucion');
+                        $this->modelo_administrador->update_institucion($id_institucion, $nombre_institucion, $sigla_institucion, $presupuesto_institucion);
+                        redirect(base_url() . 'administrador/instituciones');
+                    } else {
+                        redirect(base_url() . 'administrador');
+                    }
+                }
+            } else {
+                $datos['institucion'] = $this->modelo_administrador->get_institucion($id_institucion);
+                $this->load->view('administrador/vista_modificar_institucion', $datos);
+            }
+        }
+    }
+
+    public function activar_institucion($id_institucion) {
+        if (!is_numeric($id_institucion)) {
+            redirect(base_url() . 'administrador');
+        } else {
+            $this->modelo_administrador->activar_institucion($id_institucion);
+            redirect(base_url() . 'administrador/instituciones');
+        }
+    }
+
+    public function desactivar_institucion($id_institucion) {
+        if (!is_numeric($id_institucion)) {
+            redirect(base_url() . 'administrador');
+        } else {
+            $this->modelo_administrador->desactivar_institucion($id_institucion);
+            redirect(base_url() . 'administrador/instituciones');
+        }
     }
 
 }

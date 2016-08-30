@@ -16,7 +16,8 @@ $nombre_institucion = $this->session->userdata('nombre_institucion');
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li <?php if ($activo == "Usuarios"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'administrador/usuarios', 'Administración de usuarios') ?></li>
+                <li <?php if ($activo == "Usuarios"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'administrador/usuarios', 'Administrar usuarios') ?></li>
+                <li <?php if ($activo == "Instituciones"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'administrador/instituciones', 'Administrar instituciones') ?></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">

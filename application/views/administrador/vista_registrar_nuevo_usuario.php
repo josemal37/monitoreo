@@ -50,7 +50,7 @@
                             <option value="<?= $rol->id_rol ?>"><?= $rol->nombre_rol ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <p><?= form_error('id_institucion') ?></p>
+                    <p><?= form_error('id_rol') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="telefono_usuario">Número de telefono</label>
@@ -72,6 +72,7 @@
                     <input type="text" name="password_usuario" id="password_usuario" placeholder="Password" class="form-control" autocomplete="off" oninput="activar_password()">
                     <p><?= form_error('password_usuario') ?></p>
                 </div>
+                <input type="submit" name="submit" value="Registrar usuario" title="Registrar usuario" class="btn btn-primary">
             </form>
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
