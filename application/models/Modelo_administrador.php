@@ -120,8 +120,10 @@ class Modelo_administrador extends CI_Model {
                         USUARIO.telefono_usuario,
                         USUARIO.correo_usuario,
                         USUARIO.activo_usuario,
+                        INSTITUCION.id_institucion,
                         INSTITUCION.nombre_institucion,
                         INSTITUCION.sigla_institucion,
+                        ROL.id_rol,
                         ROL.nombre_rol
                     FROM
                         USUARIO,
@@ -146,34 +148,59 @@ class Modelo_administrador extends CI_Model {
     }
 
     public function insert_usuario($id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario) {
-        $sql = "INSERT INTO USUARIO
-                (
-                    USUARIO.id_institucion,
-                    USUARIO.id_rol,
-                    USUARIO.nombre_usuario,
-                    USUARIO.apellido_paterno_usuario,
-                    USUARIO.apellido_materno_usuario,
-                    USUARIO.login_usuario,
-                    USUARIO.password_usuario,
-                    USUARIO.telefono_usuario,
-                    USUARIO.correo_usuario,
-                    USUARIO.activo_usuario
-                )
-                VALUES
-                (
-                    $id_institucion,
-                    $id_rol,
-                    '$nombre_usuario',
-                    '$apellido_paterno_usuario',
-                    '$apellido_materno_usuario',
-                    '$login_usuario',
-                    '$password_usuario',
-                    $telefono_usuario,
-                    '$correo_usuario',
-                    true
-                )
-                ";
-        $query = $this->db->query($sql);
+        if(!is_numeric($id_institucion) || !is_numeric($id_rol)) {
+            redirect(base_url() . 'administrador');
+        } else {
+            $sql = "INSERT INTO USUARIO
+                    (
+                        USUARIO.id_institucion,
+                        USUARIO.id_rol,
+                        USUARIO.nombre_usuario,
+                        USUARIO.apellido_paterno_usuario,
+                        USUARIO.apellido_materno_usuario,
+                        USUARIO.login_usuario,
+                        USUARIO.password_usuario,
+                        USUARIO.telefono_usuario,
+                        USUARIO.correo_usuario,
+                        USUARIO.activo_usuario
+                    )
+                    VALUES
+                    (
+                        $id_institucion,
+                        $id_rol,
+                        '$nombre_usuario',
+                        '$apellido_paterno_usuario',
+                        '$apellido_materno_usuario',
+                        '$login_usuario',
+                        '$password_usuario',
+                        $telefono_usuario,
+                        '$correo_usuario',
+                        true
+                    )
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+    
+    public function update_usuario($id_usuario, $id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario) {
+        if(!is_numeric($id_usuario) || !is_numeric($id_institucion) || !is_numeric($id_rol)) {
+            redirect(base_url() . 'administrador');
+        } else {
+            $sql = "UPDATE USUARIO SET
+                        USUARIO.id_institucion = $id_institucion,
+                        USUARIO.id_rol = $id_rol,
+                        USUARIO.nombre_usuario = '$nombre_usuario',
+                        USUARIO.apellido_paterno_usuario = '$apellido_paterno_usuario',
+                        USUARIO.apellido_materno_usuario = '$apellido_materno_usuario',
+                        USUARIO.login_usuario = '$login_usuario',
+                        USUARIO.password_usuario = '$password_usuario',
+                        USUARIO.telefono_usuario = $telefono_usuario,
+                        USUARIO.correo_usuario = '$correo_usuario'
+                    WHERE
+                        USUARIO.id_usuario = $id_usuario
+                    ";
+            $query = $this->db->query($sql);
+        }
     }
     
     public function activar_usuario($id_usuario) {
@@ -196,7 +223,22 @@ class Modelo_administrador extends CI_Model {
             $sql = "UPDATE USUARIO SET
                         USUARIO.activo_usuario = false
                     WHERE
-                        USUARIO.id_usuario = $id_usuario
+                        USUARIO.id_usuario = $id_usuario AND
+                        $id_usuario NOT IN( 
+                                            SELECT
+                                                U.id_usuario 
+                                            FROM
+                                                (
+                                                    SELECT
+                                                        USUARIO.id_usuario
+                                                    FROM
+                                                        USUARIO,
+                                                        ROL
+                                                    WHERE
+                                                        USUARIO.id_rol = ROL.id_rol AND
+                                                        ROL.nombre_rol = 'administrador'
+                                                ) as U
+                                            )
                     ";
             $query = $this->db->query($sql);
         }

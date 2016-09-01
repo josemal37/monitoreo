@@ -52,7 +52,7 @@ class Administrador extends CI_Controller {
     public function nuevo_usuario() {
         $this->verificar_sesion();
 
-        if (isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario'])) {
+        if (isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario']) && isset($_POST['password_usuario_confirmacion'])) {
             $this->form_validation->set_rules('nombre_usuario', 'nombre_usuario', 'required|trim|min_length[1]|max_length[64]');
             $this->form_validation->set_rules('apellido_paterno_usuario', 'apellido_paterno_usuario', 'required|trim|min_length[1]|max_length[32]');
             $this->form_validation->set_rules('apellido_materno_usuario', 'apellido_materno_usuario', 'required|trim|min_length[1]|max_length[32]');
@@ -60,14 +60,16 @@ class Administrador extends CI_Controller {
             $this->form_validation->set_rules('id_rol', 'id_rol', 'required|numeric');
             $this->form_validation->set_rules('login_usuario', 'login_usuario', 'required|trim|min_length[5]|max_length[32]');
             $this->form_validation->set_rules('password_usuario', 'password_usuario', 'required|trim|min_length[5]|max_length[32]');
+            $this->form_validation->set_rules('password_usuario_confirmacion', 'password_usuario_confirmacion', 'required|trim|min_length[5]|max_length[32]');
             if (isset($_POST['telefono_usuario'])) {
                 $this->form_validation->set_rules('telefono_usuario', 'telefono_usuario', 'numeric');
             }
             if (isset($_POST['correo_usuario'])) {
                 $this->form_validation->set_rules('correo_usuario', 'correo_usuario', 'trim|valid_email|min_length[5]|max_length[64]');
             }
-            if ($this->form_validation->run() == FALSE) {
+            if ($this->form_validation->run() == FALSE || !($this->input->post('password_usuario') == $this->input->post('password_usuario_confirmacion'))) {
                 unset($_POST['password_usuario']);
+                unset($_POST['password_usuario_confirmacion']);
                 $this->nuevo_usuario();
             } else {
                 $id_institucion = $this->input->post('id_institucion');
@@ -90,6 +92,60 @@ class Administrador extends CI_Controller {
             $datos['instituciones'] = $this->modelo_administrador->get_instituciones();
             $datos['roles'] = $this->modelo_administrador->get_roles();
             $this->load->view('administrador/vista_registrar_nuevo_usuario', $datos);
+        }
+    }
+    
+    public function modificar_usuario($id_usuario) {
+        $this->verificar_sesion();
+        
+        if (isset($_POST['id_usuario']) && isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario_antiguo']) && isset($_POST['password_usuario']) && isset($_POST['password_usuario_confirmacion'])) {
+            $this->form_validation->set_rules('nombre_usuario', 'nombre_usuario', 'required|trim|min_length[1]|max_length[64]');
+            $this->form_validation->set_rules('apellido_paterno_usuario', 'apellido_paterno_usuario', 'required|trim|min_length[1]|max_length[32]');
+            $this->form_validation->set_rules('apellido_materno_usuario', 'apellido_materno_usuario', 'required|trim|min_length[1]|max_length[32]');
+            $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
+            $this->form_validation->set_rules('id_rol', 'id_rol', 'required|numeric');
+            $this->form_validation->set_rules('login_usuario', 'login_usuario', 'required|trim|min_length[5]|max_length[32]');
+            $this->form_validation->set_rules('password_usuario_antiguo', 'password_usuario_antiguo', 'required|trim|min_length[5]|max_length[32]');
+            $this->form_validation->set_rules('password_usuario', 'password_usuario', 'required|trim|min_length[5]|max_length[32]');
+            $this->form_validation->set_rules('password_usuario_confirmacion', 'password_usuario_confirmacion', 'required|trim|min_length[5]|max_length[32]');
+            if (isset($_POST['telefono_usuario'])) {
+                $this->form_validation->set_rules('telefono_usuario', 'telefono_usuario', 'numeric');
+            }
+            if (isset($_POST['correo_usuario'])) {
+                $this->form_validation->set_rules('correo_usuario', 'correo_usuario', 'trim|valid_email|min_length[5]|max_length[64]');
+            }
+            if($id_usuario != $this->input->post('id_usuario')) {
+                redirect(base_url() . 'administrador');
+            }
+            $usuario = $this->modelo_administrador->get_usuario($id_usuario);
+            if ($this->form_validation->run() == FALSE || $this->input->post('password_usuario') != $this->input->post('password_usuario_confirmacion') || $this->input->post('password_usuario_antiguo') != $usuario->password_usuario) {
+                unset($_POST['password_usuario']);
+                unset($_POST['password_usuario_antiguo']);
+                unset($_POST['password_usuario_confirmacion']);
+                $this->modificar_usuario($id_usuario);
+            } else {
+                $id_usuario = $this->input->post('id_usuario');
+                $id_institucion = $this->input->post('id_institucion');
+                $id_rol = $this->input->post('id_rol');
+                $nombre_usuario = $this->input->post('nombre_usuario');
+                $apellido_paterno_usuario = $this->input->post('apellido_paterno_usuario');
+                $apellido_materno_usuario = $this->input->post('apellido_materno_usuario');
+                $login_usuario = $this->input->post('login_usuario');
+                $password_usuario = $this->input->post('password_usuario');
+                $telefono_usuario = $this->input->post('telefono_usuario');
+                if ($telefono_usuario == "") {
+                    $telefono_usuario = 0;
+                }
+                $correo_usuario = $this->input->post('correo_usuario');
+                $this->modelo_administrador->update_usuario($id_usuario, $id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario);
+                redirect(base_url() . 'administrador/usuarios');
+            }
+        } else {
+            $datos = Array();
+            $datos['usuario'] = $this->modelo_administrador->get_usuario($id_usuario);
+            $datos['instituciones'] = $this->modelo_administrador->get_instituciones();
+            $datos['roles'] = $this->modelo_administrador->get_roles();
+            $this->load->view('administrador/vista_modificar_usuario', $datos);
         }
     }
     
@@ -122,8 +178,8 @@ class Administrador extends CI_Controller {
         $this->verificar_sesion();
 
         if (isset($_POST['nombre_institucion']) && isset($_POST['sigla_institucion']) && isset($_POST['presupuesto_institucion'])) {
-            $this->form_validation->set_rules('nombre_institucion', 'nombre_institucion', 'required|trim|min_length[3]|max_length[128]');
-            $this->form_validation->set_rules('sigla_institucion', 'sigla_institucion', 'required|trim|alpha|min_length[3]|max_length[8]');
+            $this->form_validation->set_rules('nombre_institucion', 'nombre_institucion', 'required|trim|min_length[2]|max_length[128]');
+            $this->form_validation->set_rules('sigla_institucion', 'sigla_institucion', 'required|trim|alpha|min_length[2]|max_length[8]');
             $this->form_validation->set_rules('presupuesto_institucion', 'presupuesto_institucion', 'required|numeric');
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['nombre_institucion']);

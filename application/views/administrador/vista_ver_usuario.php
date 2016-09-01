@@ -27,7 +27,11 @@
             <?php endif; ?>
             <div>
                 <a href="<?= base_url() . 'administrador/modificar_usuario/' . $usuario->id_usuario ?>" class="btn btn-primary">Modificar usuario</a>
-                <a href="<?= base_url() . 'administrador/desactivar_usuario/' . $usuario->id_usuario ?>" class="btn btn-danger">Desactivar usuario</a>
+                <?php if($usuario->activo_usuario): ?>
+                    <a href="<?= base_url() . 'administrador/desactivar_usuario/' . $usuario->id_usuario ?>" class="btn btn-danger">Desactivar usuario</a>
+                <?php else: ?>
+                    <a href="<?= base_url() . 'administrador/activar_usuario/' . $usuario->id_usuario ?>" class="btn btn-warning">Activar usuario</a>
+                <?php endif; ?>
                 <a href="<?= base_url() . 'administrador/usuarios' ?>" class="btn btn-success">Volver</a>
             </div>
         </div>

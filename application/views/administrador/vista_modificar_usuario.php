@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
-        <title>Nuevo usuario</title>
+        <title>Modificar usuario</title>
     </head>
     <body>
         <div class="container">
@@ -14,31 +14,31 @@
             $this->load->view('administrador/nav', $datos);
             ?>
             <h4>Nuevo usuario</h4>
-            <form action="<?= base_url() . 'administrador/nuevo_usuario' ?>" id="formulario_usuario" role="form" method="post" accept-charset="utf-8" autocomplete="off">
+            <form action="<?= base_url() . 'administrador/modificar_usuario/' . $usuario->id_usuario ?>" id="formulario_usuario" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                 <div style="display: none">
                     <input type="text">
                     <input type="password">
                 </div>
                 <div class="form-group">
                     <label for="nombre_usuario">Nombre</label>
-                    <input type="text" name="nombre_usuario" id="nombre_usuario" placeholder="Nombre" class="form-control">
+                    <input type="text" name="nombre_usuario" id="nombre_usuario" value="<?= $usuario->nombre_usuario ?>" placeholder="Nombre" class="form-control">
                     <p><?= form_error('nombre_usuario') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="apellido_paterno_usuario">Apellido paterno</label>
-                    <input type="text" name="apellido_paterno_usuario" id="apellido_paterno_usuario" placeholder="Apellido paterno" class="form-control">
+                    <input type="text" name="apellido_paterno_usuario" id="apellido_paterno_usuario" value="<?= $usuario->apellido_paterno_usuario ?>" placeholder="Apellido paterno" class="form-control">
                     <p><?= form_error('apellido_paterno_usuario') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="apellido_materno_usuario">Apellido materno</label>
-                    <input type="text" name="apellido_materno_usuario" id="apellido_materno_usuario" placeholder="Apellido materno" class="form-control">
+                    <input type="text" name="apellido_materno_usuario" id="apellido_materno_usuario" value="<?= $usuario->apellido_materno_usuario ?>" placeholder="Apellido materno" class="form-control">
                     <p><?= form_error('apellido_materno_usuario') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="id_institucion">Institución</label>
                     <select name="id_institucion" id="id_institucion" class="form-control">
                         <?php foreach ($instituciones as $institucion): ?>
-                            <option value="<?= $institucion->id_institucion ?>"><?= $institucion->nombre_institucion ?></option>
+                            <option value="<?= $institucion->id_institucion ?>" <?php if ($usuario->id_institucion == $institucion->id_institucion){echo('selected');} ?>><?= $institucion->nombre_institucion ?></option>
                         <?php endforeach; ?>
                     </select>
                     <p><?= form_error('id_institucion') ?></p>
@@ -47,37 +47,43 @@
                     <label for="id_rol">Rol del usuario</label>
                     <select name="id_rol" id="id_rol" class="form-control">
                         <?php foreach ($roles as $rol): ?>
-                            <option value="<?= $rol->id_rol ?>"><?= $rol->nombre_rol ?></option>
+                            <option value="<?= $rol->id_rol ?>" <?php if($usuario->id_rol == $rol->id_rol): ?>selected<?php endif; ?>><?= $rol->nombre_rol ?></option>
                         <?php endforeach; ?>
                     </select>
                     <p><?= form_error('id_rol') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="telefono_usuario">Número de telefono</label>
-                    <input type="number" name="telefono_usuario" id="telefono_usuario" placeholder="Telefono de referencia" class="form-control">
+                    <input type="number" name="telefono_usuario" id="telefono_usuario" value="<?= $usuario->telefono_usuario ?>" placeholder="Telefono de referencia" class="form-control">
                     <p><?= form_error('telefono_usuario') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="correo_usuario">Correo electrónico</label>
-                    <input type="text" name="correo_usuario" id="correo_usuario" placeholder="Correo electronico" class="form-control">
+                    <input type="text" name="correo_usuario" id="correo_usuario" value="<?= $usuario->correo_usuario ?>" placeholder="Correo electronico" class="form-control">
                     <p><?= form_error('correo_usuario') ?></p>
                 </div>
                 <div class="form-group">
                     <label for="login_usuario">Login</label>
-                    <input type="text" name="login_usuario" id="login_usuario" placeholder="Login" class="form-control" autocomplete="off">
+                    <input type="text" name="login_usuario" id="login_usuario" value="<?= $usuario->login_usuario?>" placeholder="Login" class="form-control" autocomplete="off">
                     <p><?= form_error('login_usuario') ?></p>
                 </div>
                 <div class="form-group">
-                    <label for="password_usuario">Password</label>
+                    <label for="password_usuario">Password antiguo</label>
+                    <input type="text" name="password_usuario_antiguo" id="password_usuario_antiguo" placeholder="Password antiguo" class="form-control" autocomplete="off">
+                    <p><?= form_error('password_usuario_antiguo') ?></p>
+                </div>
+                <div class="form-group">
+                    <label for="password_usuario">Password nuevo</label>
                     <input type="text" name="password_usuario" id="password_usuario" placeholder="Password" class="form-control" autocomplete="off">
                     <p><?= form_error('password_usuario') ?></p>
                 </div>
                 <div class="form-group">
-                    <label for="password_usuario_confirmacion">Confirmación del password</label>
+                    <label for="password_usuario_confirmacion">Confirmación del nuevo password</label>
                     <input type="text" name="password_usuario_confirmacion" id="password_usuario_confirmacion" placeholder="Confirmación del password" class="form-control" autocomplete="off">
                     <p><?= form_error('password_usuario_confirmacion') ?></p>
                 </div>
-                <input type="submit" name="submit" value="Registrar usuario" title="Registrar usuario" class="btn btn-primary">
+                <input type="hidden" name="id_usuario" id="id_usuario" value="<?= $usuario->id_usuario ?>">
+                <input type="submit" name="submit" value="Modificar usuario" title="Modificar usuario" class="btn btn-primary">
             </form>
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
@@ -135,6 +141,11 @@
                             minlength: 5,
                             maxlength: 32,
                             equalTo: '#password_usuario'
+                        },
+                        password_usuario_antiguo: {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 32
                         }
                     },
                     highlight: function(element, errorClass, validClass) {
@@ -155,6 +166,7 @@
             $(document).ready(function(){
                 $('#password_usuario').attr('type', "password");
                 $('#password_usuario_confirmacion').attr('type', "password");
+                $('#password_usuario_antiguo').attr('type', "password");
             });
         </script>
     </body>

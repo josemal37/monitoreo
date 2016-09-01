@@ -37,5 +37,41 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#formulario_institucion').validate({
+                    errorClass: 'has-error',
+                    validClass: 'has-success',
+                    rules: {
+                        nombre_institucion: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 128
+                        },
+                        sigla_institucion: {
+                            required: true,
+                            minlength: 2,
+                            maxlength: 8
+                        },
+                        presupuesto_institucion: {
+                            required: true,
+                            number: true,
+                            min: 0
+                        }
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
+                        $(element).addClass('control-label');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
+                    },
+                    errorPlacement: function(error, element) {
+                        $(error).addClass('control-label');
+                        error.insertAfter(element);
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
