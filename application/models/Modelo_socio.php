@@ -79,8 +79,10 @@ class Modelo_socio extends CI_Model {
 
             if (sizeof($datos_actividades) > 0) {
                 foreach ($datos_actividades as $datos_actividad) {
-                    $datos_indicador = $this->get_indicadores_actividad($datos_actividad->id_actividad);
-                    $datos['datos_indicadores'][$datos_actividad->nombre_actividad] = $datos_indicador;
+                    $datos_hitos_cuantitativos = $this->get_hitos_cuantitativos_actividad($datos_actividad->id_actividad);
+                    $datos['datos_hitos_cuantitativos'][$datos_actividad->nombre_actividad] = $datos_hitos_cuantitativos;
+                    $datos_hitos_cualitativos = $this->get_hitos_cualitativos_actividad($datos_actividad->id_actividad);
+                    $datos['datos_hitos_cualitativos'][$datos_actividad->nombre_actividad] = $datos_hitos_cualitativos;
                 }
             }
         } else {
@@ -115,32 +117,47 @@ class Modelo_socio extends CI_Model {
         return $query_actividades->result();
     }
 
-    public function get_indicadores_actividad($id_actividad) {
+    public function get_hitos_cuantitativos_actividad($id_actividad) {
         if (!is_numeric($id_actividad)) {
             $this->session->set_flashdata('acceso_no_autorizado', 'Operacion no permitida.');
             //TODO registrar intento de fallo
-            redirect(base_url() . 'socio', 'refresh');
+            redirect(base_url() . 'socio');
         }
         $sql = "SELECT
-                        INDICADOR_OPERATIVO.id_indicador_op,
-                        INDICADOR_OPERATIVO.id_actividad,
-                        INDICADOR_OPERATIVO.nombre_indicador_op,
-                        INDICADOR_OPERATIVO.fecha_limite_indicador_op,
-                        INDICADOR_OPERATIVO.meta_op,
-                        INDICADOR_OPERATIVO.aceptable_op,
-                        INDICADOR_OPERATIVO.limitado_op,
-                        INDICADOR_OPERATIVO.no_aceptable_op,
-                        TIPO_INDICADOR_OPERATIVO.nombre_tipo_indicador_op
-                    FROM
-                        INDICADOR_OPERATIVO,
-                        TIPO_INDICADOR_OPERATIVO,
-                        ACTIVIDAD
-                    WHERE
-                        INDICADOR_OPERATIVO.id_tipo_indicador_op = TIPO_INDICADOR_OPERATIVO.id_tipo_indicador_op AND
-                        INDICADOR_OPERATIVO.id_actividad = ACTIVIDAD.id_actividad AND
-                        ACTIVIDAD.id_actividad = $id_actividad
-                    ORDER BY
-                        INDICADOR_OPERATIVO.fecha_limite_indicador_op ASC
+                    HITO_CUANTITATIVO.id_hito_cn,
+                    HITO_CUANTITATIVO.id_actividad,
+                    HITO_CUANTITATIVO.nombre_hito_cn,
+                    HITO_CUANTITATIVO.descripcion_hito_cn,
+                    HITO_CUANTITATIVO.meta_hito_cn,
+                    HITO_CUANTITATIVO.unidad_hito_cn
+                FROM
+                    HITO_CUANTITATIVO
+                WHERE
+                    HITO_CUANTITATIVO.id_actividad = $id_actividad
+                ORDER BY
+                    HITO_CUANTITATIVO.nombre_hito_cn ASC
+                ";
+        $query_indicadores = $this->db->query($sql);
+        return $query_indicadores->result();
+    }
+
+    public function get_hitos_cualitativos_actividad($id_actividad) {
+        if (!is_numeric($id_actividad)) {
+            $this->session->set_flashdata('acceso_no_autorizado', 'Operacion no permitida.');
+            //TODO registrar intento de fallo
+            redirect(base_url() . 'socio');
+        }
+        $sql = "SELECT
+                    HITO_CUALITATIVO.id_hito_cl,
+                    HITO_CUALITATIVO.id_actividad,
+                    HITO_CUALITATIVO.nombre_hito_cl,
+                    HITO_CUALITATIVO.descripcion_hito_cl
+                FROM
+                    HITO_CUALITATIVO
+                WHERE
+                    HITO_CUALITATIVO.id_actividad = $id_actividad
+                ORDER BY
+                    HITO_CUALITATIVO.nombre_hito_cl ASC
                 ";
         $query_indicadores = $this->db->query($sql);
         return $query_indicadores->result();
@@ -314,101 +331,182 @@ class Modelo_socio extends CI_Model {
         }
     }
 
-    public function get_indicador_operativo($id_indicador) {
-        if (!is_numeric($id_indicador)) {
+    public function get_hito_cuantitativo($id_hito) {
+        if (!is_numeric($id_hito)) {
             redirect(base_url() . 'socio');
         } else {
             $sql = "SELECT
-                        INDICADOR_OPERATIVO.id_indicador_op,
-                        INDICADOR_OPERATIVO.id_tipo_indicador_op,
-                        INDICADOR_OPERATIVO.id_actividad,
-                        INDICADOR_OPERATIVO.nombre_indicador_op,
-                        INDICADOR_OPERATIVO.fecha_limite_indicador_op,
-                        INDICADOR_OPERATIVO.meta_op,
-                        INDICADOR_OPERATIVO.aceptable_op,
-                        INDICADOR_OPERATIVO.limitado_op,
-                        INDICADOR_OPERATIVO.no_aceptable_op
+                        HITO_CUANTITATIVO.id_hito_cn,
+                        HITO_CUANTITATIVO.id_actividad,
+                        HITO_CUANTITATIVO.nombre_hito_cn,
+                        HITO_CUANTITATIVO.descripcion_hito_cn,
+                        HITO_CUANTITATIVO.meta_hito_cn,
+                        HITO_CUANTITATIVO.unidad_hito_cn
                     FROM
-                        INDICADOR_OPERATIVO
+                        HITO_CUANTITATIVO
                     WHERE
-                        INDICADOR_OPERATIVO.id_indicador_op = $id_indicador
+                        HITO_CUANTITATIVO.id_hito_cn = $id_hito
                     ";
             $query = $this->db->query($sql);
             if (!$query) {
                 return false;
             } else {
-                if ($query->num_rows() == 1) {
-                    return $query->row();
-                } else {
+                if ($query->num_rows() != 1) {
                     return false;
+                } else {
+                    return $query->row();
                 }
             }
         }
     }
 
-    public function get_tipos_indicador_op() {
-        $sql = "SELECT
-                    TIPO_INDICADOR_OPERATIVO.id_tipo_indicador_op,
-                    TIPO_INDICADOR_OPERATIVO.nombre_tipo_indicador_op
-                FROM
-                    TIPO_INDICADOR_OPERATIVO";
-        $query = $this->db->query($sql);
-        if (!$query) {
-            return false;
-        } else {
-            if ($query->num_rows() == 0) {
-                return false;
-            } else {
-                return $query->result();
-            }
-        }
-    }
-
-    public function insert_indicador_op($id_tipo_indicador_op, $id_actividad, $nombre_indicador_op, $fecha_limite_indicador_op, $meta_op, $aceptable_op, $limitado_op, $no_aceptable_op) {
-        if (!is_numeric($id_tipo_indicador_op) || !is_numeric($id_actividad)) {
+    public function insert_hito_cuantitativo($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito) {
+        if (!is_numeric($id_actividad)) {
             redirect(base_url() . 'socio');
         } else {
-            $sql = "INSERT INTO INDICADOR_OPERATIVO
+            $sql = "INSERT INTO HITO_CUANTITATIVO
                     (
-                        id_tipo_indicador_op,
-                        id_actividad,
-                        nombre_indicador_op,
-                        fecha_limite_indicador_op,
-                        meta_op,
-                        aceptable_op,
-                        limitado_op,
-                        no_aceptable_op
+                        HITO_CUANTITATIVO.id_actividad,
+                        HITO_CUANTITATIVO.nombre_hito_cn,
+                        HITO_CUANTITATIVO.descripcion_hito_cn,
+                        HITO_CUANTITATIVO.meta_hito_cn,
+                        HITO_CUANTITATIVO.unidad_hito_cn
                     )
                     VALUES
                     (
-                        $id_tipo_indicador_op,
                         $id_actividad,
-                        '$nombre_indicador_op',
-                        '$fecha_limite_indicador_op',
-                        $meta_op,
-                        $aceptable_op,
-                        $limitado_op,
-                        $no_aceptable_op
+                        '$nombre_hito',
+                        '$descripcion_hito',
+                        $meta_hito,
+                        '$unidad_hito'
                     )
                     ";
             $query = $this->db->query($sql);
         }
     }
 
-    public function update_indicador_operativo($id_tipo_indicador_op, $id_indicador_op, $nombre_indicador_op, $fecha_limite_indicador_op, $meta_op, $aceptable_op, $limitado_op, $no_aceptable_op) {
-        if (!is_numeric($id_indicador_op) || !is_numeric($id_tipo_indicador_op)) {
+    public function update_hito_cuantitativo($id_hito, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito) {
+        if (!is_numeric($id_hito)) {
             redirect(base_url() . 'socio');
         } else {
-            $sql = "UPDATE INDICADOR_OPERATIVO SET
-                        id_tipo_indicador_op = $id_tipo_indicador_op,
-                        nombre_indicador_op = '$nombre_indicador_op',
-                        fecha_limite_indicador_op = '$fecha_limite_indicador_op', 
-                        meta_op = $meta_op, 
-                        aceptable_op = $aceptable_op, 
-                        limitado_op = $limitado_op, 
-                        no_aceptable_op = $no_aceptable_op
+            $sql = "UPDATE HITO_CUANTITATIVO SET
+                        HITO_CUANTITATIVO.nombre_hito_cn = '$nombre_hito',
+                        HITO_CUANTITATIVO.descripcion_hito_cn = '$descripcion_hito',
+                        HITO_CUANTITATIVO.meta_hito_cn = $meta_hito,
+                        HITO_CUANTITATIVO.unidad_hito_cn = '$unidad_hito'
                     WHERE
-                        id_indicador_op = $id_indicador_op
+                        HITO_CUANTITATIVO.id_hito_cn = $id_hito
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+
+    public function delete_hito_cuantitativo($id_hito) {
+        if(!is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $sql = "DELETE FROM HITO_CUANTITATIVO
+                    WHERE
+                        id_hito_cn = $id_hito
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+    
+    public function registrar_avance_hito_cuantitativo_sin_documentos($id_hito, $cantidad_avance_hito, $fecha_avance_hito, $descripcion_avance_hito) {
+        if(!is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $sql = "INSERT INTO AVANCE_HITO_CUANTITATIVO
+                    (
+                        AVANCE_HITO_CUANTITATIVO.id_hito_cn,
+                        AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn,
+                        AVANCE_HITO_CUANTITATIVO.fecha_avance_hito_cn,
+                        AVANCE_HITO_CUANTITATIVO.descripcion_avance_hito_cn,
+                        AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn
+                    )
+                    VALUES
+                    (
+                        $id_hito,
+                        $cantidad_avance_hito,
+                        '$fecha_avance_hito',
+                        '$descripcion_avance_hito',
+                        false
+                    )
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+
+    public function get_hito_cualitativo($id_hito) {
+        if (!is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $sql = "SELECT
+                        HITO_CUALITATIVO.id_hito_cl,
+                        HITO_CUALITATIVO.id_actividad,
+                        HITO_CUALITATIVO.nombre_hito_cl,
+                        HITO_CUALITATIVO.descripcion_hito_cl
+                    FROM
+                        HITO_CUALITATIVO
+                    WHERE
+                        HITO_CUALITATIVO.id_hito_cl = $id_hito
+                    ";
+            $query = $this->db->query($sql);
+            if (!$query) {
+                return false;
+            } else {
+                if ($query->num_rows() != 1) {
+                    return false;
+                } else {
+                    return $query->row();
+                }
+            }
+        }
+    }
+
+    public function insert_hito_cualitativo($id_actividad, $nombre_hito, $descripcion_hito) {
+        if (!is_numeric($id_actividad)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $sql = "INSERT INTO HITO_CUALITATIVO
+                    (
+                        HITO_CUALITATIVO.id_actividad,
+                        HITO_CUALITATIVO.nombre_hito_cl,
+                        HITO_CUALITATIVO.descripcion_hito_cl
+                    )
+                    VALUES
+                    (
+                        $id_actividad,
+                        '$nombre_hito',
+                        '$descripcion_hito'
+                    )
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+
+    public function update_hito_cualitativo($id_hito, $nombre_hito, $descripcion_hito) {
+        if (!is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $sql = "UPDATE HITO_CUALITATIVO SET
+                        HITO_CUALITATIVO.nombre_hito_cl = '$nombre_hito',
+                        HITO_CUALITATIVO.descripcion_hito_cl = '$descripcion_hito'
+                    WHERE
+                        HITO_CUALITATIVO.id_hito_cl = $id_hito
+                    ";
+            $query = $this->db->query($sql);
+        }
+    }
+
+    public function delete_hito_cualitativo($id_hito) {
+        if(!is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $sql = "DELETE FROM HITO_CUALITATIVO
+                    WHERE
+                        id_hito_cl = $id_hito
                     ";
             $query = $this->db->query($sql);
         }
@@ -438,18 +536,6 @@ class Modelo_socio extends CI_Model {
         }
     }
 
-    public function delete_indicador_operativo($id_indicador) {
-        if (!is_numeric($id_indicador)) {
-            redirect(base_url() . 'socio');
-        } else {
-            $sql = "DELETE FROM INDICADOR_OPERATIVO
-                    WHERE
-                        id_indicador_op = $id_indicador
-                    ";
-            $query = $this->db->query($sql);
-        }
-    }
-
     public function terminar_edicion_proyecto($id_proyecto) {
         if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio');
@@ -460,138 +546,6 @@ class Modelo_socio extends CI_Model {
                         PROYECTO.id_proyecto = $id_proyecto
                     ";
             $query = $this->db->query($sql);
-        }
-    }
-
-    public function get_avances_indicador_operativo($id_indicador) {
-        if (!is_numeric($id_indicador)) {
-            redirect(base_url() . 'socio');
-        } else {
-            $sql = "SELECT
-                        AVANCE_INDICADOR_OPERATIVO.id_avance_indicador_op,
-                        AVANCE_INDICADOR_OPERATIVO.id_indicador_op,
-                        AVANCE_INDICADOR_OPERATIVO.avance_op,
-                        AVANCE_INDICADOR_OPERATIVO.fecha_avance_op,
-                        AVANCE_INDICADOR_OPERATIVO.descripcion_avance_op
-                    FROM
-                        AVANCE_INDICADOR_OPERATIVO
-                    WHERE
-                        AVANCE_INDICADOR_OPERATIVO.id_indicador_op = $id_indicador
-                    ORDER BY
-                        AVANCE_INDICADOR_OPERATIVO.fecha_avance_op ASC
-                    ";
-            $query = $this->db->query($sql);
-            if (!$query) {
-                return false;
-            } else {
-                if ($query->num_rows() == 0) {
-                    return false;
-                } else {
-                    return $query->result();
-                }
-            }
-        }
-    }
-
-    public function guardar_avance_indicador_operativo($id_indicador_op, $avance_op, $descripcion_avance_op, $fecha_gasto_avance, $concepto_gasto_avance, $importe_gasto_avance, $respaldo_gasto_avance) {
-        if (!is_numeric($id_indicador_op)) {
-            redirect(base_url() . 'socio');
-        } else {
-            $this->db->trans_start();
-            $query = $this->db->query('SET foreign_key_checks = 0;');
-            $sql = "INSERT INTO AVANCE_INDICADOR_OPERATIVO
-                    (
-                        AVANCE_INDICADOR_OPERATIVO.id_indicador_op,
-                        AVANCE_INDICADOR_OPERATIVO.avance_op,
-                        AVANCE_INDICADOR_OPERATIVO.fecha_avance_op,
-                        AVANCE_INDICADOR_OPERATIVO.descripcion_avance_op
-                    )
-                    VALUES
-                    (
-                        $id_indicador_op,
-                        $avance_op,
-                        curdate(),
-                        '$descripcion_avance_op'
-                    )
-                    ";
-            $query = $this->db->query($sql);
-            if ($query) {
-                $sql = "SELECT
-                            AVANCE_INDICADOR_OPERATIVO.id_avance_indicador_op,
-                            AVANCE_INDICADOR_OPERATIVO.id_indicador_op,
-                            AVANCE_INDICADOR_OPERATIVO.avance_op,
-                            AVANCE_INDICADOR_OPERATIVO.fecha_avance_op,
-                            AVANCE_INDICADOR_OPERATIVO.descripcion_avance_op
-                        FROM
-                            AVANCE_INDICADOR_OPERATIVO
-                        WHERE
-                            AVANCE_INDICADOR_OPERATIVO.avance_op = $avance_op AND
-                            AVANCE_INDICADOR_OPERATIVO.fecha_avance_op = curdate() AND
-                            AVANCE_INDICADOR_OPERATIVO.descripcion_avance_op = '$descripcion_avance_op'
-                        ";
-                $query = $this->db->query($sql);
-                if ($query->num_rows() == 1) {
-                    $datos_avance = $query->row();
-                    $id_avance = $datos_avance->id_avance_indicador_op;
-                    $valores_gasto_avance = "";
-                    $num_gastos = count($fecha_gasto_avance);
-                    for ($i = 0; $i < $num_gastos; $i = $i + 1) {
-                        $valores_gasto_avance = $valores_gasto_avance .
-                                "($id_avance, '$fecha_gasto_avance[$i]', '$concepto_gasto_avance[$i]', $importe_gasto_avance[$i], '$respaldo_gasto_avance[$i]')";
-                        if ($i < $num_gastos - 1) {
-                            $valores_gasto_avance = $valores_gasto_avance . ",";
-                        }
-                    }
-
-                    $sql = "INSERT INTO GASTO_AVANCE
-                            (
-                                GASTO_AVANCE.id_avance_indicador_op,
-                                GASTO_AVANCE.fecha_gasto_avance,
-                                GASTO_AVANCE.concepto_gasto_avance,
-                                GASTO_AVANCE.importe_gasto_avance,
-                                GASTO_AVANCE.respaldo_gasto_avance
-                            )
-                            VALUES
-                                $valores_gasto_avance
-                            ";
-                    $query = $this->db->query($sql);
-                }
-            } else {
-                //error
-            }
-            $query = $this->db->query('SET foreign_key_checks = 0;');
-            $this->db->trans_complete();
-        }
-    }
-
-    public function get_gastos_avance($id_indicador_op) {
-        if (!is_numeric($id_indicador_op)) {
-            redirect(base_url() . 'socio');
-        } else {
-            $sql = "SELECT
-                        GASTO_AVANCE.id_gasto_avance,
-                        GASTO_AVANCE.id_avance_indicador_op,
-                        GASTO_AVANCE.fecha_gasto_avance,
-                        GASTO_AVANCE.concepto_gasto_avance,
-                        GASTO_AVANCE.importe_gasto_avance,
-                        GASTO_AVANCE.respaldo_gasto_avance
-                    FROM
-                        GASTO_AVANCE,
-                        AVANCE_INDICADOR_OPERATIVO
-                    WHERE
-                        GASTO_AVANCE.id_avance_indicador_op = AVANCE_INDICADOR_OPERATIVO.id_avance_indicador_op AND
-                        AVANCE_INDICADOR_OPERATIVO.id_indicador_op = $id_indicador_op
-                    ";
-            $query = $this->db->query($sql);
-            if (!$query) {
-                return false;
-            } else {
-                if ($query->num_rows() == 0) {
-                    return false;
-                } else {
-                    return $query->result();
-                }
-            }
         }
     }
 

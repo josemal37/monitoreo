@@ -234,5 +234,24 @@ class Modelo_coordinador extends CI_Model {
             }
         }
     }
+    
+    public function get_tipos_indicador_op() {
+        $sql = "SELECT
+                    TIPO_INDICADOR_OPERATIVO.id_tipo_indicador_op,
+                    TIPO_INDICADOR_OPERATIVO.nombre_tipo_indicador_op
+                FROM
+                    TIPO_INDICADOR_OPERATIVO";
+        $query = $this->db->query($sql);
+        if (!$query) {
+            return false;
+        } else {
+            if ($query->num_rows() == 0) {
+                return false;
+            } else {
+                return $query->result();
+            }
+        }
+    }
+
 
 }

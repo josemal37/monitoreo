@@ -47,24 +47,24 @@ class Socio extends CI_Controller {
         $this->verificar_sesion();
 
         $datos = $this->modelo_socio->get_proyecto_completo($id_proyecto);
-        foreach ($datos['datos_indicadores'] as $key => $indicadores) {
-            for ($i = 0; $i < sizeof($indicadores); $i = $i + 1) {
-                switch ($datos['datos_indicadores'][$key][$i]->nombre_tipo_indicador_op) {
-                    case 'Acumulativo':
-                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_acumulativo->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
-                        break;
-                    case 'Promedio (menor que)':
-                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_promedio_menor_que->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
-                        break;
-                    case 'Porcentaje':
-                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_porcentaje->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
-                        break;
-                    default :
-                        $datos['datos_indicadores'][$key][$i]->estado_indicador_op = 'Indicador no definido';
-                        break;
-                }
-            }
-        }
+        /* foreach ($datos['datos_indicadores'] as $key => $indicadores) {
+          for ($i = 0; $i < sizeof($indicadores); $i = $i + 1) {
+          switch ($datos['datos_indicadores'][$key][$i]->nombre_tipo_indicador_op) {
+          case 'Acumulativo':
+          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_acumulativo->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+          break;
+          case 'Promedio (menor que)':
+          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_promedio_menor_que->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+          break;
+          case 'Porcentaje':
+          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_porcentaje->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
+          break;
+          default :
+          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = 'Indicador no definido';
+          break;
+          }
+          }
+          } */
         $this->load->view('socio/vista_proyecto', $datos);
     }
 
@@ -156,49 +156,6 @@ class Socio extends CI_Controller {
         }
     }
 
-    public function registrar_nuevo_indicador($id_proyecto, $id_actividad) {
-        $this->verificar_sesion();
-
-        if (isset($_POST['id_tipo_indicador_op']) && isset($_POST['id_actividad']) && isset($_POST['nombre_indicador_op']) && isset($_POST['fecha_limite_indicador_op']) && isset($_POST['meta_op']) && isset($_POST['aceptable_op']) && isset($_POST['limitado_op']) && isset($_POST['no_aceptable_op'])) {
-            $this->form_validation->set_rules('id_tipo_indicador_op', 'id_tipo_indicador_op', 'required|numeric|is_natural');
-            $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric|is_natural');
-            $this->form_validation->set_rules('nombre_indicador_op', 'nombre_indicador_op', 'required|trim|min_length[2]|max_length[128]');
-            $this->form_validation->set_rules('fecha_limite_indicador_op', 'fecha_limite_indicador_op', 'required');
-            $this->form_validation->set_rules('meta_op', 'meta_op', 'required|numeric');
-            $this->form_validation->set_rules('aceptable_op', 'aceptable_op', 'required|numeric');
-            $this->form_validation->set_rules('limitado_op', 'limitado_op', 'required|numeric');
-            $this->form_validation->set_rules('no_aceptable_op', 'no_aceptable_op', 'required|numeric');
-            if ($this->form_validation->run() == FALSE) {
-                unset($_POST['id_actividad']);
-                $this->registrar_nuevo_indicador($id_proyecto, $id_actividad);
-            } else {
-                if ($id_actividad == $this->input->post('id_actividad')) {
-                    $id_tipo_indicador_op = $this->input->post('id_tipo_indicador_op');
-                    $id_actividad = $this->input->post('id_actividad');
-                    $nombre_indicador_op = $this->input->post('nombre_indicador_op');
-                    $fecha_limite_indicador_op = $this->input->post('fecha_limite_indicador_op');
-                    $meta_op = $this->input->post('meta_op');
-                    $aceptable_op = $this->input->post('aceptable_op');
-                    $limitado_op = $this->input->post('limitado_op');
-                    $no_aceptable_op = $this->input->post('no_aceptable_op');
-                    $this->modelo_socio->insert_indicador_op($id_tipo_indicador_op, $id_actividad, $nombre_indicador_op, $fecha_limite_indicador_op, $meta_op, $aceptable_op, $limitado_op, $no_aceptable_op);
-                    redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
-                } else {
-                    redirect(base_url() . 'socio');
-                }
-            }
-        } else {
-            $tipos_indicador_op = $this->modelo_socio->get_tipos_indicador_op();
-            $actividad = $this->modelo_socio->get_actividad($id_actividad);
-            $datos = Array();
-            $datos['id_proyecto'] = $id_proyecto;
-            $datos['id_actividad'] = $id_actividad;
-            $datos['tipos_indicador_op'] = $tipos_indicador_op;
-            $datos['actividad'] = $actividad;
-            $this->load->view('socio/vista_registrar_nuevo_indicador_op', $datos);
-        }
-    }
-
     public function modificar_proyecto($id_proyecto) {
         $this->verificar_sesion();
 
@@ -277,54 +234,6 @@ class Socio extends CI_Controller {
         }
     }
 
-    public function modificar_indicador_operativo($id_proyecto, $id_indicador) {
-        $this->verificar_sesion();
-
-        if (!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
-            redirect(base_url() . 'socio');
-        } else {
-            if (isset($_POST['id_tipo_indicador_op']) && isset($_POST['id_indicador_op']) && isset($_POST['nombre_indicador_op']) && isset($_POST['fecha_limite_indicador_op']) && isset($_POST['meta_op']) && isset($_POST['aceptable_op']) && isset($_POST['limitado_op']) && isset($_POST['no_aceptable_op'])) {
-                $this->form_validation->set_rules('id_tipo_indicador_op', 'id_tipo_indicador_op', 'required|numeric|is_natural');
-                $this->form_validation->set_rules('id_indicador_op', 'id_indicador_op', 'required|numeric|is_natural');
-                $this->form_validation->set_rules('nombre_indicador_op', 'nombre_indicador_op', 'required|trim|min_length[5]|max_length[128]');
-                $this->form_validation->set_rules('fecha_limite_indicador_op', 'fecha_limite_indicador_op', 'required');
-                $this->form_validation->set_rules('meta_op', 'meta_op', 'required|numeric|is_natural');
-                $this->form_validation->set_rules('aceptable_op', 'aceptable_op', 'required|numeric|is_natural');
-                $this->form_validation->set_rules('limitado_op', 'limitado_op', 'required|numeric|is_natural');
-                $this->form_validation->set_rules('no_aceptable_op', 'no_aceptable_op', 'required|numeric|is_natural');
-                if ($this->form_validation->run() == FALSE) {
-                    unset($_POST['id_indicador_op']);
-                    $this->modificar_indicador_operativo($id_proyecto, $id_indicador);
-                } else {
-                    if ($id_indicador == $this->input->post('id_indicador_op')) {
-                        $id_tipo_indicador_op = $this->input->post('id_tipo_indicador_op');
-                        $id_indicador_op = $this->input->post('id_indicador_op');
-                        $nombre_indicador_op = $this->input->post('nombre_indicador_op');
-                        $fecha_limite_indicador_op = $this->input->post('fecha_limite_indicador_op');
-                        $meta_op = $this->input->post('meta_op');
-                        $aceptable_op = $this->input->post('aceptable_op');
-                        $limitado_op = $this->input->post('limitado_op');
-                        $no_aceptable_op = $this->input->post('no_aceptable_op');
-                        $this->modelo_socio->update_indicador_operativo($id_tipo_indicador_op, $id_indicador_op, $nombre_indicador_op, $fecha_limite_indicador_op, $meta_op, $aceptable_op, $limitado_op, $no_aceptable_op);
-                        redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
-                    } else {
-                        redirect(base_url() . 'socio');
-                    }
-                }
-            } else {
-                $datos = Array();
-                $datos['tipos_indicador_op'] = $this->modelo_socio->get_tipos_indicador_op();
-                $datos['id_proyecto'] = $id_proyecto;
-                $indicador = $this->modelo_socio->get_indicador_operativo($id_indicador);
-                $datos['indicador'] = $indicador;
-                if ($indicador) {
-                    $datos['actividad'] = $this->modelo_socio->get_actividad($indicador->id_actividad);
-                }
-                $this->load->view('socio/vista_modificar_indicador_op', $datos);
-            }
-        }
-    }
-
     public function eliminar_proyecto($id_proyecto) {
         $this->verificar_sesion();
 
@@ -347,107 +256,184 @@ class Socio extends CI_Controller {
         }
     }
 
-    public function eliminar_indicador_operativo($id_proyecto, $id_indicador) {
+    public function registrar_nuevo_hito($id_proyecto, $id_actividad) {
         $this->verificar_sesion();
 
-        if (!is_numeric($id_indicador) || !is_numeric($id_proyecto)) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_actividad)) {
             redirect(base_url() . 'socio');
         } else {
-            $this->modelo_socio->delete_indicador_operativo($id_indicador);
+            if (isset($_POST['id_actividad']) && isset($_POST['tipo_hito'])) {
+                if ($this->input->post('id_actividad') == $id_actividad) {
+                    $nombre_hito = $this->input->post('nombre_hito');
+                    $descripcion_hito = $this->input->post('descripcion_hito');
+                    $meta_hito = $this->input->post('meta_hito');
+                    $unidad_hito = $this->input->post('unidad_hito');
+                    switch ($this->input->post('tipo_hito')) {
+                        case 'cuantitativo':
+                            $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                            $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
+                            $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
+                            if ($this->form_validation->run() == FALSE) {
+                                unset($_POST['id_actividad']);
+                                $this->registrar_nuevo_hito($id_proyecto, $id_actividad);
+                            } else {
+                                $this->registrar_hito_cuantitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito);
+                            }
+                            break;
+                        case 'cualitativo':
+                            $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                            if ($this->form_validation->run() == FALSE) {
+                                unset($_POST['id_actividad']);
+                                $this->registrar_nuevo_hito($id_proyecto, $id_actividad);
+                            } else {
+                                $this->registrar_hito_cualitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito);
+                            }
+                            break;
+                        default :
+                            redirect(base_url() . 'socio');
+                            break;
+                    }
+                }
+            } else {
+                $datos = Array();
+                $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['id_actividad'] = $id_actividad;
+                $this->load->view('socio/vista_registrar_nuevo_hito', $datos);
+            }
+        }
+    }
+
+    private function registrar_hito_cuantitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito) {
+        $this->modelo_socio->insert_hito_cuantitativo($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito);
+        redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+    }
+
+    private function registrar_hito_cualitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito) {
+        $this->modelo_socio->insert_hito_cualitativo($id_actividad, $nombre_hito, $descripcion_hito);
+        redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+    }
+
+    public function modificar_hito_cuantitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito']) && isset($_POST['meta_hito']) && isset($_POST['unidad_hito'])) {
+                if ($id_hito == $this->input->post('id_hito')) {
+                    $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                    $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
+                    $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
+                    if ($this->form_validation->run() == FALSE) {
+                        unset($_POST['id_hito']);
+                        $this->modificar_hito_cuantitativo($id_actividad, $id_hito);
+                    } else {
+                        $nombre_hito = $this->input->post('nombre_hito');
+                        $descripcion_hito = $this->input->post('descripcion_hito');
+                        $meta_hito = $this->input->post('meta_hito');
+                        $unidad_hito = $this->input->post('unidad_hito');
+                        $this->modelo_socio->update_hito_cuantitativo($id_hito, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito);
+                        redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+                    }
+                } else {
+                    redirect(base_url() . 'socio');
+                }
+            } else {
+                $datos = Array();
+                $datos['id_hito'] = $id_hito;
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['hito'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
+                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
+                $this->load->view('socio/vista_modificar_hito_cuantitativo', $datos);
+            }
+        }
+    }
+
+    public function modificar_hito_cualitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito'])) {
+                if ($id_hito == $this->input->post('id_hito')) {
+                    $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                    if ($this->form_validation->run() == FALSE) {
+                        unset($_POST['id_hito']);
+                        $this->modificar_hito_cuantitativo($id_actividad, $id_hito);
+                    } else {
+                        $nombre_hito = $this->input->post('nombre_hito');
+                        $descripcion_hito = $this->input->post('descripcion_hito');
+                        $this->modelo_socio->update_hito_cualitativo($id_hito, $nombre_hito, $descripcion_hito);
+                        redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+                    }
+                } else {
+                    redirect(base_url() . 'socio');
+                }
+            } else {
+                $datos = Array();
+                $datos['id_hito'] = $id_hito;
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['hito'] = $this->modelo_socio->get_hito_cualitativo($id_hito);
+                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
+                $this->load->view('socio/vista_modificar_hito_cualitativo', $datos);
+            }
+        }
+    }
+
+    public function eliminar_hito_cuantitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $this->modelo_socio->delete_hito_cuantitativo($id_hito);
             redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
         }
     }
 
-    public function ver_avance_indicador_operativo($id_proyecto, $id_indicador) {
-        if (!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
+    public function eliminar_hito_cualitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
             redirect(base_url() . 'socio');
         } else {
-            $datos_indicador = $this->modelo_socio->get_indicador_operativo($id_indicador);
-            $avances_indicador = $this->modelo_socio->get_avances_indicador_operativo($id_indicador);
-            $gastos_avances = $this->modelo_socio->get_gastos_avance($id_indicador);
-            $datos = Array();
-            $datos['id_proyecto'] = $id_proyecto;
-            $datos['id_indicador'] = $id_indicador;
-            $datos['indicador'] = $datos_indicador;
-            $datos['avances_indicador'] = $avances_indicador;
-            $datos['gastos_avances'] = $gastos_avances;
-            $this->load->view('socio/vista_avance_indicador_op', $datos);
+            $this->modelo_socio->delete_hito_cualitativo($id_hito);
+            redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
         }
     }
 
-    public function registrar_avance_indicador_operativo($id_proyecto, $id_indicador) {
-        $this->verificar_sesion();
-
-        if (!is_numeric($id_proyecto) || !is_numeric($id_indicador)) {
+    public function registrar_avance_hito_cuantitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
             redirect(base_url() . 'socio');
         } else {
-            if (isset($_POST['id_indicador_op']) && isset($_POST['avance_op']) && isset($_POST['descripcion_avance_op']) && isset($_POST['fecha_gasto_avance']) && isset($_POST['concepto_gasto_avance']) && isset($_POST['importe_gasto_avance'])) {
-                $this->form_validation->set_rules('avance_op', 'avance_op', 'required|numeric');
-                $this->form_validation->set_rules('descripcion_avance_op', 'descripcion_avance_op', 'required|trim|min_length[2]|max_length[512]');
-                $this->form_validation->set_rules('fecha_gasto_avance[]', 'fecha_gasto_avance[]', 'required');
-                $this->form_validation->set_rules('concepto_gasto_avance[]', 'concepto_gasto_avance[]', 'required|trim|min_length[2]|max_length[512]');
-                $this->form_validation->set_rules('importe_gasto_avance[]', 'importe_gasto_avance[]', 'required|numeric');
-                if ($this->form_validation->run() == FALSE) {
-                    unset($_POST['avance_op']);
-                    $this->registrar_avance_indicador_operativo($id_proyecto, $id_indicador);
+            if (isset($_POST['id_hito']) && isset($_POST['cantidad_avance_hito']) && isset($_POST['fecha_avance_hito']) && isset($_POST['descripcion_avance_hito'])) {
+                $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
+                $this->form_validation->set_rules('cantidad_avance_hito', 'cantidad_avance_hito', 'required|numeric');
+                $this->form_validation->set_rules('fecha_avance_hito', 'fecha_avance_hito', 'required');
+                $this->form_validation->set_rules('descripcion_avance_hito', 'descripcion_avance_hito', 'required|trim|min_length[5]|max_length[1024]');
+                if ($this->form_validation->run() == FALSE || $id_hito != $_POST['id_hito']) {
+                    unset($_POST['id_hito']);
+                    $this->registrar_avance_hito_cuantitativo($id_proyecto, $id_hito);
                 } else {
-                    if ($id_indicador == $this->input->post('id_indicador_op')) {
-                        $avance_op = $this->input->post('avance_op');
-                        $descripcion_avance_op = $this->input->post('descripcion_avance_op');
-                        $fecha_gasto_avance = $this->input->post('fecha_gasto_avance[]');
-                        $concepto_gasto_avance = $this->input->post('concepto_gasto_avance[]');
-                        $importe_gasto_avance = $this->input->post('importe_gasto_avance[]');
-                        $respaldo_gasto_avance = Array();
-                        $id_indicador_op = $this->input->post('id_indicador_op');
-                        $archivos = Array();
-                        $errores = FALSE;
-                        $indice_respaldos = 0;
-                        $config = Array();
-                        $config['upload_path'] = './files/' . $this->session->userdata('carpeta_institucion') . '/';
-                        $config['allowed_types'] = 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx';
-                        $config['max_size'] = '800000000';
-                        $this->upload->initialize($config);
-                        foreach ($_FILES as $key => $value) {
-                            if (!empty($value['name'])) {
-                                $nombre_archivo = $_FILES[$key]['name'];
-                                unset($_FILES[$key]['name']);
-                                $_FILES[$key]['name'] = $this->sanitizar_cadena($nombre_archivo);
-                                if (!$this->upload->do_upload($key)) {
-                                    $errores = TRUE;
-                                } else {
-                                    $archivos[$value['name']] = $this->upload->data();
-                                    $respaldo_gasto_avance[$indice_respaldos] = $archivos[$value['name']]['file_name'];
-                                    $indice_respaldos = $indice_respaldos + 1;
-                                }
-                            }
-                        }
-                        if ($errores) {
-                            foreach ($archivos as $key => $file) {
-                                @unlink($file['full_path']);
-                            }
-                            //error en los archivos
-                            redirect(base_url() . 'socio/ver_avance_indicador_operativo/' . $id_proyecto . '/' . $id_indicador);
-                        } else {
-                            if (!empty($archivos)) {
-                                //guardamos el la base de datos
-                                $this->modelo_socio->guardar_avance_indicador_operativo($id_indicador_op, $avance_op, $descripcion_avance_op, $fecha_gasto_avance, $concepto_gasto_avance, $importe_gasto_avance, $respaldo_gasto_avance);
-                                redirect(base_url() . 'socio/ver_avance_indicador_operativo/' . $id_proyecto . '/' . $id_indicador);
-                            } else {
-                                //error en los archivos
-                                redirect(base_url() . 'socio');
-                            }
-                        }
+                    $cantidad_avance_hito = $this->input->post('cantidad_avance_hito');
+                    $fecha_avance_hito = $this->input->post('fecha_avance_hito');
+                    $descripcion_avance_hito = $this->input->post('descripcion_avance_hito');
+                    if(isset($_POST['con_respaldos'])) {
+                        //registrar con respaldos
                     } else {
-                        redirect(base_url() . 'socio');
+                        $this->modelo_socio->registrar_avance_hito_cuantitativo_sin_documentos($id_hito, $cantidad_avance_hito, $fecha_avance_hito, $descripcion_avance_hito);
+                        redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
                     }
                 }
             } else {
-                $datos_indicador = $this->modelo_socio->get_indicador_operativo($id_indicador);
                 $datos = Array();
                 $datos['id_proyecto'] = $id_proyecto;
-                $datos['id_indicador'] = $id_indicador;
-                $datos['indicador'] = $datos_indicador;
-                $this->load->view('socio/vista_registrar_avance_indicador_op', $datos);
+                $datos['id_hito'] = $id_hito;
+                $datos['hito'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
+                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_hito_cn);
+                $this->load->view('socio/vista_registrar_avance_hito_cuantitativo', $datos);
             }
         }
     }

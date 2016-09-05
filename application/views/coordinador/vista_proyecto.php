@@ -47,10 +47,10 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <?php foreach ($indicadores_actividad as $indicador_actividad): ?>
+                                                        <?php foreach ($indicadores_actividad as $hito_cuantitativo): ?>
                                                             <?php
                                                             $color_indicador = 'ffffff';
-                                                            switch ($indicador_actividad->estado_indicador_op) {
+                                                            switch ($hito_cuantitativo->estado_indicador_op) {
                                                                 case 'Aceptable':
                                                                     $color_indicador = "CDFDC3";
                                                                     break;
@@ -63,10 +63,10 @@
                                                             }
                                                             ?>
                                                             <tr bgColor = "#<?= $color_indicador ?>">
-                                                                <td><?= $indicador_actividad->nombre_indicador_op ?></td>
-                                                                <td><?= $indicador_actividad->estado_indicador_op ?></td>
+                                                                <td><?= $hito_cuantitativo->nombre_indicador_op ?></td>
+                                                                <td><?= $hito_cuantitativo->estado_indicador_op ?></td>
                                                                 <td>
-                                                                    <a href="<?= base_url() . 'coordinador/detalle_avance_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-success btn-xs btn-block">Ver detalle de avance</a>
+                                                                    <a href="<?= base_url() . 'coordinador/detalle_avance_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_indicador_op ?>" class="btn btn-success btn-xs btn-block">Ver detalle de avance</a>
                                                                 </td>
                                                             </tr>
                                                         <?php endforeach; ?>

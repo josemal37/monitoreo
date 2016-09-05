@@ -39,51 +39,78 @@
                                     <br>
                                     <?php
                                     $id_actividad = $actividad->id_actividad;
-                                    $indicadores_actividad = $datos_indicadores[$actividad->nombre_actividad];
+                                    $hitos_cuantitativos = $datos_hitos_cuantitativos[$actividad->nombre_actividad];
+                                    $hitos_cualitativos = $datos_hitos_cualitativos[$actividad->nombre_actividad];
                                     ?>
-                                    <?php if (sizeof($indicadores_actividad) > 0): ?>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <strong>Indicadores operativos</strong>
-                                            </div>
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Nombre del indicador</th>
-                                                            <th>Tipo de indicador</th>
-                                                            <th>Valor no aceptable</th>
-                                                            <th>Valor limitado</th>
-                                                            <th>Valor aceptable</th>
-                                                            <th>Meta del indicador</th>
-                                                            <th>Fecha limite</th>
-                                                            <th>Acciones</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <?php foreach ($indicadores_actividad as $indicador_actividad): ?>
+                                    <?php if((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
+                                        <?php if (sizeof($hitos_cuantitativos) > 0): ?>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <strong>Hitos cuantitativos</strong>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <thead>
                                                             <tr>
-                                                                <td><?= $indicador_actividad->nombre_indicador_op ?></td>
-                                                                <td><?= $indicador_actividad->nombre_tipo_indicador_op ?></td>
-                                                                <td><?= '0 - ' . $indicador_actividad->no_aceptable_op ?></td>
-                                                                <td><?= $indicador_actividad->no_aceptable_op . ' - ' . $indicador_actividad->limitado_op ?></td>
-                                                                <td><?= $indicador_actividad->limitado_op.' - '.$indicador_actividad->aceptable_op ?></td>
-                                                                <td><?= $indicador_actividad->meta_op ?></td>
-                                                                <td><?= $indicador_actividad->fecha_limite_indicador_op ?></td>
-                                                                <td>
-                                                                    <a href="<?= base_url() . 'socio/modificar_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-default btn-xs btn-block">Modificar indicador</a>
-                                                                    <a href="<?= base_url() . 'socio/eliminar_indicador_operativo/' . $datos_proyecto->id_proyecto . '/' . $indicador_actividad->id_indicador_op ?>" class="btn btn-danger btn-xs btn-block">Eliminar indicador</a>
-                                                                </td>
+                                                                <th>Nombre del hito</th>
+                                                                <th>Descripción</th>
+                                                                <th>Meta</th>
+                                                                <th>Unidad</th>
+                                                                <th>Acciones</th>
                                                             </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                                </table>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach ($hitos_cuantitativos as $hito_cuantitativo): ?>
+                                                                <tr>
+                                                                    <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
+                                                                    <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
+                                                                    <td><?= $hito_cuantitativo->meta_hito_cn ?></td>
+                                                                    <td><?= $hito_cuantitativo->unidad_hito_cn ?></td>
+                                                                    <td width="15%">
+                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-default btn-xs btn-block">Modificar hito</a>
+                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-danger btn-xs btn-block">Eliminar hito</a>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
-                                        </div>
+                                        <?php endif; ?>
+                                        <?php if (sizeof($hitos_cualitativos) > 0): ?>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <strong>Hitos cualitativos</strong>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Nombre del hito</th>
+                                                                <th>Descripción</th>
+                                                                <th>Acciones</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach ($hitos_cualitativos as $hito_cualitativo): ?>
+                                                                <tr>
+                                                                    <td><?= $hito_cualitativo->nombre_hito_cl ?></td>
+                                                                    <td><?= $hito_cualitativo->descripcion_hito_cl ?></td>
+                                                                    <td width="15%">
+                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-default btn-xs btn-block">Modificar hito</a>
+                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-danger btn-xs btn-block">Eliminar hito</a>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
                                     <?php else: ?>
-                                        <h4>No se registraron indicadores</h4>
-                                    <?php endif; ?>
-                                    <a href="<?= base_url() . 'socio/registrar_nuevo_indicador/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar indicador operativo</a>
+                                        <h4>No se registraron hitos</h4>
+                                    <?php endif; ?>    
+                                    <a href="<?= base_url() . 'socio/registrar_nuevo_hito/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar nuevo hito</a>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +119,7 @@
                     <h4>No se registraron actividades</h4>
                 <?php endif; ?>
             </div>
-            <a href="<?= base_url() . 'socio/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Registrar actividad</a>
+            <a href="<?= base_url() . 'socio/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Registrar nueva actividad</a>
             <div>
                 <p class="text-right">
                     <a href="<?= base_url() . 'socio/terminar_edicion_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-primary">Activar proyecto</a>
