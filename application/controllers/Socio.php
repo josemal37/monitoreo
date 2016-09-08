@@ -20,10 +20,9 @@ class Socio extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model(array('modelo_socio', 'modelo_indicador_operativo', 'modelo_indicador_acumulativo', 'modelo_indicador_promedio_menor_que', 'modelo_indicador_porcentaje'));
-        $this->load->library(array('session', 'form_validation', 'encrypt'));
+        $this->load->library(array('session', 'form_validation', 'encrypt', 'upload'));
         $this->load->helper(array('url', 'form', 'download'));
         $this->load->database('default');
-        $this->load->library('upload');
     }
 
     public function index() {
@@ -46,7 +45,7 @@ class Socio extends CI_Controller {
     public function ver_proyecto($id_proyecto) {
         $this->verificar_sesion();
 
-        $datos = $this->modelo_socio->get_proyecto_completo($id_proyecto);
+        $datos = $this->modelo_socio->get_proyecto_completo_activo($id_proyecto);
         /* foreach ($datos['datos_indicadores'] as $key => $indicadores) {
           for ($i = 0; $i < sizeof($indicadores); $i = $i + 1) {
           switch ($datos['datos_indicadores'][$key][$i]->nombre_tipo_indicador_op) {
@@ -103,7 +102,7 @@ class Socio extends CI_Controller {
     public function editar_proyecto($id_proyecto) {
         $this->verificar_sesion();
 
-        $datos = $this->modelo_socio->get_proyecto_completo($id_proyecto);
+        $datos = $this->modelo_socio->get_proyecto_completo_en_edicion($id_proyecto);
         $this->load->view('socio/vista_editar_proyecto', $datos);
     }
 
@@ -404,6 +403,23 @@ class Socio extends CI_Controller {
         }
     }
 
+    public function ver_avances_hito_cuantitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $datos = Array();
+            $datos['id_proyecto'] = $id_proyecto;
+            $datos['id_hito'] = $id_hito;
+            $datos['hito_cuantitativo'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
+            $avances = $this->modelo_socio->get_avances_hito_cuantitativo($id_hito);
+            $datos['avances_hito_cuantitativo'] = $avances['avances_hito_cuantitativo'];
+            if (isset($avances['documentos'])) {
+                $datos['documentos'] = $avances['documentos'];
+            }
+            $this->load->view('socio/vista_avances_hito_cuantitativo', $datos);
+        }
+    }
+
     public function registrar_avance_hito_cuantitativo($id_proyecto, $id_hito) {
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
             redirect(base_url() . 'socio');
@@ -420,10 +436,19 @@ class Socio extends CI_Controller {
                     $cantidad_avance_hito = $this->input->post('cantidad_avance_hito');
                     $fecha_avance_hito = $this->input->post('fecha_avance_hito');
                     $descripcion_avance_hito = $this->input->post('descripcion_avance_hito');
-                    if(isset($_POST['con_respaldos'])) {
-                        //registrar con respaldos
+                    if (isset($_POST['con_respaldos'])) {
+                        $titulo_documento_avance = $this->input->post('titulo_documento_avance');
+                        $descripcion_documento_avance = $this->input->post('descripcion_documento_avance');
+                        foreach ($_FILES as $clave => $archivo) {
+                            $nombre = $archivo['name'];
+                            $nombre = $this->modelo_socio->sanitizar_cadena($nombre);
+                            unset($_FILES[$clave]['name']);
+                            $_FILES[$clave]['name'] = $nombre;
+                        }
+                        $this->modelo_socio->insert_avance_hito_cuantitativo_con_documentos($id_hito, $cantidad_avance_hito, $fecha_avance_hito, $descripcion_avance_hito, $titulo_documento_avance, $descripcion_documento_avance);
+                        redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
                     } else {
-                        $this->modelo_socio->registrar_avance_hito_cuantitativo_sin_documentos($id_hito, $cantidad_avance_hito, $fecha_avance_hito, $descripcion_avance_hito);
+                        $this->modelo_socio->insert_avance_hito_cuantitativo_sin_documentos($id_hito, $cantidad_avance_hito, $fecha_avance_hito, $descripcion_avance_hito);
                         redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
                     }
                 }
@@ -432,8 +457,53 @@ class Socio extends CI_Controller {
                 $datos['id_proyecto'] = $id_proyecto;
                 $datos['id_hito'] = $id_hito;
                 $datos['hito'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
-                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_hito_cn);
+                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
                 $this->load->view('socio/vista_registrar_avance_hito_cuantitativo', $datos);
+            }
+        }
+    }
+    
+    public function ver_avances_hito_cualitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $datos = Array();
+            $datos['id_proyecto'] = $id_proyecto;
+            $datos['id_hito'] = $id_hito;
+            $datos['hito_cualitativo'] = $this->modelo_socio->get_hito_cualitativo($id_hito);
+            $avances = $this->modelo_socio->get_avances_hito_cualitativo($id_hito);
+            $datos['avances_hito_cualitativo'] = $avances;
+            $this->load->view('socio/vista_avances_hito_cualitativo', $datos);
+        }
+    }
+
+    public function registrar_avance_hito_cualitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_hito']) && isset($_POST['titulo_avance_hito']) && isset($_POST['fecha_avance_hito']) && isset($_POST['descripcion_avance_hito']) && isset($_POST['nombre_documento_avance_hito'])) {
+                $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
+                $this->form_validation->set_rules('titulo_avance_hito', 'titulo_avance_hito', 'required|trim|min_length[5]|max_length[128]');
+                $this->form_validation->set_rules('fecha_avance_hito', 'fecha_avance_hito', 'required');
+                $this->form_validation->set_rules('descripcion_avance_hito', 'descripcion_avance_hito', 'required|trim|min_length[5]|max_length[1024]');
+                $this->form_validation->set_rules('nombre_documento_avance_hito', 'nombre_documento_avance_hito', 'required|trim|max_length[128]');
+                if ($this->form_validation->run() == FALSE || $id_hito != $_POST['id_hito']) {
+                    unset($_POST['id_hito']);
+                    $this->registrar_avance_hito_cualtitativo($id_proyecto, $id_hito);
+                } else {
+                    $titulo_avance_hito = $this->input->post('titulo_avance_hito');
+                    $fecha_avance_hito = $this->input->post('fecha_avance_hito');
+                    $descripcion_avance_hito = $this->input->post('descripcion_avance_hito');
+                    $this->modelo_socio->insert_avance_hito_cualitativo($id_hito, $titulo_avance_hito, $fecha_avance_hito, $descripcion_avance_hito);
+                    redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
+                }
+            } else {
+                $datos = Array();
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['id_hito'] = $id_hito;
+                $datos['hito'] = $this->modelo_socio->get_hito_cualitativo($id_hito);
+                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
+                $this->load->view('socio/vista_registrar_avance_hito_cualitativo', $datos);
             }
         }
     }
@@ -443,27 +513,6 @@ class Socio extends CI_Controller {
 
         $data = file_get_contents('./files/' . $this->session->userdata('carpeta_institucion') . '/' . $nombre);
         force_download($nombre, $data);
-    }
-
-    private function sanitizar_cadena($cadena) {
-        $cadena = str_replace(array('á', 'à', 'â', 'ã', 'ª', 'ä'), "a", $cadena);
-        $cadena = str_replace(array('Á', 'À', 'Â', 'Ã', 'Ä'), "A", $cadena);
-        $cadena = str_replace(array('Í', 'Ì', 'Î', 'Ï'), "I", $cadena);
-        $cadena = str_replace(array('í', 'ì', 'î', 'ï'), "i", $cadena);
-        $cadena = str_replace(array('é', 'è', 'ê', 'ë'), "e", $cadena);
-        $cadena = str_replace(array('É', 'È', 'Ê', 'Ë'), "E", $cadena);
-        $cadena = str_replace(array('ó', 'ò', 'ô', 'õ', 'ö', 'º'), "o", $cadena);
-        $cadena = str_replace(array('Ó', 'Ò', 'Ô', 'Õ', 'Ö'), "O", $cadena);
-        $cadena = str_replace(array('ú', 'ù', 'û', 'ü'), "u", $cadena);
-        $cadena = str_replace(array('Ú', 'Ù', 'Û', 'Ü'), "U", $cadena);
-        $cadena = str_replace(array('[', '^', '´', '`', '¨', '~', ']', ',', '+', '=', '&'), "", $cadena);
-        $cadena = str_replace("ç", "c", $cadena);
-        $cadena = str_replace("Ç", "C", $cadena);
-        $cadena = str_replace("ñ", "n", $cadena);
-        $cadena = str_replace("Ñ", "N", $cadena);
-        $cadena = str_replace("Ý", "Y", $cadena);
-        $cadena = str_replace("ý", "y", $cadena);
-        return $cadena;
     }
 
     private function comparar_fechas($primera, $segunda) {

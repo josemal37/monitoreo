@@ -35,13 +35,13 @@
                     <div class="form-group" id="respaldos">
                         <div class="checkbox">
                             <label for="con_respaldos">
-                                <input type="checkbox" name="con_respaldos" id="con_respaldos" disabled><strong>Añadir documentos</strong>
+                                <input type="checkbox" name="con_respaldos" id="con_respaldos"><strong>Añadir documentos</strong>
                             </label>
                         </div>
                         <p><?= form_error('con_respaldos') ?></p>
                     </div>
                     <input type="hidden" name="id_hito" value="<?= $id_hito ?>" id="id_hito">
-                    <input type="submit" name="submit" value="Registrar hito" title="Registrar hito" class="btn btn-primary">
+                    <input type="submit" name="submit" value="Registrar avance" title="Registrar avance" class="btn btn-primary">
                 </form>
             </div>
         </div>
@@ -99,8 +99,8 @@
                                                             "<tr>"+
                                                                 "<th>Titulo</th>"+
                                                                 "<th>Descripción</th>"+
-                                                                "<th>Documento</th>"+
-                                                                "<th>Acciones</th>"+
+                                                                "<th width='25%'>Documento</th>"+
+                                                                "<th width='15%'>Acciones</th>"+
                                                             "</tr>"+
                                                         "</thead>"+
                                                         "<tbody>"+

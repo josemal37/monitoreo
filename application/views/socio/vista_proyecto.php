@@ -36,24 +36,24 @@
                                     $hitos_cuantitativos = $datos_hitos_cuantitativos[$actividad->nombre_actividad];
                                     $hitos_cualitativos = $datos_hitos_cualitativos[$actividad->nombre_actividad];
                                     ?>
-                                    <?php if((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
-                                        <?php if (sizeof($hitos_cuantitativos) > 0): ?>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong>Hitos cuantitativos</strong>
-                                                </div>
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Nombre del hito</th>
-                                                                <th>Descripción</th>
-                                                                <th>Meta</th>
-                                                                <th>Unidad</th>
-                                                                <th>Acciones</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
+                                    <?php if ((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <strong>Hitos</strong>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre del hito</th>
+                                                            <th>Descripción</th>
+                                                            <th>Meta</th>
+                                                            <th>Unidad</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php if (sizeof($hitos_cuantitativos) > 0): ?>
                                                             <?php foreach ($hitos_cuantitativos as $hito_cuantitativo): ?>
                                                                 <tr>
                                                                     <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
@@ -66,41 +66,25 @@
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                        <?php if (sizeof($hitos_cualitativos) > 0): ?>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong>Hitos cualitativos</strong>
-                                                </div>
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Nombre del hito</th>
-                                                                <th>Descripción</th>
-                                                                <th>Acciones</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
+                                                        <?php endif; ?>
+                                                        <?php if (sizeof($hitos_cualitativos) > 0): ?>
                                                             <?php foreach ($hitos_cualitativos as $hito_cualitativo): ?>
                                                                 <tr>
                                                                     <td><?= $hito_cualitativo->nombre_hito_cl ?></td>
                                                                     <td><?= $hito_cualitativo->descripcion_hito_cl ?></td>
+                                                                    <td>-----</td>
+                                                                    <td>-----</td>
                                                                     <td width="15%">
                                                                         <a href="<?= base_url() . 'socio/registrar_avance_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-primary btn-xs btn-block">Registrar avance</a>
                                                                         <a href="<?= base_url() . 'socio/ver_avances_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                        <?php endif; ?>
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                        <?php endif; ?>
+                                        </div>
                                     <?php else: ?>
                                         <h4>No se registraron hitos</h4>
                                     <?php endif; ?>
