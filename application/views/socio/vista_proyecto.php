@@ -7,7 +7,7 @@
     </head>
     <body>
         <div class="container">
-            <h1 style="text-align: center">Bienvenido socio</h1>
+            <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
             $datos['activo'] = "Ver proyecto";

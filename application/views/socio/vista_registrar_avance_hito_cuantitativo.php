@@ -8,7 +8,7 @@
     </head>
     <body>
         <div class="container">
-            <h1 style="text-align: center">Bienvenido socio</h1>
+            <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
             $datos['activo'] = "Proyectos activos";
@@ -51,6 +51,51 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
         <script type="text/javascript">
+            $.extend($.validator.prototype, {
+                showErrors: function(errors) {
+                    if (errors) {
+                        // add items to error list and map
+                        $.extend(this.errorMap, errors);
+                        this.errorList = [];
+                        for (var name in errors) {
+                            this.errorList.push({
+                                message: errors[name],
+                                /* NOTE THAT IM COMMENTING THIS OUT
+                                 element: this.findByName(name)[0]
+                                 */
+                                element: this.findById(name)[0]
+                            });
+                        }
+                        // remove items from success list
+                        this.successList = $.grep(this.successList, function(element) {
+                            return !(element.name in errors);
+                        });
+                    }
+                    this.settings.showErrors
+                            ? this.settings.showErrors.call(this, this.errorMap, this.errorList)
+                            : this.defaultShowErrors();
+                },
+                findById: function(id) {
+                    // select by name and filter by form for performance over form.find(“[id=…]”)
+                    var form = this.currentForm;
+                    return $(document.getElementById(id)).map(function(index, element) {
+                        return element.form == form && element.id == id && element || null;
+                    });
+                },
+                checkForm: function() {
+                    this.prepareForm();
+                    for (var i = 0, elements = (this.currentElements = this.elements()); elements[i]; i++) {
+                        if (this.findByName(elements[i].name).length != undefined && this.findByName(elements[i].name).length > 1) {
+                            for (var cnt = 0; cnt < this.findByName(elements[i].name).length; cnt++) {
+                                this.check(this.findByName(elements[i].name)[cnt]);
+                            }
+                        } else {
+                            this.check(elements[i]);
+                        }
+                    }
+                    return this.valid();
+                }
+            });
             $(document).ready(function() {
                 $('#formulario_avance_hito').validate({
                     errorClass: 'has-error',
@@ -69,6 +114,16 @@
                             required: true,
                             minlength: 5,
                             maxlength: 1024
+                        },
+                        'titulo_documento_avance[]': {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 64
+                        },
+                        'descripcion_documento_avance[]': {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 512
                         }
                     },
                     highlight: function(element, errorClass, validClass) {
@@ -105,13 +160,10 @@
                                                         "</thead>"+
                                                         "<tbody>"+
                                                             "<tr>"+
-                                                                "<td><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance' class='form-control' required></td>"+
-                                                                "<td><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance' class='form-control vresize' required></textarea></td>"+
+                                                                "<td><div class='form-group'><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance_1' class='form-control' required></div></td>"+
+                                                                "<td><div class='form-group'><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance_1' class='form-control vresize' required></textarea></div></td>"+
                                                                 "<td>"+
-                                                                    "<input type='text' name='nombre_documento_avance_1' id='nombre_documento_avance_1' class='form-control' readonly>"+
-                                                                   "<span class='btn btn-default btn-block btn-xs btn-file'><strong>Seleccione un archivo</strong> "+
-                                                                       "<input type='file' name='documento_avance_1' id='documento_avance_1' required>"+
-                                                                   "</span>"+
+                                                                    "<div class='form-group'><input type='file' name='documento_avance_1' id='documento_avance_1' required></div>"+
                                                                 "</td>"+
                                                                 "<td><button type='button' name='eliminar_fila' id='eliminar_fila' class='btn btn-danger btn-block btn-xs'>Eliminar fila</button></td>"+
                                                             "</tr>"+
@@ -128,26 +180,14 @@
             });
         </script>
         <script type="text/javascript">
-            $(document).on('change', ':file', function() {
-                var input = $(this);
-                var label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-                var id_input = input.attr('id');
-                var num_input = id_input.substring(id_input.length - 1, id_input.length);
-                $('#nombre_documento_avance_' + num_input).attr('value', label);
-            });
-        </script>
-        <script type="text/javascript">
             var num_filas = 2;
             $('#respaldos').on('click', '#nueva_fila', function(){
                 $('#tabla-respaldos >tbody').append(
                         "<tr>"+
-                            "<td><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance' class='form-control' required></td>"+
-                            "<td><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance' class='form-control vresize' required></textarea></td>"+
+                            "<td><div class='form-group'><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance_"+num_filas+"' class='form-control' required></div></td>"+
+                            "<td><div class='form-group'><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance_"+num_filas+"' class='form-control vresize' required></textarea></div></td>"+
                             "<td>"+
-                                "<input type='text' name='nombre_documento_avance_"+num_filas+"' id='nombre_documento_avance_"+num_filas+"' class='form-control' readonly>"+
-                               "<span class='btn btn-default btn-block btn-xs btn-file'><strong>Seleccione un archivo</strong> "+
-                                   "<input type='file' name='documento_avance_"+num_filas+"' id='documento_avance_"+num_filas+"' required>"+
-                               "</span>"+
+                                "<div class='form-group'><input type='file' name='documento_avance_"+num_filas+"' id='documento_avance_"+num_filas+"' required></div>"+
                             "</td>"+
                             "<td><button type='button' name='eliminar_fila' id='eliminar_fila' class='btn btn-danger btn-block btn-xs'>Eliminar fila</button></td>"+
                         "</tr>"

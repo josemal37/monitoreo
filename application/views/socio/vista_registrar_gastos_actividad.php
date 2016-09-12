@@ -9,7 +9,7 @@
     </head>
     <body>
         <div class="container">
-            <h1 style="text-align: center">Bienvenido socio</h1>
+            <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
             $datos['activo'] = "Proyectos activos";
@@ -139,15 +139,6 @@
         </script>
         <script type="text/javascript">
             $("#fecha_gasto_1").datepicker({dateFormat: 'yy-mm-dd'});
-        </script>
-        <script type="text/javascript">
-            $(document).on('change', ':file', function() {
-                var input = $(this);
-                var label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-                var id_input = input.attr('id');
-                var num_input = id_input.substring(id_input.length - 1, id_input.length);
-                $('#nombre_respaldo_' + num_input).attr('value', label);
-            });
         </script>
         <script type="text/javascript">
             var num_filas = 2;

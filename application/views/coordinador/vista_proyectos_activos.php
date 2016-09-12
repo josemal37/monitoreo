@@ -7,7 +7,7 @@
     </head>
     <body>
         <div class="container">
-            <h1 class="text-center">Bienvenido coordinador</h1>
+            <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
             $datos['activo'] = "Proyectos activos";

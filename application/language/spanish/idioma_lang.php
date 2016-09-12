@@ -1,10 +1,10 @@
 <?php
  //idioma español
-$lang['idioma.bienvenido'] = "Bienvenido a uno-de-piera.com";
+$lang['idioma.bienvenido'] = "Bienvenido";
 $lang['idioma.error_login'] = "Ha habido un error";
 
 //lang_fomularios
-$lang['idioma.titulo_form'] = "Login en uno-de-piera.com";
+$lang['idioma.titulo_form'] = "Login";
 
 //labels
 $lang['idioma.label_nombre'] = "Nombre"; 

@@ -8,6 +8,7 @@
     </head>
     <body>
         <div class="container">
+            <?php $this->load->view('cabecera') ?>
             <div class="form-signin">
                 <h1 class="form-signin-heading">Inicio de sesión</h1>
                 <form action="<?= base_url() . 'login/iniciar_sesion' ?>" id="inicio-sesion" method="post" accept-charset="utf-8">
