@@ -37,7 +37,7 @@
                                     <td><?= $usuario->correo_usuario ?></td>
                                     <td><?= $usuario->nombre_institucion ?></td>
                                     <td>
-                                        <?php if($usuario->activo_usuario): ?>
+                                        <?php if ($usuario->activo_usuario): ?>
                                             SI
                                         <?php else: ?>
                                             NO
@@ -46,7 +46,7 @@
                                     <td>
                                         <a href="<?= base_url() . 'administrador/ver_usuario/' . $usuario->id_usuario ?>" class="btn btn-success btn-xs btn-block">Ver usuario</a>
                                         <a href="<?= base_url() . 'administrador/modificar_usuario/' . $usuario->id_usuario ?>" class="btn btn-primary btn-xs btn-block">Modificar usuario</a>
-                                        <?php if($usuario->activo_usuario): ?>
+                                        <?php if ($usuario->activo_usuario): ?>
                                             <a href="<?= base_url() . 'administrador/desactivar_usuario/' . $usuario->id_usuario ?>" class="btn btn-danger btn-xs btn-block">Desactivar usuario</a>
                                         <?php else: ?>
                                             <a href="<?= base_url() . 'administrador/activar_usuario/' . $usuario->id_usuario ?>" class="btn btn-warning btn-xs btn-block">Activar usuario</a>
@@ -59,7 +59,14 @@
                     <a href="<?= base_url() . 'administrador/nuevo_usuario' ?>" class="btn btn-primary">Nuevo usuario</a>
                 </div>
             <?php else: ?>
-                <h4>Todavía no se registraron usuarios.</h4>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        Advertencia
+                    </div>
+                    <div class="panel-body">
+                        Todavía no se registraron usuarios.
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>

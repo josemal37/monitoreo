@@ -54,7 +54,7 @@
                                                     <a href="<?= base_url() . 'socio/descarga/' . $documento->archivo_documento_avance_hito_cn ?>" title="<?= $documento->archivo_documento_avance_hito_cn ?>" class="btn btn-success btn-xs btn-block">Ver documento</a>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
-                                                    <label class="text-warning">Sin documentos</label>
+                                                <label class="text-warning">Sin documentos</label>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -64,7 +64,14 @@
                         </table>
                     </div>
                 <?php else: ?>
-                    Todavía no se registraron avances.
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            Advertencia
+                        </div>
+                        <div class="panel-body">
+                            Todavía no se registraron avances.
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>

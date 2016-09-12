@@ -38,7 +38,14 @@
                     </table>
                 </div>
             <?php else: ?>
-                <h4>No se existen proyectos activos actualmente.</h4>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        Advertencia
+                    </div>
+                    <div class="panel-body">
+                        Todavía no se registraron proyectos.
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
         <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>

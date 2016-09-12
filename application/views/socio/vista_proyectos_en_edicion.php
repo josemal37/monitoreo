@@ -40,7 +40,14 @@
                     </table>
                 </div>
             <?php else: ?>
-                <h4>No existen proyectos en edición actualmente.</h4>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        Advertencia
+                    </div>
+                    <div class="panel-body">
+                        No existen proyectos en edición actualmente.
+                    </div>
+                </div>
             <?php endif; ?>
             <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" class="btn btn-primary">Registrar nuevo proyecto</a>
         </div>	

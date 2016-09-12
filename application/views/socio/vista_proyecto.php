@@ -147,10 +147,24 @@
                                                 </div>
                                             </div>
                                         <?php else : ?>
-                                            <p>No se registraron indicadores.</p>
+                                            <div class="panel panel-warning">
+                                                <div class="panel-heading">
+                                                    Advertencia
+                                                </div>
+                                                <div class="panel-body">
+                                                    Todavía no se registraron indicadores.
+                                                </div>
+                                            </div>
                                         <?php endif; ?>
                                     <?php else: ?>
-                                        <p>No se registraron hitos</p>
+                                        <div class="panel panel-warning">
+                                            <div class="panel-heading">
+                                                Advertencia
+                                            </div>
+                                            <div class="panel-body">
+                                                No se registraron hitos.
+                                            </div>
+                                        </div>
                                     <?php endif; ?>
                                     <?php if ($gastos_actividad): ?>
                                         <div class="panel panel-default">
@@ -179,15 +193,29 @@
                                             </div>
                                         </div>
                                     <?php else: ?>
-                                        <p>No se registraron gastos.</p>
+                                        <div class="panel panel-warning">
+                                            <div class="panel-heading">
+                                                Advertencia
+                                            </div>
+                                            <div class="panel-body">
+                                                Todavía no se registraron gastos.
+                                            </div>
+                                        </div>
                                     <?php endif; ?>
-                                        <a href="<?= base_url() . 'socio/registrar_gastos_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default">Registrar gastos actividad</a>
+                                    <a href="<?= base_url() . 'socio/registrar_gastos_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default">Registrar gastos actividad</a>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <h4>No se registraron actividades</h4>
+                    <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        Advertencia
+                    </div>
+                    <div class="panel-body">
+                        No se registraron actividades.
+                    </div>
+                </div>
                 <?php endif; ?>
             </div>
         </div>

@@ -33,11 +33,11 @@
                             <tbody>
                                 <?php foreach ($avances_hito_cualitativo as $avance): ?>
                                     <tr>
-                                        <td><?= $avance->fecha_avance_hito_cl?></td>
-                                        <td><?= $avance->titulo_avance_hito_cl?></td>
-                                        <td><?= $avance->descripcion_avance_hito_cl?></td>
+                                        <td><?= $avance->fecha_avance_hito_cl ?></td>
+                                        <td><?= $avance->titulo_avance_hito_cl ?></td>
+                                        <td><?= $avance->descripcion_avance_hito_cl ?></td>
                                         <td>
-                                            <?php if($avance->en_revision_avance_hito_cl): ?>
+                                            <?php if ($avance->en_revision_avance_hito_cl): ?>
                                                 <div class="div_popover"> 
                                                     <a href="#" class="nombre_estado">En revisión</a>
                                                     <div id="contenedor_formulario" class="hide">
@@ -46,7 +46,7 @@
                                                     </div>
                                                 </div>
                                             <?php else: ?>
-                                                <?php if($avance->aprobado_avance_hito_cl): ?>
+                                                <?php if ($avance->aprobado_avance_hito_cl): ?>
                                                     <label class="text-success">Aprobado</label>
                                                 <?php else: ?>
                                                     <label class="text-danger">No aprobado</label>
@@ -60,7 +60,14 @@
                         </table>
                     </div>
                 <?php else: ?>
-                    Todavía no se registraron avances.
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            Advertencia
+                        </div>
+                        <div class="panel-body">
+                            Todavía no se registraron avances.
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>

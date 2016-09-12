@@ -54,7 +54,14 @@
                     <a href="<?= base_url() . 'administrador/nueva_institucion' ?>" class="btn btn-primary">Nueva institución</a>
                 </div>
             <?php else: ?>
-                <h4>Todavía no se registraron instituciones.</h4>
+                <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            Advertencia
+                        </div>
+                        <div class="panel-body">
+                            Todavía no se registraron instituciones.
+                        </div>
+                    </div>
             <?php endif; ?>
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>

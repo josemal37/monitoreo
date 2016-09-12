@@ -92,7 +92,14 @@
                                             </div>
                                         </div>
                                     <?php else: ?>
-                                        <h4>No se registraron hitos</h4>
+                                        <div class="panel panel-warning">
+                                            <div class="panel-heading">
+                                                Advertencia
+                                            </div>
+                                            <div class="panel-body">
+                                                Todavía no se registraron hitos.
+                                            </div>
+                                        </div>
                                     <?php endif; ?>    
                                     <a href="<?= base_url() . 'socio/registrar_nuevo_hito/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar nuevo hito</a>
                                 </div>
@@ -100,7 +107,14 @@
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <h4>No se registraron actividades</h4>
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            Advertencia
+                        </div>
+                        <div class="panel-body">
+                            Todavía no se registraron actividades.
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
             <a href="<?= base_url() . 'socio/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Registrar nueva actividad</a>

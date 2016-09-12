@@ -70,7 +70,14 @@
                         </table>
                     </div>
                 <?php else: ?>
-                    Todavía no se registraron avances.
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            Advertencia
+                        </div>
+                        <div class="panel-body">
+                            Todavía no se registraron avances.
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
