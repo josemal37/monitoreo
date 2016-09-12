@@ -38,7 +38,13 @@
                                         <td><?= $avance->descripcion_avance_hito_cl?></td>
                                         <td>
                                             <?php if($avance->en_revision_avance_hito_cl): ?>
-                                                <label class="text-primary">En revisión</label>
+                                                <div class="div_popover"> 
+                                                    <a href="#" class="nombre_estado">En revisión</a>
+                                                    <div id="contenedor_formulario" class="hide">
+                                                        <a href="<?= base_url() . 'coordinador/aprobar_avance_hito_cualitativo/' . $id_proyecto . '/' . $id_hito . '/' . $avance->id_avance_hito_cl ?>" class="btn btn-success btn-xs">Aprobado</a>
+                                                        <a href="<?= base_url() . 'coordinador/no_aprobar_avance_hito_cualitativo/' . $id_proyecto . '/' . $id_hito . '/' . $avance->id_avance_hito_cl ?>" class="btn btn-danger btn-xs">No aprobado</a>
+                                                    </div>
+                                                </div>
                                             <?php else: ?>
                                                 <?php if($avance->aprobado_avance_hito_cl): ?>
                                                     <label class="text-success">Aprobado</label>
@@ -47,7 +53,7 @@
                                                 <?php endif; ?>
                                             <?php endif; ?>
                                         </td>
-                                        <td><a href="<?= base_url() . 'coordinador/descarga/' . $avance->documento_avance_hito_cl ?>" title="<?= $avance->documento_avance_hito_cl ?>" class="btn btn-success btn-xs btn-block">Ver documento</a></td>
+                                        <td><a href="<?= base_url() . 'coordinador/descarga/' . $id_institucion . '/' . $avance->documento_avance_hito_cl ?>" title="<?= $avance->documento_avance_hito_cl ?>" class="btn btn-success btn-xs btn-block">Ver documento</a></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -60,5 +66,13 @@
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript">
+            $('.nombre_estado').popover({
+                html: true,
+                content: function() {
+                    return $(this).parent().find('#contenedor_formulario').html();
+                }
+            });
+        </script>
     </body>
 </html>

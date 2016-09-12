@@ -39,7 +39,13 @@
                                         <td><?= $avance->cantidad_avance_hito_cn . ' ' . $hito_cuantitativo->unidad_hito_cn ?></td>
                                         <td class="text-center">
                                             <?php if ($avance->en_revision_avance_hito_cn): ?>
-                                                <label class="text-primary">En revisión</label>
+                                                <div class="div_popover"> 
+                                                    <a href="#" class="nombre_estado">En revisión</a>
+                                                    <div id="contenedor_formulario" class="hide">
+                                                        <a href="<?= base_url() . 'coordinador/aprobar_avance_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito . '/' . $avance->id_avance_hito_cn ?>" class="btn btn-success btn-xs">Aprobado</a>
+                                                        <a href="<?= base_url() . 'coordinador/no_aprobar_avance_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito . '/' . $avance->id_avance_hito_cn ?>" class="btn btn-danger btn-xs">No aprobado</a>
+                                                    </div>
+                                                </div>
                                             <?php else: ?>
                                                 <?php if ($avance->aprobado_avance_hito_cn): ?>
                                                     <label class="text-success">Aprobado</label>
@@ -51,10 +57,10 @@
                                         <td class="text-center">
                                             <?php if ($documentos[$i]): ?>
                                                 <?php foreach ($documentos[$i] as $documento): ?>
-                                                    <a href="<?= base_url() . 'coordinador/descarga/' . $documento->archivo_documento_avance_hito_cn ?>" title="<?= $documento->archivo_documento_avance_hito_cn ?>" class="btn btn-success btn-xs btn-block">Ver documento</a>
+                                                    <a href="<?= base_url() . 'coordinador/descarga/' . $id_institucion . '/' . $documento->archivo_documento_avance_hito_cn ?>" title="<?= $documento->archivo_documento_avance_hito_cn ?>" class="btn btn-success btn-xs btn-block">Ver documento</a>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
-                                                    <label class="text-warning">Sin documentos</label>
+                                                <label class="text-warning">Sin documentos</label>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -70,5 +76,13 @@
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript">
+            $('.nombre_estado').popover({
+                html: true,
+                content: function() {
+                    return $(this).parent().find('#contenedor_formulario').html();
+                }
+            });
+        </script>
     </body>
 </html>

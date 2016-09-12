@@ -19,7 +19,7 @@ class Socio extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model(array('modelo_socio', 'modelo_indicador_operativo', 'modelo_indicador_acumulativo', 'modelo_indicador_promedio_menor_que', 'modelo_indicador_porcentaje'));
+        $this->load->model(array('modelo_socio', 'modelo_indicador', 'modelo_indicador_cualitativo', 'modelo_indicador_cuantitativo', 'modelo_indicador_acumulativo', 'modelo_indicador_promedio_menor_que', 'modelo_indicador_porcentaje'));
         $this->load->library(array('session', 'form_validation', 'encrypt', 'upload'));
         $this->load->helper(array('url', 'form', 'download'));
         $this->load->database('default');
@@ -46,24 +46,6 @@ class Socio extends CI_Controller {
         $this->verificar_sesion();
 
         $datos = $this->modelo_socio->get_proyecto_completo_activo($id_proyecto);
-        /* foreach ($datos['datos_indicadores'] as $key => $indicadores) {
-          for ($i = 0; $i < sizeof($indicadores); $i = $i + 1) {
-          switch ($datos['datos_indicadores'][$key][$i]->nombre_tipo_indicador_op) {
-          case 'Acumulativo':
-          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_acumulativo->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
-          break;
-          case 'Promedio (menor que)':
-          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_promedio_menor_que->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
-          break;
-          case 'Porcentaje':
-          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = $this->modelo_indicador_porcentaje->get_estado_indicador($datos['datos_indicadores'][$key][$i]->id_indicador_op);
-          break;
-          default :
-          $datos['datos_indicadores'][$key][$i]->estado_indicador_op = 'Indicador no definido';
-          break;
-          }
-          }
-          } */
         $this->load->view('socio/vista_proyecto', $datos);
     }
 
@@ -462,7 +444,7 @@ class Socio extends CI_Controller {
             }
         }
     }
-    
+
     public function ver_avances_hito_cualitativo($id_proyecto, $id_hito) {
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
             redirect(base_url() . 'socio');
@@ -504,6 +486,42 @@ class Socio extends CI_Controller {
                 $datos['hito'] = $this->modelo_socio->get_hito_cualitativo($id_hito);
                 $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
                 $this->load->view('socio/vista_registrar_avance_hito_cualitativo', $datos);
+            }
+        }
+    }
+
+    public function registrar_gastos_actividad($id_proyecto, $id_actividad) {
+        if (!is_numeric($id_actividad) || !is_numeric($id_proyecto)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_actividad']) && isset($_POST['fecha_gasto']) && isset($_POST['importe_gasto']) && isset($_POST['concepto_gasto'])) {
+                $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
+                $this->form_validation->set_rules('fecha_gasto[]', 'fecha_gasto', 'required');
+                $this->form_validation->set_rules('importe_gasto[]', 'importe_gasto', 'required|numeric');
+                $this->form_validation->set_rules('concepto_gasto[]', 'concepto_gasto', 'required|trim|min_length[5]|max_length[1024]');
+                if ($this->form_validation->run() == FALSE || $id_actividad != $_POST['id_actividad']) {
+                    unset($_POST['id_actividad']);
+                    $this->registrar_gastos_actividad($id_proyecto, $id_actividad);
+                } else {
+                    foreach ($_FILES as $clave => $archivo) {
+                        $nombre = $archivo['name'];
+                        $nombre = $this->modelo_socio->sanitizar_cadena($nombre);
+                        unset($_FILES[$clave]['name']);
+                        $_FILES[$clave]['name'] = $nombre;
+                    }
+                    $fecha_gasto = $this->input->post('fecha_gasto');
+                    $importe_gasto = $this->input->post('importe_gasto');
+                    $concepto_gasto = $this->input->post('concepto_gasto');
+                    $this->modelo_socio->insert_gastos_actividad($id_actividad, $fecha_gasto, $importe_gasto, $concepto_gasto);
+                    redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
+                }
+            } else {
+                $datos = Array();
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['id_actividad'] = $id_actividad;
+                $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
+                $datos['gastos_actividad'] = $this->modelo_socio->get_gastos_actividad($id_actividad);
+                $this->load->view('socio/vista_registrar_gastos_actividad', $datos);
             }
         }
     }
