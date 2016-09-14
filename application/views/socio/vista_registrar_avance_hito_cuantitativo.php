@@ -48,54 +48,12 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.html.array.extend.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
         <script type="text/javascript">
-            $.extend($.validator.prototype, {
-                showErrors: function(errors) {
-                    if (errors) {
-                        // add items to error list and map
-                        $.extend(this.errorMap, errors);
-                        this.errorList = [];
-                        for (var name in errors) {
-                            this.errorList.push({
-                                message: errors[name],
-                                /* NOTE THAT IM COMMENTING THIS OUT
-                                 element: this.findByName(name)[0]
-                                 */
-                                element: this.findById(name)[0]
-                            });
-                        }
-                        // remove items from success list
-                        this.successList = $.grep(this.successList, function(element) {
-                            return !(element.name in errors);
-                        });
-                    }
-                    this.settings.showErrors
-                            ? this.settings.showErrors.call(this, this.errorMap, this.errorList)
-                            : this.defaultShowErrors();
-                },
-                findById: function(id) {
-                    // select by name and filter by form for performance over form.find(“[id=…]”)
-                    var form = this.currentForm;
-                    return $(document.getElementById(id)).map(function(index, element) {
-                        return element.form == form && element.id == id && element || null;
-                    });
-                },
-                checkForm: function() {
-                    this.prepareForm();
-                    for (var i = 0, elements = (this.currentElements = this.elements()); elements[i]; i++) {
-                        if (this.findByName(elements[i].name).length != undefined && this.findByName(elements[i].name).length > 1) {
-                            for (var cnt = 0; cnt < this.findByName(elements[i].name).length; cnt++) {
-                                this.check(this.findByName(elements[i].name)[cnt]);
-                            }
-                        } else {
-                            this.check(elements[i]);
-                        }
-                    }
-                    return this.valid();
-                }
-            });
             $(document).ready(function() {
                 $('#formulario_avance_hito').validate({
                     errorClass: 'has-error',
@@ -125,17 +83,6 @@
                             minlength: 5,
                             maxlength: 512
                         }
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
-                        $(element).addClass('control-label');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
-                    },
-                    errorPlacement: function(error, element) {
-                        $(error).addClass('control-label');
-                        error.insertAfter(element);
                     }
                 });
             });
@@ -163,7 +110,7 @@
                                                                 "<td><div class='form-group'><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance_1' class='form-control' required></div></td>"+
                                                                 "<td><div class='form-group'><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance_1' class='form-control vresize' required></textarea></div></td>"+
                                                                 "<td>"+
-                                                                    "<div class='form-group'><input type='file' name='documento_avance_1' id='documento_avance_1' required></div>"+
+                                                                    "<div class='form-group'><input type='file' name='documento_avance_1' id='documento_avance_1' title='Seleccionar archivo' required></div>"+
                                                                 "</td>"+
                                                                 "<td><button type='button' name='eliminar_fila' id='eliminar_fila' class='btn btn-danger btn-block btn-xs'>Eliminar fila</button></td>"+
                                                             "</tr>"+
@@ -173,6 +120,7 @@
                                                 "<button type='button' name='nueva_fila' id='nueva_fila' class='btn btn-success'>Añadir fila</button>"+
                                             "</div>");
                     $('#documentos_avance').show('swing');
+                    $('#documento_avance_1').bootstrapFileInput();
                 } else {
                     $('#documentos_avance').hide('swing');
                     $('#documentos_avance').remove();
@@ -187,11 +135,12 @@
                             "<td><div class='form-group'><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance_"+num_filas+"' class='form-control' required></div></td>"+
                             "<td><div class='form-group'><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance_"+num_filas+"' class='form-control vresize' required></textarea></div></td>"+
                             "<td>"+
-                                "<div class='form-group'><input type='file' name='documento_avance_"+num_filas+"' id='documento_avance_"+num_filas+"' required></div>"+
+                                "<div class='form-group'><input type='file' name='documento_avance_"+num_filas+"' id='documento_avance_"+num_filas+"' title='Seleccionar archivo' required></div>"+
                             "</td>"+
                             "<td><button type='button' name='eliminar_fila' id='eliminar_fila' class='btn btn-danger btn-block btn-xs'>Eliminar fila</button></td>"+
                         "</tr>"
                         );
+                $('#documento_avance_'+num_filas).bootstrapFileInput();
                 num_filas = num_filas + 1;
             });
             $('#respaldos').on('click', '#eliminar_fila', function(){

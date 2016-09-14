@@ -23,6 +23,12 @@ class Login extends CI_Controller {
         $this->load->library(array('session', 'form_validation'));
         $this->load->helper(array('url', 'form'));
         $this->load->database('default');
+        $this->clear_cache();
+    }
+
+    private function clear_cache() {
+        $this->output->set_header("Cache-Control: no-store, no-cache, must-revalidate, no-transform, max-age=0, post-check=0, pre-check=0");
+        $this->output->set_header("Pragma: no-cache");
     }
 
     public function index() {
@@ -91,7 +97,7 @@ class Login extends CI_Controller {
 
     public function cerrar_sesion() {
         $this->session->sess_destroy();
-        $this->index();
+        redirect(base_url());
     }
 
 }

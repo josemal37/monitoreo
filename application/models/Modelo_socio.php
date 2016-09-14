@@ -373,6 +373,7 @@ class Modelo_socio extends CI_Model {
 
     public function insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto) {
         $id_institucion = $this->session->userdata('id_institucion');
+        $this->db->trans_start();
         $sql = "INSERT INTO PROYECTO
                 (
                     nombre_proyecto,
@@ -391,6 +392,9 @@ class Modelo_socio extends CI_Model {
                 )
                 ";
         $query = $this->db->query($sql);
+        $id_proyecto = $this->db->insert_id();
+        $this->db->trans_complete();
+        return $id_proyecto;
     }
 
     public function update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto) {

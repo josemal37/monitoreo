@@ -26,13 +26,18 @@ class Socio extends CI_Controller {
     }
 
     public function index() {
-        $this->proyectos_activos();
+        $this->inicio_sistema_socio();
     }
 
     private function verificar_sesion() {
         if ($this->session->userdata('nombre_rol') == FALSE || $this->session->userdata('nombre_rol') != 'socio') {
             redirect(base_url() . 'login');
         }
+    }
+    
+    public function inicio_sistema_socio() {
+        $datos['proyectos'] = $this->modelo_socio->get_proyectos_socio();
+        $this->load->view('socio/vista_inicio_sistema_socio', $datos);
     }
 
     public function proyectos_activos() {
@@ -72,8 +77,9 @@ class Socio extends CI_Controller {
                 $nombre_proyecto = $this->input->post('nombre_proyecto');
                 $descripcion_proyecto = $this->input->post('descripcion_proyecto');
                 $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
-                $this->modelo_socio->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto);
-                redirect(base_url() . 'socio/proyectos_en_edicion');
+                $id_proyecto = $this->modelo_socio->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto);
+                redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+                //redirect(base_url() . 'socio/proyectos_en_edicion');
             }
         } else {
             $datos = NULL;
@@ -528,6 +534,12 @@ class Socio extends CI_Controller {
                 $this->load->view('socio/vista_registrar_gastos_actividad', $datos);
             }
         }
+    }
+    
+    public function ver_reportes() {
+        $this->verificar_sesion();
+        
+        $this->load->view('socio/vista_reportes');
     }
 
     public function descarga($nombre) {
