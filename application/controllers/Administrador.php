@@ -55,7 +55,7 @@ class Administrador extends CI_Controller {
         if (isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario']) && isset($_POST['password_usuario_confirmacion'])) {
             $this->form_validation->set_rules('nombre_usuario', 'nombre_usuario', 'required|trim|min_length[1]|max_length[64]');
             $this->form_validation->set_rules('apellido_paterno_usuario', 'apellido_paterno_usuario', 'required|trim|min_length[1]|max_length[32]');
-            $this->form_validation->set_rules('apellido_materno_usuario', 'apellido_materno_usuario', 'required|trim|min_length[1]|max_length[32]');
+            $this->form_validation->set_rules('apellido_materno_usuario', 'apellido_materno_usuario', 'trim|min_length[1]|max_length[32]');
             $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
             $this->form_validation->set_rules('id_rol', 'id_rol', 'required|numeric');
             $this->form_validation->set_rules('login_usuario', 'login_usuario', 'required|trim|min_length[5]|max_length[32]');

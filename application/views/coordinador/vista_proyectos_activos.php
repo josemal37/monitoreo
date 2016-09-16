@@ -2,7 +2,13 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+        
+        <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
+        
         <title>Proyectos activos</title>
     </head>
     <body>
@@ -48,7 +54,5 @@
                 </div>
             <?php endif; ?>
         </div>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
     </body>
 </html>

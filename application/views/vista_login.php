@@ -2,15 +2,24 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/signin.css' ?>" />
+        
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        
         <title>Sistema de monitoreo</title>
     </head>
     <body>
         <div class="container">
             <?php $this->load->view('cabecera') ?>
             <div class="form-signin">
-                <h1 class="form-signin-heading">Inicio de sesión</h1>
+                <h2 class="hidden-sm hidden-xs">Inicio de sesión</h2>
                 <form action="<?= base_url() . 'login/iniciar_sesion' ?>" id="inicio-sesion" method="post" accept-charset="utf-8">
                     <div class="form-group">
                         <label for="login_usuario" class="sr-only">Nombre de usuario</label>
@@ -32,10 +41,6 @@
                 </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#inicio-sesion').validate({
@@ -50,17 +55,6 @@
                             required: true, 
                             maxlength: 32
                         }
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
-                        $(element).addClass('control-label');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
-                    },
-                    errorPlacement: function(error, element) {
-                        $(error).addClass('control-label');
-                        error.insertAfter(element);
                     }
                 });
             });

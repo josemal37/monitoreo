@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
         <title>Nuevo usuario</title>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+
     </head>
     <body>
         <div class="container">
@@ -77,13 +87,11 @@
                     <input type="text" name="password_usuario_confirmacion" id="password_usuario_confirmacion" placeholder="Confirmación del password" class="form-control" autocomplete="off">
                     <p><?= form_error('password_usuario_confirmacion') ?></p>
                 </div>
-                <input type="submit" name="submit" value="Registrar usuario" title="Registrar usuario" class="btn btn-primary">
+                <div>
+                    <input type="submit" name="submit" value="Registrar usuario" title="Registrar usuario" class="btn btn-primary">
+                </div>
             </form>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_usuario').validate({
@@ -101,7 +109,6 @@
                             maxlength: 32
                         },
                         apellido_materno_usuario: {
-                            required: true,
                             minlength: 1,
                             maxlength: 32
                         },
@@ -136,23 +143,12 @@
                             maxlength: 32,
                             equalTo: '#password_usuario'
                         }
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
-                        $(element).addClass('control-label');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
-                    },
-                    errorPlacement: function(error, element) {
-                        $(error).addClass('control-label');
-                        error.insertAfter(element);
                     }
                 });
             });
         </script>
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(document).ready(function() {
                 $('#password_usuario').attr('type', "password");
                 $('#password_usuario_confirmacion').attr('type', "password");
             });

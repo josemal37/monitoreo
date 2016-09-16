@@ -2,7 +2,14 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+        
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+        
         <title>Instituciones</title>
     </head>
     <body>
@@ -14,7 +21,10 @@
             $this->load->view('administrador/nav', $datos);
             ?>
             <?php if (sizeof($instituciones) > 0): ?>
-                <h4>Instituciones</h4>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Instituciones</strong>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
@@ -23,7 +33,7 @@
                                 <th>Nombre de la institución</th>
                                 <th>Presupuesto (Bs.)</th>
                                 <th>Activa</th>
-                                <th>Administrar</th>
+                                <th width="15%">Administrar</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,6 +62,7 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
             <?php else: ?>
                 <div class="panel panel-warning">
                         <div class="panel-heading">
@@ -64,9 +75,6 @@
             <?php endif; ?>
             <a href="<?= base_url() . 'administrador/nueva_institucion' ?>" class="btn btn-primary">Nueva institución</a>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script>
             $('.presupuesto_institucion').number(true, 2);
         </script>
