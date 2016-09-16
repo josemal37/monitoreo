@@ -29,8 +29,9 @@
                     </div>
                     <div id="datos_cuantitativos">
                         <div class="form-group">
-                            <label for="meta_hito">Meta del hito</label>
-                            <input type="number" name="meta_hito" id="meta_hito" value="<?= $hito->meta_hito_cn ?>" placeholder="Meta del hito" class="form-control" required>
+                            <label for="meta_hito_vista">Meta del hito</label>
+                            <input type="text" name="meta_hito_vista" id="meta_hito_vista" value="<?= $hito->meta_hito_cn ?>" placeholder="Meta del hito" class="form-control" required>
+                            <input type="hidden" name="meta_hito" id="meta_hito" value="<?= $hito->meta_hito_cn ?>">
                             <p><?= form_error('meta_hito') ?></p>
                         </div>
                         <div class="form-group">
@@ -48,6 +49,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_hito').validate({
@@ -87,6 +89,14 @@
                         error.insertAfter(element);
                     }
                 });
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#meta_hito_vista').number(true);
+            });
+            $('#meta_hito_vista').keyup(function(){
+                $('#meta_hito').val($('#meta_hito_vista').val());
             });
         </script>
     </body>

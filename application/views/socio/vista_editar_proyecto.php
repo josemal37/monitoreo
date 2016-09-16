@@ -14,7 +14,7 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <?= $datos_proyecto->presupuesto_proyecto ?>)</h4>
+                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span>)</h4>
                 <p class="text-justify"><?= $datos_proyecto->descripcion_proyecto ?></p>
                 <p class="text-left"><a href="<?= base_url() . 'socio/modificar_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Modificar datos generales</a></p>
             </div>
@@ -31,7 +31,7 @@
                                     <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
-                                    <p><strong>Presupuesto: </strong>Bs. <?= $actividad->presupuesto_actividad ?></p>
+                                    <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span></p>
                                     <div>
                                         <a href="<?= base_url() . 'socio/modificar_actividad/' . $actividad->id_actividad ?>" class="btn btn-default">Modificar actividad</a>
                                         <a href="<?= base_url() . 'socio/eliminar_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-danger">Eliminar actividad</a>
@@ -64,7 +64,7 @@
                                                                 <tr>
                                                                     <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
-                                                                    <td><?= $hito_cuantitativo->meta_hito_cn ?></td>
+                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span></td>
                                                                     <td><?= $hito_cuantitativo->unidad_hito_cn ?></td>
                                                                     <td width="15%">
                                                                         <a href="<?= base_url() . 'socio/modificar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-default btn-xs btn-block">Modificar hito</a>
@@ -127,5 +127,12 @@
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.number_decimal').number(true, 2);
+                $('.number_integer').number(true);
+            });
+        </script>
     </body>
 </html>

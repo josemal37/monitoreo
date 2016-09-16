@@ -37,8 +37,9 @@
                         <p><?= form_error('fecha_fin_actividad') ?></p>
                     </div>
                     <div class="form-group">
-                        <label for="presupuesto_actividad">Presupuesto (Bs.)</label>
-                        <input type="number" name="presupuesto_actividad" placeholder="Presupuesto" class="form-control" required>
+                        <label for="presupuesto_actividad_vista">Presupuesto (Bs.)</label>
+                        <input type="text" name="presupuesto_actividad_vista" id="presupuesto_actividad_vista" placeholder="Presupuesto" class="form-control" required>
+                        <input type="hidden" name="presupuesto_actividad" id="presupuesto_actividad">
                         <p><?= form_error('presupuesto_actividad') ?></p>
                     </div>
                     <input type="hidden" name="id_proyecto" value="<?= $id_proyecto ?>" id="id_proyecto">
@@ -51,6 +52,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#actividad').validate({
@@ -109,6 +111,14 @@
                     var fecha_fin = $("#fecha_fin_actividad").datepicker("getDate");
                     $("#fecha_inicio_actividad").datepicker("option", "maxDate", fecha_fin);
                 });
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#presupuesto_actividad_vista').number(true, 2);
+            });
+            $('#presupuesto_actividad_vista').keyup(function(){
+                $('#presupuesto_actividad').val($('#presupuesto_actividad_vista').val());
             });
         </script>
     </body>

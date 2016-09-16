@@ -32,11 +32,16 @@
                             <tbody>
                                 <tr>
                                     <td><div class="form-group"><input type="text" name="fecha_gasto[]" id="fecha_gasto_1" class="form-control" required></div></td>
-                                    <td><div class="form-group"><input type="number" name="importe_gasto[]" id="importe_gasto_1" class="form-control" required></div></td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="importe_gasto_vista[]" id="importe_gasto_vista_1" class="form-control importe" required>
+                                            <input type="hidden" name="importe_gasto[]" id="importe_gasto_1">
+                                        </div>
+                                    </td>
                                     <td><div class="form-group"><textarea name="concepto_gasto[]" id="concepto_gasto_1" class="form-control vresize" required></textarea></div></td>
                                     <td>
                                         <div class="form-group">
-                                            <input type='file' name='respaldo_1' id='respaldo_1' required class="required" aria-required="true" data-required>
+                                            <input type='file' name='respaldo_1' id='respaldo_1' title="Archivo" required class="required" aria-required="true" data-required>
                                         </div>
                                     </td>
                                     <td><button name="eliminar_fila" id="eliminar_fila" class="btn btn-danger btn-block btn-xs">Eliminar fila</button></td>
@@ -57,6 +62,8 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $.extend($.validator.prototype, {
                 showErrors: function(errors) {
@@ -139,6 +146,8 @@
         </script>
         <script type="text/javascript">
             $("#fecha_gasto_1").datepicker({dateFormat: 'yy-mm-dd'});
+            //$('#respaldo_1').bootstrapFileInput();
+            $('#importe_gasto_vista_1').number(true, 2);
         </script>
         <script type="text/javascript">
             var num_filas = 2;
@@ -146,18 +155,30 @@
                 $('#tabla_gastos >tbody').append(
                         "<tr>" +
                         "<td><div class='form-group'><input type='text' name='fecha_gasto[]' id='fecha_gasto_" + num_filas + "' class='form-control' required></div></td>" +
-                        "<td><div class='form-group'><input type='number' name='importe_gasto[]' id='importe_gasto_" + num_filas + "' class='form-control' required></div></td>" +
+                        "<td><div class='form-group'><input type='text' name='importe_gasto_vista[]' id='importe_gasto_vista_" + num_filas + "' class='form-control importe' required>" +
+                        "<input type='hidden' name='importe_gasto[]' id='importe_gasto_" + num_filas + "'></div></td>" +
                         "<td><div class='form-group'><textarea name='concepto_gasto[]' id='concepto_gasto_" + num_filas + "' class='form-control vresize' required></textarea></div></td>" +
                         "<td><div class='form-group'><input type='file' class='msg_respaldo' name='respaldo_" + num_filas + "' id='respaldo_" + num_filas + "' required  class='required' aria-required='true' data-required></div></td>" +
                         "<td><button name='eliminar_fila' id='eliminar_fila' class='btn btn-danger btn-block btn-xs'>Eliminar fila</button></td>" +
                         "</tr>"
                         );
                 $("#fecha_gasto_" + num_filas).datepicker({dateFormat: 'yy-mm-dd'});
+                $('#importe_gasto_vista_' + num_filas).number(true, 2);
                 num_filas = num_filas + 1;
             });
             $('#formulario_gastos').on('click', '#eliminar_fila', function() {
                 if ($('#tabla_gastos >tbody >tr').length > 1) {
                     $(this).closest('tr').remove();
+                }
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).on('keyup', function(e){
+                if(e.target.name == 'importe_gasto_vista[]'){
+                    var id_vista = e.target.id;
+                    var num_importe = id_vista.substring(id_vista.length - 1, id_vista.length);
+                    var id_importe = 'importe_gasto_' + num_importe;
+                    $('#'+id_importe).val($('#'+id_vista).val());
                 }
             });
         </script>

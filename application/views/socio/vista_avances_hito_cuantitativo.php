@@ -36,7 +36,7 @@
                                     <tr>
                                         <td><?= $avance->fecha_avance_hito_cn ?></td>
                                         <td><?= $avance->descripcion_avance_hito_cn ?></td>
-                                        <td><?= $avance->cantidad_avance_hito_cn . ' ' . $hito_cuantitativo->unidad_hito_cn ?></td>
+                                        <td><span class="number_decimal"><?= $avance->cantidad_avance_hito_cn?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
                                         <td class="text-center">
                                             <?php if ($avance->en_revision_avance_hito_cn): ?>
                                                 <label class="text-primary">En revisión</label>
@@ -77,5 +77,12 @@
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.number_decimal').number(true, 2);
+                $('.number_integer').number(true);
+            });
+        </script>
     </body>
 </html>

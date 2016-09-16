@@ -14,7 +14,7 @@ create table ACTIVIDAD
    DESCRIPCION_ACTIVIDAD text,
    FECHA_INICIO_ACTIVIDAD date not null,
    FECHA_FIN_ACTIVIDAD  date not null,
-   PRESUPUESTO_ACTIVIDAD decimal,
+   PRESUPUESTO_ACTIVIDAD decimal(9,2),
    primary key (ID_ACTIVIDAD)
 );
 
@@ -41,7 +41,7 @@ create table AVANCE_HITO_CUANTITATIVO
 (
    ID_AVANCE_HITO_CN    int not null auto_increment,
    ID_HITO_CN           int,
-   CANTIDAD_AVANCE_HITO_CN decimal not null,
+   CANTIDAD_AVANCE_HITO_CN decimal(9,2) not null,
    FECHA_AVANCE_HITO_CN date not null,
    DESCRIPCION_AVANCE_HITO_CN text not null,
    APROBADO_AVANCE_HITO_CN bool not null,
@@ -84,7 +84,7 @@ create table GASTO_ACTIVIDAD
    ID_ACTIVIDAD         int not null,
    FECHA_GASTO_ACTIVIDAD date not null,
    CONCEPTO_GASTO_ACTIVIDAD varchar(512) not null,
-   IMPORTE_GASTO_ACTIVIDAD decimal not null,
+   IMPORTE_GASTO_ACTIVIDAD decimal(9,2) not null,
    RESPALDO_GASTO_ACTIVIDAD varchar(128) not null,
    primary key (ID_GASTO_ACTIVIDAD)
 );
@@ -98,7 +98,7 @@ create table GASTO_PROYECTO
    ID_PROYECTO          int not null,
    FECHA_GASTO_PROYECTO date not null,
    CONCEPTO_GASTO_PROYECTO varchar(512) not null,
-   IMPORTE_GASTO_PROYECTO decimal not null,
+   IMPORTE_GASTO_PROYECTO decimal(9,2) not null,
    RESPALDO_GASTO_PROYECTO varchar(128) not null,
    primary key (ID_GASTO_PROYECTO)
 );
@@ -138,9 +138,9 @@ create table INDICADOR_CUANTITATIVO
    ID_TIPO_INDICADOR_CN int not null,
    ID_HITO_CN           int,
    NOMBRE_INDICADOR_CN  varchar(128) not null,
-   ACEPTABLE_CN         decimal not null,
-   LIMITADO_CN          decimal not null,
-   NO_ACEPTABLE_CN      decimal not null,
+   ACEPTABLE_CN         decimal(9,2) not null,
+   LIMITADO_CN          decimal(9,2) not null,
+   NO_ACEPTABLE_CN      decimal(9,2) not null,
    primary key (ID_INDICADOR_CN)
 );
 
@@ -152,7 +152,7 @@ create table INSTITUCION
    ID_INSTITUCION       int not null auto_increment,
    NOMBRE_INSTITUCION   varchar(128) not null,
    SIGLA_INSTITUCION    varchar(8) not null,
-   PRESUPUESTO_INSTITUCION decimal not null,
+   PRESUPUESTO_INSTITUCION decimal(9,2) not null,
    CARPETA_INSTITUCION  varchar(32),
    ACTIVA_INSTITUCION   bool not null,
    primary key (ID_INSTITUCION)
@@ -167,7 +167,7 @@ create table PROYECTO
    ID_INSTITUCION       int not null,
    NOMBRE_PROYECTO      varchar(128) not null,
    DESCRIPCION_PROYECTO text,
-   PRESUPUESTO_PROYECTO decimal,
+   PRESUPUESTO_PROYECTO decimal(9,2),
    EN_EDICION           bool not null,
    primary key (ID_PROYECTO)
 );
@@ -253,8 +253,6 @@ alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
       references ROL (ID_ROL) on delete cascade on update restrict;
-
-
 
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');

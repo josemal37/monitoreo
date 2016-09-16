@@ -31,7 +31,7 @@
                                 <tr>
                                     <td><?= $institucion->sigla_institucion ?></td>
                                     <td><?= $institucion->nombre_institucion ?></td>
-                                    <td><?= $institucion->presupuesto_institucion ?></td>
+                                    <td><span class="presupuesto_institucion"><?= $institucion->presupuesto_institucion ?></span></td>
                                     <td>
                                         <?php if($institucion->activa_institucion): ?>
                                             SI
@@ -51,7 +51,6 @@
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                    <a href="<?= base_url() . 'administrador/nueva_institucion' ?>" class="btn btn-primary">Nueva institución</a>
                 </div>
             <?php else: ?>
                 <div class="panel panel-warning">
@@ -63,8 +62,13 @@
                         </div>
                     </div>
             <?php endif; ?>
+            <a href="<?= base_url() . 'administrador/nueva_institucion' ?>" class="btn btn-primary">Nueva institución</a>
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+        <script>
+            $('.presupuesto_institucion').number(true, 2);
+        </script>
     </body>
 </html>

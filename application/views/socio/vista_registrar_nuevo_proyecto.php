@@ -14,12 +14,6 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <?php
-                $nombre_proyecto = array('name' => 'nombre_proyecto', 'placeholder' => 'Nombre del proyecto', 'class' => 'form-control');
-                $descripcion_proyecto = array('name' => 'descripcion_proyecto', 'placeholder' => 'Descripción', 'class' => 'form-control', 'rows' => '4');
-                $presupuesto_proyecto = array('name' => 'presupuesto_proyecto', 'placeholder' => 'Presupuesto', 'type' => 'number', 'class' => 'form-control');
-                $submit = array('name' => 'submit', 'value' => 'Registrar proyecto', 'title' => 'Registrar proyecto', 'class' => 'btn btn-primary');
-                ?>
                 <form action="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" id="proyecto" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">
                         <label for="nombre_proyecto">Nombre del proyecto</label>
@@ -32,8 +26,9 @@
                         <p><?= form_error('descripcion_proyecto') ?></p>
                     </div>
                     <div class="form-group">
-                        <label for="presupuesto_proyecto">Presupuesto (Bs.)</label>
-                        <input type="number" name="presupuesto_proyecto" placeholder="Presupuesto" class="form-control">
+                        <label for="presupuesto_proyecto_vista">Presupuesto (Bs.)</label>
+                        <input type="text" name="presupuesto_proyecto_vista" id="presupuesto_proyecto_vista" placeholder="Presupuesto" class="form-control">
+                        <input type="hidden" name="presupuesto_proyecto" id="presupuesto_proyecto">
                         <p><?= form_error('presupuesto_proyecto') ?></p>
                     </div>
                     <input type="submit" name="submit" value="Registrar proyecto" title="Registrar proyecto" class="btn btn-primary">
@@ -44,6 +39,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#proyecto').validate({
@@ -78,6 +74,14 @@
                         error.insertAfter(element);
                     }
                 });
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#presupuesto_proyecto_vista').number(true, 2);
+            });
+            $('#presupuesto_proyecto_vista').keyup(function(){
+                $('#presupuesto_proyecto').val($('#presupuesto_proyecto_vista').val());
             });
         </script>
     </body>

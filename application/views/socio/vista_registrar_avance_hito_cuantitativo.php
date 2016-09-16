@@ -18,8 +18,9 @@
                 <h4><?= $actividad->nombre_actividad . ': ' . $hito->nombre_hito_cn ?></h4>
                 <form action="<?= base_url() . 'socio/registrar_avance_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_avance_hito" role="form" method="post" accept-charset="utf-8" enctype="multipart/form-data" autocomplete="off">
                     <div class="form-group">
-                        <label for="cantidad_avance_hito">Cantidad de avance</label>
-                        <input type="number" name="cantidad_avance_hito" id="cantidad_avance_hito" placeholder="Cantidad de avance" class="form-control" required>
+                        <label for="cantidad_avance_hito_vista">Cantidad de avance</label>
+                        <input type="text" name="cantidad_avance_hito_vista" id="cantidad_avance_hito_vista" placeholder="Cantidad de avance" class="form-control" required>
+                        <input type="hidden" name="cantidad_avance_hito" id="cantidad_avance_hito">
                         <p><?= form_error('cantidad_avance_hito') ?></p>
                     </div>
                     <div class="form-group">
@@ -53,6 +54,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_avance_hito').validate({
@@ -147,6 +149,14 @@
                 if($('#tabla-respaldos >tbody >tr').length > 1) {
                     $(this).closest('tr').remove();
                 }
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#cantidad_avance_hito_vista').number(true, 2);
+            });
+            $('#cantidad_avance_hito_vista').keyup(function(){
+                $('#cantidad_avance_hito').val($('#cantidad_avance_hito_vista').val());
             });
         </script>
     </body>

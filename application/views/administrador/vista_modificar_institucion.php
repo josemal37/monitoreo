@@ -26,8 +26,9 @@
                     <p><?= form_error('sigla_institucion') ?></p>
                 </div>
                 <div class="form-group">
-                    <label for="presupuesto_institucion">Presupuesto (Bs.)</label>
-                    <input type="text" name="presupuesto_institucion" id="presupuesto_institucion" value="<?= $institucion->presupuesto_institucion ?>" placeholder="Presupuesto" class="form-control">
+                    <label for="presupuesto_institucion_vista">Presupuesto (Bs.)</label>
+                    <input type="text" name="presupuesto_institucion_vista" id="presupuesto_institucion_vista" value="<?= $institucion->presupuesto_institucion ?>" placeholder="Presupuesto" class="form-control">
+                    <input type="hidden" name="presupuesto_institucion" id="presupuesto_institucion" value="<?= $institucion->presupuesto_institucion ?>">
                     <p><?= form_error('presupuesto_institucion') ?></p>
                 </div>
                 <input type="hidden" name="id_institucion" id="id_institucion" value="<?= $institucion->id_institucion?>">
@@ -38,6 +39,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_institucion').validate({
@@ -72,6 +74,14 @@
                         error.insertAfter(element);
                     }
                 });
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#presupuesto_institucion_vista').number(true, 2);
+            });
+            $('#presupuesto_institucion_vista').keyup(function(){
+                $('#presupuesto_institucion').val($('#presupuesto_institucion_vista').val());
             });
         </script>
     </body>

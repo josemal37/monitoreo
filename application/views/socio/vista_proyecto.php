@@ -14,7 +14,7 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <?= $datos_proyecto->presupuesto_proyecto ?>)</h4>
+                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span>)</h4>
                 <p class="text-justify"><?= $datos_proyecto->descripcion_proyecto ?></p>
             </div>
             <div>
@@ -30,7 +30,7 @@
                                     <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
-                                    <p><strong>Presupuesto: </strong>Bs. <?= $actividad->presupuesto_actividad ?></p>
+                                    <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span></p>
                                     <?php
                                     $id_actividad = $actividad->id_actividad;
                                     $hitos_cuantitativos = $datos_hitos_cuantitativos[$actividad->nombre_actividad];
@@ -61,7 +61,7 @@
                                                                 <tr>
                                                                     <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
-                                                                    <td><?= $hito_cuantitativo->meta_hito_cn ?></td>
+                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span></td>
                                                                     <td><?= $hito_cuantitativo->unidad_hito_cn ?></td>
                                                                     <td width="15%">
                                                                         <a href="<?= base_url() . 'socio/registrar_avance_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-primary btn-xs btn-block">Registrar avance</a>
@@ -185,7 +185,7 @@
                                                             <tr>
                                                                 <td><?= $gasto_actividad->fecha_gasto_actividad ?></td>
                                                                 <td><?= $gasto_actividad->concepto_gasto_actividad ?><a href="<?= base_url() . 'socio/descarga/' . $gasto_actividad->respaldo_gasto_actividad ?>" class="btn btn-success btn-xs pull-right">Ver respaldo</a></td>
-                                                                <td><?= $gasto_actividad->importe_gasto_actividad ?></td>
+                                                                <td><span class="number_decimal"><?= $gasto_actividad->importe_gasto_actividad ?></span></td>
                                                             </tr>
                                                         <?php endforeach; ?>
                                                     </tbody>
@@ -221,5 +221,12 @@
         </div>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.number_decimal').number(true, 2);
+                $('.number_integer').number(true);
+            });
+        </script>
     </body>
 </html>
