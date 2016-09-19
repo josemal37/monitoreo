@@ -2,7 +2,13 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+        
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        
         <title>Ver proyecto</title>
     </head>
     <body>
@@ -52,7 +58,7 @@
                                                             <th>Descripción</th>
                                                             <th>Meta</th>
                                                             <th>Unidad</th>
-                                                            <th>Acciones</th>
+                                                            <th width="15%">Acciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -63,7 +69,7 @@
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->meta_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->unidad_hito_cn ?></td>
-                                                                    <td width="15%">
+                                                                    <td>
                                                                         <a href="<?= base_url() . 'coordinador/registrar_indicador_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-primary btn-xs btn-block">Registrar indicador</a>
                                                                         <a href="<?= base_url() . 'coordinador/ver_avances_hito_cuantitativo/' . $datos_proyecto->id_institucion . '/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>
                                                                     </td>
@@ -77,7 +83,7 @@
                                                                     <td><?= $hito_cualitativo->descripcion_hito_cl ?></td>
                                                                     <td>-----</td>
                                                                     <td>-----</td>
-                                                                    <td width="15%">
+                                                                    <td>
                                                                         <a href="<?= base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $datos_proyecto->id_institucion . '/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>
                                                                     </td>
                                                                 </tr>
@@ -97,7 +103,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Nombre del indicador</th>
-                                                                <th>Estado</th>
+                                                                <th width="15%">Estado</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -174,9 +180,9 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th>Fecha</th>
+                                                            <th width="15%">Fecha</th>
                                                             <th>Concepto</th>
-                                                            <th>Importe (Bs.)</th>
+                                                            <th width="15%">Importe (Bs.)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -217,7 +223,5 @@
                 <?php endif; ?>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
     </body>
 </html>
