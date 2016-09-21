@@ -2,8 +2,17 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
         <link rel="stylesheet" href="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.css' ?>" />
+        
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+        
         <title>Registrar hito</title>
     </head>
     <body>
@@ -33,7 +42,7 @@
                     </div>
                     <div class="form-group">
                         <label for="descripcion_hito">Descripción</label>
-                        <textarea name="descripcion_hito" id="descripcion_hito" rows="4" placeholder="Descripción" class="form-control"></textarea>
+                        <textarea name="descripcion_hito" id="descripcion_hito" rows="4" placeholder="Descripción" class="form-control vresize"></textarea>
                         <p><?= form_error('descripcion_hito') ?></p>
                     </div>
                     <div id="datos_cuantitativos">
@@ -54,11 +63,6 @@
                 </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_hito').validate({

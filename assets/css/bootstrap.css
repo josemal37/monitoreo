@@ -6851,3 +6851,17 @@ button.close {
     height: 50%;
     width: 50%;
 }
+
+.white-space-normal {
+    white-space: normal;
+}
+
+tr input {
+    width: auto;
+    min-width: 150px;
+}
+
+tr textarea {
+    width: auto;
+    min-width: 200px;
+}

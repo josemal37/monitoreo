@@ -20,7 +20,7 @@
             $this->load->view('coordinador/nav', $datos);
             ?>
             <div>
-                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <?= $datos_proyecto->presupuesto_proyecto ?>)<span class="pull-right"><?= $datos_proyecto->sigla_institucion ?></span></h4>
+                <h4 class="text-justify"><?= $datos_proyecto->nombre_proyecto ?> (Bs. <?= $datos_proyecto->presupuesto_proyecto ?>)<span class="pull-right hidden-sm hidden-xs"><?= $datos_proyecto->sigla_institucion ?></span></h4>
                 <p class="text-justify"><?= $datos_proyecto->descripcion_proyecto ?></p>
             </div>
             <div>

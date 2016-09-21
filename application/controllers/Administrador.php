@@ -189,7 +189,6 @@ class Administrador extends CI_Controller {
                 $sigla_institucion = $this->input->post('sigla_institucion');
                 $presupuesto_institucion = $this->input->post('presupuesto_institucion');
                 $carpeta_institucion = strtolower($sigla_institucion);
-                $carpeta = mkdir('./files/' . $carpeta_institucion);
                 $this->modelo_administrador->insert_institucion($nombre_institucion, $sigla_institucion, $presupuesto_institucion, $carpeta_institucion);
                 redirect(base_url() . 'administrador/instituciones');
             }
@@ -247,6 +246,34 @@ class Administrador extends CI_Controller {
             $this->modelo_administrador->desactivar_institucion($id_institucion);
             redirect(base_url() . 'administrador/instituciones');
         }
+    }
+    
+    public function existe_nombre_institucion_ajax() {
+        if($this->input->is_ajax_request() && $_REQUEST['nombre_institucion']) {
+            $existe = $this->modelo_administrador->existe_nombre_institucion($_REQUEST['nombre_institucion']);
+            if($existe) {
+                echo('false');
+            } else {
+                echo('true');
+            }
+        }
+    }
+    
+    public function existe_sigla_institucion_ajax() {
+        if($this->input->is_ajax_request() && $_REQUEST['sigla_institucion']) {
+            $existe = $this->modelo_administrador->existe_sigla_institucion($_REQUEST['sigla_institucion']);
+            if($existe) {
+                echo('false');
+            } else {
+                echo('true');
+            }
+        }
+    }
+    
+    public function error() {
+        $this->verificar_sesion();
+        
+        $this->load->view('vista_error');
     }
 
 }

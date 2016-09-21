@@ -155,6 +155,12 @@ class Coordinador extends CI_Controller {
             redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $id_proyecto . '/' . $id_hito);
         }
     }
+    
+    public function error() {
+        $this->verificar_sesion();
+        
+        $this->load->view('vista_error');
+    }
 
     public function descarga($id_institucion, $nombre) {
         $this->verificar_sesion();

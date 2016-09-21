@@ -2,8 +2,21 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
         <link rel="stylesheet" href="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.css' ?>" />
+        
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.html.array.extend.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+        
         <title>Registrar avance hito</title>
     </head>
     <body>
@@ -30,7 +43,7 @@
                     </div>
                     <div class="form-group">
                         <label for="descripcion_avance_hito">Descripción</label>
-                        <textarea name="descripcion_avance_hito" id="descripcion_avance_hito" rows="4" placeholder="Descripción" class="form-control"></textarea>
+                        <textarea name="descripcion_avance_hito" id="descripcion_avance_hito" rows="4" placeholder="Descripción" class="form-control vresize"></textarea>
                         <p><?= form_error('descripcion_avance_hito') ?></p>
                     </div>
                     <div class="form-group" id="respaldos">
@@ -46,15 +59,6 @@
                 </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.html.array.extend.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_avance_hito').validate({
@@ -102,7 +106,7 @@
                                                         "<thead>"+
                                                             "<tr>"+
                                                                 "<th>Titulo</th>"+
-                                                                "<th>Descripción</th>"+
+                                                                "<th width='65%'>Descripción</th>"+
                                                                 "<th width='25%'>Documento</th>"+
                                                                 "<th width='15%'>Acciones</th>"+
                                                             "</tr>"+

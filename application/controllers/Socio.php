@@ -101,7 +101,7 @@ class Socio extends CI_Controller {
             redirect(base_url() . 'socio');
         } else {
             $this->modelo_socio->terminar_edicion_proyecto($id_proyecto);
-            redirect(base_url() . 'socio/proyectos_en_edicion');
+            redirect(base_url() . 'socio');
         }
     }
 
@@ -131,6 +131,7 @@ class Socio extends CI_Controller {
                         redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
                     } else {
                         //fechas incoherentes
+                        unset($_POST['id_proyecto']);
                         $this->registrar_nueva_actividad($id_actividad);
                     }
                 } else {
@@ -473,12 +474,11 @@ class Socio extends CI_Controller {
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
             redirect(base_url() . 'socio');
         } else {
-            if (isset($_POST['id_hito']) && isset($_POST['titulo_avance_hito']) && isset($_POST['fecha_avance_hito']) && isset($_POST['descripcion_avance_hito']) && isset($_POST['nombre_documento_avance_hito'])) {
+            if (isset($_POST['id_hito']) && isset($_POST['titulo_avance_hito']) && isset($_POST['fecha_avance_hito']) && isset($_POST['descripcion_avance_hito'])) {
                 $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
                 $this->form_validation->set_rules('titulo_avance_hito', 'titulo_avance_hito', 'required|trim|min_length[5]|max_length[128]');
                 $this->form_validation->set_rules('fecha_avance_hito', 'fecha_avance_hito', 'required');
                 $this->form_validation->set_rules('descripcion_avance_hito', 'descripcion_avance_hito', 'required|trim|min_length[5]|max_length[1024]');
-                $this->form_validation->set_rules('nombre_documento_avance_hito', 'nombre_documento_avance_hito', 'required|trim|max_length[128]');
                 if ($this->form_validation->run() == FALSE || $id_hito != $_POST['id_hito']) {
                     unset($_POST['id_hito']);
                     $this->registrar_avance_hito_cualtitativo($id_proyecto, $id_hito);
@@ -540,6 +540,12 @@ class Socio extends CI_Controller {
         $this->verificar_sesion();
         
         $this->load->view('socio/vista_reportes');
+    }
+    
+    public function error() {
+        $this->verificar_sesion();
+        
+        $this->load->view('vista_error');
     }
 
     public function descarga($nombre) {

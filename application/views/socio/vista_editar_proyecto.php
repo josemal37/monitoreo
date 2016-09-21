@@ -2,7 +2,14 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+
         <title>Editar proyecto</title>
     </head>
     <body>
@@ -117,7 +124,9 @@
                     </div>
                 <?php endif; ?>
             </div>
-            <a href="<?= base_url() . 'socio/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Registrar nueva actividad</a>
+            <p>
+                <a href="<?= base_url() . 'socio/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Registrar nueva actividad</a>
+            </p>
             <div>
                 <p class="text-right">
                     <a href="<?= base_url() . 'socio/terminar_edicion_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-primary">Activar proyecto</a>
@@ -125,11 +134,8 @@
                 </p>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(document).ready(function() {
                 $('.number_decimal').number(true, 2);
                 $('.number_integer').number(true);
             });

@@ -3,16 +3,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
+
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
-        
+
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
-        
+
         <title>Nueva institución</title>
     </head>
     <body>
@@ -41,39 +41,53 @@
                     <input type="hidden" name="presupuesto_institucion" id="presupuesto_institucion">
                     <p><?= form_error('presupuesto_institucion') ?></p>
                 </div>
+                <?php if ($this->session->flashdata('existe_institucion')): ?>
+                    <p><label class="text-danger">La institución ya se encuentra registrada.</label></p>
+                <?php endif; ?>
                 <input type="submit" name="submit" value="Registrar institución" title="Registrar institución" class="btn btn-primary">
             </form>
         </div>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_institucion').validate({
+                    ignore: [],
                     errorClass: 'has-error',
                     validClass: 'has-success',
                     rules: {
                         nombre_institucion: {
                             required: true,
                             minlength: 3,
-                            maxlength: 128
+                            maxlength: 128,
+                            remote: '<?= base_url() . 'administrador/existe_nombre_institucion_ajax' ?>'
                         },
                         sigla_institucion: {
                             required: true,
                             minlength: 2,
-                            maxlength: 8
+                            maxlength: 8,
+                            remote: '<?= base_url() . 'administrador/existe_sigla_institucion_ajax' ?>'
                         },
                         presupuesto_institucion: {
                             required: true,
                             number: true,
                             min: 0
                         }
+                    },
+                    messages: {
+                        nombre_institucion: {
+                            remote: 'Esta institución ya se encuentra registrada.'
+                        },
+                        sigla_institucion: {
+                            remote: 'Esta sigla ya se encuentra registrada.'
+                        }
                     }
                 });
             });
         </script>
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(document).ready(function() {
                 $('#presupuesto_institucion_vista').number(true, 2);
             });
-            $('#presupuesto_institucion_vista').keyup(function(){
+            $('#presupuesto_institucion_vista').keyup(function() {
                 $('#presupuesto_institucion').val($('#presupuesto_institucion_vista').val());
             });
         </script>

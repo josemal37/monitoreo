@@ -7,3 +7,4 @@
 <IfModule !mod_rewrite.c>
     ErrorDocument 404 /monitoreo/index.php 
 </IfModule>
+Options -Indexes

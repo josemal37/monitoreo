@@ -2,8 +2,18 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
         <link rel="stylesheet" href="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.css' ?>" />
+
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
+
         <title>Registrar actividad</title>
     </head>
     <body>
@@ -23,7 +33,7 @@
                     </div>
                     <div class="form-group">
                         <label for="descripcion_actividad">Descripción</label>
-                        <textarea name="descripcion_actividad" rows="4" placeholder="Descripción" class="form-control" required></textarea>
+                        <textarea name="descripcion_actividad" rows="4" placeholder="Descripción" class="form-control vresize" required></textarea>
                         <p><?= form_error('descripcion_actividad') ?></p>
                     </div>
                     <div class="form-group">
@@ -47,12 +57,6 @@
                 </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#actividad').validate({
@@ -98,8 +102,16 @@
             });
         </script>
         <script type="text/javascript">
-            $("#fecha_inicio_actividad").datepicker({dateFormat: 'yy-mm-dd'});
+            $("#fecha_inicio_actividad").datepicker({
+                dateFormat: 'yy-mm-dd',
+                inline: true,
+            });
             $("#fecha_fin_actividad").datepicker({dateFormat: 'yy-mm-dd'});
+        </script>
+        <script type="text/javascript">
+            if ($(document).width() <= 768) {
+                $("#calendario_inicio_actividad").datepicker('hide');
+            }
         </script>
         <script type="text/javascript">
             $(function() {
@@ -114,10 +126,10 @@
             });
         </script>
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(document).ready(function() {
                 $('#presupuesto_actividad_vista').number(true, 2);
             });
-            $('#presupuesto_actividad_vista').keyup(function(){
+            $('#presupuesto_actividad_vista').keyup(function() {
                 $('#presupuesto_actividad').val($('#presupuesto_actividad_vista').val());
             });
         </script>

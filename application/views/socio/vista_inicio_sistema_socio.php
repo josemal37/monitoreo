@@ -2,7 +2,13 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
+
+        <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
+
         <title>Inicio</title>
     </head>
     <body>
@@ -13,7 +19,7 @@
             $datos['activo'] = "Inicio";
             $this->load->view('socio/nav', $datos);
             ?>
-            <div class="row">
+            <div class="row hidden-sm hidden-xs">
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
                     <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>">
                         <div class="btn-div">
@@ -34,9 +40,9 @@
                         </div>
                     </a>
                     <div id="contenedor_formulario" class="hide">
-                        <?php if($proyectos):?>
+                        <?php if ($proyectos): ?>
                             <?php foreach ($proyectos as $proyecto): ?>
-                                <a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs"><?= $proyecto->nombre_proyecto?></a>
+                        <p><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block white-space-normal"><?= $proyecto->nombre_proyecto ?></a></p>
                             <?php endforeach; ?>
                         <?php else: ?>
                             No existen proyectos activos.
@@ -44,7 +50,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                    <a href="<?= base_url() . 'socio/ver_reportes'?>">
+                    <a href="<?= base_url() . 'socio/ver_reportes' ?>">
                         <div class="btn-div">
                             <div class="div-center">
                                 <img src="<?= base_url() . 'assets/images/reporte.png' ?>" style="width: 100%" class="img-responsive">
@@ -54,9 +60,35 @@
                     </a>
                 </div>
             </div>
+            <div class="hidden-lg hidden-md">
+                <div class="">
+                    <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" class="btn btn-success btn-lg btn-block">Registrar proyecto</a>
+                </div>
+                <br>
+                <div>
+                    <a href="#collapse" data-toggle="collapse" id="avance_mobile" class="btn btn-success btn-lg btn-block">Registrar avances</a>
+                    <div class="collapse on" id="collapse">
+                        <?php if ($proyectos): ?>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <?php foreach ($proyectos as $proyecto): ?>
+                                        <tr>
+                                            <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block white-space-normal"><?= $proyecto->nombre_proyecto ?></a></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php else: ?>
+                            No existen proyectos activos.
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <a href="<?= base_url() . 'socio/ver_reportes' ?>" class="btn btn-success btn-lg btn-block">Ver reportes</a>
+                </div>
+            </div>
         </div>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
-        <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
         <script type="text/javascript">
             $('#avance').popover({
                 html: true,

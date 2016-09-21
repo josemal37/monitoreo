@@ -2,8 +2,18 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
         <link rel="stylesheet" href="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.css' ?>" />
+
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
+
         <title>Registrar avance hito</title>
     </head>
     <body>
@@ -29,20 +39,13 @@
                     </div>
                     <div class="form-group">
                         <label for="descripcion_avance_hito">Descripción</label>
-                        <textarea name="descripcion_avance_hito" id="descripcion_avance_hito" rows="4" placeholder="Descripción" class="form-control"></textarea>
+                        <textarea name="descripcion_avance_hito" id="descripcion_avance_hito" rows="4" placeholder="Descripción" class="form-control vresize"></textarea>
                         <p><?= form_error('descripcion_avance_hito') ?></p>
                     </div>
                     <div class="form-group">
-                        <label for="nombre_documento_avance_hito">Documento</label>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <span class="btn btn-default btn-file btn-block"><strong>Seleccione un archivo</strong>
-                                    <input type="file" name="documento_avance_hito" id="documento_avance_hito" required>
-                                </span>
-                            </div>
-                            <div class="col-md-9">
-                                <input type="text" name="nombre_documento_avance_hito" id="nombre_documento_avance_hito" class="form-control" readonly>
-                            </div>
+                        <label for="documento_avance_hito">Documento</label>
+                        <div>
+                            <input type="file" name="documento_avance_hito" id="documento_avance_hito" title="Seleccione un archivo" required>
                         </div>
                     </div>
                     <input type="hidden" name="id_hito" value="<?= $id_hito ?>" id="id_hito">
@@ -50,11 +53,6 @@
                 </form>
             </div>
         </div>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_avance_hito').validate({
@@ -77,15 +75,6 @@
                         },
                         documento_avance_hito: {
                             required: true
-                        },
-                        nombre_documento_avance_hito: {
-                            required: true,
-                            maxlength: 128
-                        }
-                    },
-                    messages: {
-                        documento_avance_hito: {
-                            required: "!"
                         }
                     },
                     highlight: function(element, errorClass, validClass) {
@@ -103,14 +92,12 @@
             });
         </script>
         <script type="text/javascript">
-            $("#fecha_avance_hito").datepicker({dateFormat: 'yy-mm-dd'});
+            $(document).ready(function() {
+                $('#documento_avance_hito').bootstrapFileInput();
+            });
         </script>
         <script type="text/javascript">
-            $(document).on('change', ':file', function() {
-                var input = $(this);
-                var label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-                $('#nombre_documento_avance_hito').attr('value', label);
-            });
+            $("#fecha_avance_hito").datepicker({dateFormat: 'yy-mm-dd'});
         </script>
     </body>
 </html>

@@ -9,7 +9,7 @@
         <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
         
-        <title>Reportes</title>
+        <title>Error</title>
     </head>
     <body>
         <div class="container">
@@ -19,22 +19,15 @@
             $datos['activo'] = "Reportes";
             $this->load->view('socio/nav', $datos);
             ?>
-            <div class="panel panel-success">
+            <div class="panel panel-danger">
                 <div class="panel-heading">
-                    Reportes
+                    Error en el sistema
                 </div>
                 <div class="panel-body">
-                    Los reportes se encuentran en desarrollo.
+                    <p>Ocurrió un error al intentar realizar la última acción en el sistema.</p>
                 </div>
             </div>
+            <p><a href="<?= base_url() ?>" class="btn btn-primary">Volver al inicio</a></p>
         </div>
-        <script type="text/javascript">
-            $('#avance').popover({
-                html: true,
-                content: function() {
-                    return $(this).parent().find('#contenedor_formulario').html();
-                }
-            });
-        </script>
     </body>
 </html>
