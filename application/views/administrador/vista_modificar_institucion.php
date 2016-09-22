@@ -3,17 +3,17 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
+
         <link rel="stylesheet" href="<?= base_url() . 'assets/css/bootstrap.css' ?>" />
-        
+
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
-        
-        <title>Nueva institución</title>
+
+        <title>Modificar institución</title>
     </head>
     <body>
         <div class="container">
@@ -41,7 +41,7 @@
                     <input type="hidden" name="presupuesto_institucion" id="presupuesto_institucion" value="<?= $institucion->presupuesto_institucion ?>">
                     <p><?= form_error('presupuesto_institucion') ?></p>
                 </div>
-                <input type="hidden" name="id_institucion" id="id_institucion" value="<?= $institucion->id_institucion?>">
+                <input type="hidden" name="id_institucion" id="id_institucion" value="<?= $institucion->id_institucion ?>">
                 <input type="submit" name="submit" value="Modificar institución" title="Modificar institución" class="btn btn-primary">
             </form>
         </div>
@@ -54,12 +54,40 @@
                         nombre_institucion: {
                             required: true,
                             minlength: 3,
-                            maxlength: 128
+                            maxlength: 128,
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_nombre_institucion_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    nombre_institucion: function() {
+                                        return $('#nombre_institucion').val();
+                                    },
+                                    id_institucion: function() {
+                                        return $('#id_institucion').val();
+                                    }
+                                }
+                            }
                         },
                         sigla_institucion: {
                             required: true,
                             minlength: 2,
-                            maxlength: 8
+                            maxlength: 8,
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_sigla_institucion_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    sigla_institucion: function() {
+                                        return $('#sigla_institucion').val();
+                                    },
+                                    id_institucion: function() {
+                                        return $('#id_institucion').val();
+                                    }
+                                }
+                            }
                         },
                         presupuesto_institucion: {
                             required: true,
@@ -67,25 +95,21 @@
                             min: 0
                         }
                     },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
-                        $(element).addClass('control-label');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
-                    },
-                    errorPlacement: function(error, element) {
-                        $(error).addClass('control-label');
-                        error.insertAfter(element);
+                    messages: {
+                        nombre_institucion: {
+                            remote: 'Esta institución ya se encuentra registrada.'
+                        },
+                        sigla_institucion: {
+                            remote: 'Esta sigla ya se encuentra registrada.'
+                        }
                     }
                 });
-            });
-        </script>
+            });</script>
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(document).ready(function() {
                 $('#presupuesto_institucion_vista').number(true, 2);
             });
-            $('#presupuesto_institucion_vista').keyup(function(){
+            $('#presupuesto_institucion_vista').keyup(function() {
                 $('#presupuesto_institucion').val($('#presupuesto_institucion_vista').val());
             });
         </script>

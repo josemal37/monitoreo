@@ -94,10 +94,10 @@ class Administrador extends CI_Controller {
             $this->load->view('administrador/vista_registrar_nuevo_usuario', $datos);
         }
     }
-    
+
     public function modificar_usuario($id_usuario) {
         $this->verificar_sesion();
-        
+
         if (isset($_POST['id_usuario']) && isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario_antiguo']) && isset($_POST['password_usuario']) && isset($_POST['password_usuario_confirmacion'])) {
             $this->form_validation->set_rules('nombre_usuario', 'nombre_usuario', 'required|trim|min_length[1]|max_length[64]');
             $this->form_validation->set_rules('apellido_paterno_usuario', 'apellido_paterno_usuario', 'required|trim|min_length[1]|max_length[32]');
@@ -114,7 +114,7 @@ class Administrador extends CI_Controller {
             if (isset($_POST['correo_usuario'])) {
                 $this->form_validation->set_rules('correo_usuario', 'correo_usuario', 'trim|valid_email|min_length[5]|max_length[64]');
             }
-            if($id_usuario != $this->input->post('id_usuario')) {
+            if ($id_usuario != $this->input->post('id_usuario')) {
                 redirect(base_url() . 'administrador');
             }
             $usuario = $this->modelo_administrador->get_usuario($id_usuario);
@@ -148,7 +148,7 @@ class Administrador extends CI_Controller {
             $this->load->view('administrador/vista_modificar_usuario', $datos);
         }
     }
-    
+
     public function activar_usuario($id_usuario) {
         if (!is_numeric($id_usuario)) {
             redirect(base_url() . 'administrador');
@@ -247,32 +247,44 @@ class Administrador extends CI_Controller {
             redirect(base_url() . 'administrador/instituciones');
         }
     }
-    
+
     public function existe_nombre_institucion_ajax() {
-        if($this->input->is_ajax_request() && $_REQUEST['nombre_institucion']) {
-            $existe = $this->modelo_administrador->existe_nombre_institucion($_REQUEST['nombre_institucion']);
-            if($existe) {
+        if ($this->input->is_ajax_request() && isset($_POST['nombre_institucion'])) {
+            $existe = false;
+            if (isset($_POST['id_institucion'])) {
+                $existe = $this->modelo_administrador->existe_nombre_institucion_con_id($_POST['id_institucion'], $_POST['nombre_institucion']);
+            } else {
+                $existe = $this->modelo_administrador->existe_nombre_institucion($_POST['nombre_institucion']);
+            }
+            if ($existe) {
                 echo('false');
             } else {
                 echo('true');
             }
+        } else {
+            echo('true');
         }
     }
-    
+
     public function existe_sigla_institucion_ajax() {
-        if($this->input->is_ajax_request() && $_REQUEST['sigla_institucion']) {
-            $existe = $this->modelo_administrador->existe_sigla_institucion($_REQUEST['sigla_institucion']);
-            if($existe) {
+        if ($this->input->is_ajax_request() && $_POST['sigla_institucion']) {
+            $existe = false;
+            if (isset($_POST['id_institucion'])) {
+                $existe = $this->modelo_administrador->existe_sigla_institucion_con_id($_POST['id_institucion'], $_POST['sigla_institucion']);
+            } else {
+                $existe = $this->modelo_administrador->existe_sigla_institucion($_POST['sigla_institucion']);
+            }
+            if ($existe) {
                 echo('false');
             } else {
                 echo('true');
             }
         }
     }
-    
+
     public function error() {
         $this->verificar_sesion();
-        
+
         $this->load->view('vista_error');
     }
 

@@ -58,13 +58,29 @@
                             required: true,
                             minlength: 3,
                             maxlength: 128,
-                            remote: '<?= base_url() . 'administrador/existe_nombre_institucion_ajax' ?>'
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_nombre_institucion_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    nombre_institucion: function() {return $('#nombre_institucion').val();}
+                                }
+                            }
                         },
                         sigla_institucion: {
                             required: true,
                             minlength: 2,
                             maxlength: 8,
-                            remote: '<?= base_url() . 'administrador/existe_sigla_institucion_ajax' ?>'
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_sigla_institucion_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    nombre_institucion: function() {return $('#sigla_institucion').val();}
+                                }
+                            }
                         },
                         presupuesto_institucion: {
                             required: true,

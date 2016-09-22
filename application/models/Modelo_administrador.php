@@ -439,6 +439,27 @@ class Modelo_administrador extends CI_Model {
         }
     }
     
+    public function existe_nombre_institucion_con_id($id_institucion, $nombre_institucion) {
+        try {
+            $sql = "SELECT
+                        INSTITUCION.id_institucion
+                    FROM
+                        INSTITUCION
+                    WHERE
+                        INSTITUCION.id_institucion = ? AND
+                        INSTITUCION.nombre_institucion != ?
+                    ";
+            $query = $this->db->query($sql, Array($id_institucion, $nombre_institucion));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+    
     public function existe_sigla_institucion($sigla_institucion) {
         try {
             $sql = "SELECT
@@ -449,6 +470,27 @@ class Modelo_administrador extends CI_Model {
                         INSTITUCION.sigla_institucion = ?
                     ";
             $query = $this->db->query($sql, Array($sigla_institucion));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+    
+    public function existe_sigla_institucion_con_id($id_institucion, $sigla_institucion) {
+        try {
+            $sql = "SELECT
+                        INSTITUCION.id_institucion
+                    FROM
+                        INSTITUCION
+                    WHERE
+                        INSTITUCION.id_institucion = ? AND
+                        INSTITUCION.sigla_institucion != ?
+                    ";
+            $query = $this->db->query($sql, Array($id_institucion, $sigla_institucion));
             if($query->num_rows() > 0) {
                 return true;
             } else {
