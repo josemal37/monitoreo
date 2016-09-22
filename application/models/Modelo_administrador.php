@@ -275,6 +275,88 @@ class Modelo_administrador extends CI_Model {
             }
         }
     }
+    
+    public function existe_correo_usuario($correo_usuario) {
+        try {
+            $sql = "SELECT
+                        USUARIO.id_usuario
+                    FROM
+                        USUARIO
+                    WHERE
+                        USUARIO.correo_usuario = ?
+                    ";
+            $query = $this->db->query($sql, Array($correo_usuario));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+    
+    public function existe_correo_usuario_con_id($id_usuario, $correo_usuario) {
+        try {
+            $sql = "SELECT
+                        USUARIO.id_usuario
+                    FROM
+                        USUARIO
+                    WHERE
+                        USUARIO.id_usuario != ? AND
+                        USUARIO.correo_usuario = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_usuario, $correo_usuario));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+    
+    public function existe_login_usuario($login_usuario) {
+        try {
+            $sql = "SELECT
+                        USUARIO.id_usuario
+                    FROM
+                        USUARIO
+                    WHERE
+                        USUARIO.login_usuario = ?
+                    ";
+            $query = $this->db->query($sql, Array($login_usuario));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+    
+    public function existe_login_usuario_con_id($id_usuario, $login_usuario) {
+        try {
+            $sql = "SELECT
+                        USUARIO.id_usuario
+                    FROM
+                        USUARIO
+                    WHERE
+                        USUARIO.id_usuario != ? AND
+                        USUARIO.login_usuario = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_usuario, $login_usuario));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
 
     public function get_institucion($id_institucion) {
         if (!is_numeric($id_institucion)) {
@@ -446,8 +528,8 @@ class Modelo_administrador extends CI_Model {
                     FROM
                         INSTITUCION
                     WHERE
-                        INSTITUCION.id_institucion = ? AND
-                        INSTITUCION.nombre_institucion != ?
+                        INSTITUCION.id_institucion != ? AND
+                        INSTITUCION.nombre_institucion = ?
                     ";
             $query = $this->db->query($sql, Array($id_institucion, $nombre_institucion));
             if($query->num_rows() > 0) {
@@ -487,8 +569,8 @@ class Modelo_administrador extends CI_Model {
                     FROM
                         INSTITUCION
                     WHERE
-                        INSTITUCION.id_institucion = ? AND
-                        INSTITUCION.sigla_institucion != ?
+                        INSTITUCION.id_institucion != ? AND
+                        INSTITUCION.sigla_institucion = ?
                     ";
             $query = $this->db->query($sql, Array($id_institucion, $sigla_institucion));
             if($query->num_rows() > 0) {

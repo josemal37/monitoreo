@@ -98,14 +98,13 @@ class Administrador extends CI_Controller {
     public function modificar_usuario($id_usuario) {
         $this->verificar_sesion();
 
-        if (isset($_POST['id_usuario']) && isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario_antiguo']) && isset($_POST['password_usuario']) && isset($_POST['password_usuario_confirmacion'])) {
+        if (isset($_POST['id_usuario']) && isset($_POST['nombre_usuario']) && isset($_POST['apellido_paterno_usuario']) && isset($_POST['apellido_materno_usuario']) && isset($_POST['id_institucion']) && isset($_POST['id_rol']) && isset($_POST['login_usuario']) && isset($_POST['password_usuario']) && isset($_POST['password_usuario_confirmacion'])) {
             $this->form_validation->set_rules('nombre_usuario', 'nombre_usuario', 'required|trim|min_length[1]|max_length[64]');
             $this->form_validation->set_rules('apellido_paterno_usuario', 'apellido_paterno_usuario', 'required|trim|min_length[1]|max_length[32]');
-            $this->form_validation->set_rules('apellido_materno_usuario', 'apellido_materno_usuario', 'required|trim|min_length[1]|max_length[32]');
+            $this->form_validation->set_rules('apellido_materno_usuario', 'apellido_materno_usuario', 'trim|min_length[1]|max_length[32]');
             $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
             $this->form_validation->set_rules('id_rol', 'id_rol', 'required|numeric');
             $this->form_validation->set_rules('login_usuario', 'login_usuario', 'required|trim|min_length[5]|max_length[32]');
-            $this->form_validation->set_rules('password_usuario_antiguo', 'password_usuario_antiguo', 'required|trim|min_length[5]|max_length[32]');
             $this->form_validation->set_rules('password_usuario', 'password_usuario', 'required|trim|min_length[5]|max_length[32]');
             $this->form_validation->set_rules('password_usuario_confirmacion', 'password_usuario_confirmacion', 'required|trim|min_length[5]|max_length[32]');
             if (isset($_POST['telefono_usuario'])) {
@@ -117,10 +116,8 @@ class Administrador extends CI_Controller {
             if ($id_usuario != $this->input->post('id_usuario')) {
                 redirect(base_url() . 'administrador');
             }
-            $usuario = $this->modelo_administrador->get_usuario($id_usuario);
-            if ($this->form_validation->run() == FALSE || $this->input->post('password_usuario') != $this->input->post('password_usuario_confirmacion') || $this->input->post('password_usuario_antiguo') != $usuario->password_usuario) {
+            if ($this->form_validation->run() == FALSE || $this->input->post('password_usuario') != $this->input->post('password_usuario_confirmacion')) {
                 unset($_POST['password_usuario']);
-                unset($_POST['password_usuario_antiguo']);
                 unset($_POST['password_usuario_confirmacion']);
                 $this->modificar_usuario($id_usuario);
             } else {
@@ -164,6 +161,42 @@ class Administrador extends CI_Controller {
         } else {
             $this->modelo_administrador->desactivar_usuario($id_usuario);
             redirect(base_url() . 'administrador/usuarios');
+        }
+    }
+
+    public function existe_correo_usuario_ajax() {
+        if ($this->input->is_ajax_request() && isset($_POST['correo_usuario'])) {
+            $existe = false;
+            if (isset($_POST['id_usuario'])) {
+                $existe = $this->modelo_administrador->existe_correo_usuario_con_id($_POST['id_usuario'], $_POST['correo_usuario']);
+            } else {
+                $existe = $this->modelo_administrador->existe_correo_usuario($_POST['correo_usuario']);
+            }
+            if ($existe) {
+                echo('false');
+            } else {
+                echo('true');
+            }
+        } else {
+            echo('true');
+        }
+    }
+
+    public function existe_login_usuario_ajax() {
+        if ($this->input->is_ajax_request() && isset($_POST['login_usuario'])) {
+            $existe = false;
+            if (isset($_POST['id_usuario'])) {
+                $existe = $this->modelo_administrador->existe_login_usuario_con_id($_POST['id_usuario'], $_POST['login_usuario']);
+            } else {
+                $existe = $this->modelo_administrador->existe_login_usuario($_POST['login_usuario']);
+            }
+            if ($existe) {
+                echo('false');
+            } else {
+                echo('true');
+            }
+        } else {
+            echo('true');
         }
     }
 

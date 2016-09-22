@@ -125,12 +125,30 @@
                         correo_usuario: {
                             minlength: 5,
                             maxlength: 64,
-                            email: true
+                            email: true,
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_correo_usuario_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    correo_usuario: function() {return $('#correo_usuario').val();}
+                                }
+                            }
                         },
                         login_usuario: {
                             required: true,
                             minlength: 5,
-                            maxlength: 32
+                            maxlength: 32,
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_login_usuario_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    login_usuario: function() {return $('#login_usuario').val();}
+                                }
+                            }
                         },
                         password_usuario: {
                             required: true,
@@ -142,6 +160,14 @@
                             minlength: 5,
                             maxlength: 32,
                             equalTo: '#password_usuario'
+                        }
+                    },
+                    messages: {
+                        correo_usuario: {
+                            remote: 'Este correo ya se encuentra registrado.'
+                        },
+                        login_usuario: {
+                            remote: 'Este login ya se encuentra registrado.'
                         }
                     }
                 });

@@ -77,11 +77,6 @@
                     <p><?= form_error('login_usuario') ?></p>
                 </div>
                 <div class="form-group">
-                    <label for="password_usuario">Password antiguo</label>
-                    <input type="text" name="password_usuario_antiguo" id="password_usuario_antiguo" placeholder="Password antiguo" class="form-control" autocomplete="off">
-                    <p><?= form_error('password_usuario_antiguo') ?></p>
-                </div>
-                <div class="form-group">
                     <label for="password_usuario">Password nuevo</label>
                     <input type="text" name="password_usuario" id="password_usuario" placeholder="Password" class="form-control" autocomplete="off">
                     <p><?= form_error('password_usuario') ?></p>
@@ -112,7 +107,6 @@
                             maxlength: 32
                         },
                         apellido_materno_usuario: {
-                            required: true,
                             minlength: 1,
                             maxlength: 32
                         },
@@ -129,12 +123,32 @@
                         correo_usuario: {
                             minlength: 5,
                             maxlength: 64,
-                            email: true
+                            email: true,
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_correo_usuario_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    correo_usuario: function() {return $('#correo_usuario').val();},
+                                    id_usuario: function() {return $('#id_usuario').val();}
+                                }
+                            }
                         },
                         login_usuario: {
                             required: true,
                             minlength: 5,
-                            maxlength: 32
+                            maxlength: 32,
+                            remote: {
+                                url: '<?= base_url() . 'administrador/existe_login_usuario_ajax' ?>',
+                                method: 'POST',
+                                cache: false,
+                                dataType: "json",
+                                data: {
+                                    login_usuario: function() {return $('#login_usuario').val();},
+                                    id_usuario: function() {return $('#id_usuario').val();}
+                                }
+                            }
                         },
                         password_usuario: {
                             required: true,
@@ -146,11 +160,14 @@
                             minlength: 5,
                             maxlength: 32,
                             equalTo: '#password_usuario'
+                        }
+                    },
+                    messages: {
+                        correo_usuario: {
+                            remote: 'Este correo ya se encuentra registrado.'
                         },
-                        password_usuario_antiguo: {
-                            required: true,
-                            minlength: 5,
-                            maxlength: 32
+                        login_usuario: {
+                            remote: 'Este login ya se encuentra registrado.'
                         }
                     }
                 });
