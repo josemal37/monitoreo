@@ -1098,6 +1098,181 @@ class Modelo_socio extends CI_Model {
             }
         }
     }
+    
+    public function existe_nombre_proyecto_institucion($id_institucion, $nombre_proyecto) {
+        try {
+            $sql = "SELECT
+                        PROYECTO.id_proyecto
+                    FROM
+                        PROYECTO
+                    WHERE
+                        PROYECTO.id_institucion = ? AND
+                        PROYECTO.nombre_proyecto = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_institucion, $nombre_proyecto));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function existe_nombre_proyecto_institucion_con_id($id_institucion, $id_proyecto, $nombre_proyecto) {
+        try {
+            $sql = "SELECT
+                        PROYECTO.id_proyecto
+                    FROM
+                        PROYECTO
+                    WHERE
+                        PROYECTO.id_institucion = ? AND
+                        PROYECTO.id_proyecto != ? AND
+                        PROYECTO.nombre_proyecto = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_institucion, $id_proyecto, $nombre_proyecto));
+            if($query->num_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function get_presupuesto_disponible_institucion($id_institucion) {
+        try {
+            if(!is_numeric($id_institucion)) {
+                redirect(base_url() . 'socio/error');
+            } else {
+                $sql = "SELECT 
+                            INSTITUCION.id_institucion, 
+                            INSTITUCION.nombre_institucion, 
+                            INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
+                        FROM 
+                            INSTITUCION, 
+                            PROYECTO
+                        WHERE 
+                            INSTITUCION.id_institucion = PROYECTO.id_institucion AND
+                            INSTITUCION.id_institucion = ? 
+                        GROUP BY
+                            INSTITUCION.id_institucion
+                        ";
+                $query = $this->db->query($sql, Array($id_institucion));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function get_presupuesto_disponible_institucion_con_id($id_institucion, $id_proyecto) {
+        try {
+            if(!is_numeric($id_institucion) || !is_numeric($id_proyecto)) {
+                redirect(base_url() . 'socio/error');
+            } else {
+                $sql = "SELECT 
+                            INSTITUCION.id_institucion, 
+                            INSTITUCION.nombre_institucion, 
+                            INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
+                        FROM 
+                            INSTITUCION, 
+                            PROYECTO
+                        WHERE 
+                            INSTITUCION.id_institucion = PROYECTO.id_institucion AND
+                            INSTITUCION.id_institucion = ? AND
+                            PROYECTO.id_proyecto != ?
+                        GROUP BY
+                            INSTITUCION.id_institucion
+                        ";
+                $query = $this->db->query($sql, Array($id_institucion, $id_proyecto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function get_presupuesto_disponible_proyecto($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PROYECTO.presupuesto_proyecto - COALESCE(SUM(ACTIVIDAD.presupuesto_actividad), 0) AS presupuesto_disponible_proyecto
+                        FROM
+                            PROYECTO,
+                            ACTIVIDAD
+                        WHERE
+                            PROYECTO.id_proyecto = ACTIVIDAD.id_proyecto AND
+                            PROYECTO.id_proyecto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+                
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function get_presupuesto_disponible_proyecto_con_id($id_proyecto, $id_actividad) {
+        if(!is_numeric($id_proyecto) || !is_numeric($id_actividad)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PROYECTO.presupuesto_proyecto - COALESCE(SUM(ACTIVIDAD.presupuesto_actividad), 0) AS presupuesto_disponible_proyecto
+                        FROM
+                            PROYECTO,
+                            ACTIVIDAD
+                        WHERE
+                            PROYECTO.id_proyecto = ACTIVIDAD.id_proyecto AND
+                            PROYECTO.id_proyecto = ? AND
+                            ACTIVIDAD.id_actividad != ?
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto, $id_actividad));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+                
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
 
     public function sanitizar_cadena($cadena) {
         $cadena = str_replace(array('á', 'à', 'â', 'ã', 'ª', 'ä'), "a", $cadena);

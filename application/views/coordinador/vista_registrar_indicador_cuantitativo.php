@@ -14,7 +14,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery.ui.touch-punch.js' ?>"></script>
         
-        <title>Registrar avance hito</title>
+        <title>Registrar indicador</title>
     </head>
     <body>
         <div class="container">

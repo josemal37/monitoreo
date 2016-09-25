@@ -22,7 +22,7 @@ class Modelo_indicador_porcentaje extends Modelo_indicador_cuantitativo {
             redirect(base_url());
         } else {
             $sql = "SELECT
-                        SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn) AS 'total_avance'
+                        COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) AS 'total_avance'
                     FROM
                         AVANCE_HITO_CUANTITATIVO
                     WHERE

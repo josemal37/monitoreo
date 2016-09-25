@@ -10,6 +10,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
@@ -48,9 +49,10 @@
                     </div>
                     <div class="form-group">
                         <label for="presupuesto_actividad_vista">Presupuesto (Bs.)</label>
-                        <input type="text" name="presupuesto_actividad_vista" id="presupuesto_actividad_vista" placeholder="Presupuesto" class="form-control" required>
+                        <input type="text" name="presupuesto_actividad_vista" id="presupuesto_actividad_vista" placeholder="Presupuesto" class="form-control">
                         <input type="hidden" name="presupuesto_actividad" id="presupuesto_actividad">
                         <p><?= form_error('presupuesto_actividad') ?></p>
+                        <label>Disponible: Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_proyecto ?></span></label>
                     </div>
                     <input type="hidden" name="id_proyecto" value="<?= $id_proyecto ?>" id="id_proyecto">
                     <input type="submit" name="submit" value="Registrar actividad" title="Registrar actividad" class="btn btn-primary">
@@ -60,6 +62,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#actividad').validate({
+                    ignore: [],
                     errorClass: 'has-error',
                     validClass: 'has-success',
                     rules: {
@@ -84,19 +87,14 @@
                         presupuesto_actividad: {
                             required: true,
                             number: true,
-                            min: 0
+                            min: 0,
+                            max: <?= $presupuesto_disponible->presupuesto_disponible_proyecto ?>
                         }
                     },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
-                        $(element).addClass('control-label');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
-                    },
-                    errorPlacement: function(error, element) {
-                        $(error).addClass('control-label');
-                        error.insertAfter(element);
+                    messages: {
+                        presupuesto_actividad: {
+                            max: 'Por favor, escribe un valor menor o igual al disponible.'
+                        }
                     }
                 });
             });
@@ -128,6 +126,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#presupuesto_actividad_vista').number(true, 2);
+                $('.number_decimal').number(true, 2);
             });
             $('#presupuesto_actividad_vista').keyup(function() {
                 $('#presupuesto_actividad').val($('#presupuesto_actividad_vista').val());

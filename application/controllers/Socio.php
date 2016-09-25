@@ -34,7 +34,7 @@ class Socio extends CI_Controller {
             redirect(base_url() . 'login');
         }
     }
-    
+
     public function inicio_sistema_socio() {
         $datos['proyectos'] = $this->modelo_socio->get_proyectos_socio();
         $this->load->view('socio/vista_inicio_sistema_socio', $datos);
@@ -79,10 +79,10 @@ class Socio extends CI_Controller {
                 $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
                 $id_proyecto = $this->modelo_socio->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto);
                 redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
-                //redirect(base_url() . 'socio/proyectos_en_edicion');
             }
         } else {
-            $datos = NULL;
+            $datos = Array();
+            $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion($this->session->userdata('id_institucion'));
             $this->load->view('socio/vista_registrar_nuevo_proyecto', $datos);
         }
     }
@@ -139,7 +139,9 @@ class Socio extends CI_Controller {
                 }
             }
         } else {
-            $datos = Array('id_proyecto' => $id_proyecto);
+            $datos = Array();
+            $datos['id_proyecto'] = $id_proyecto;
+            $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto($id_proyecto);
             $this->load->view('socio/vista_registrar_nueva_actividad', $datos);
         }
     }
@@ -172,6 +174,8 @@ class Socio extends CI_Controller {
                     }
                 }
             } else {
+                $datos = Array();
+                $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion_con_id($this->session->userdata('id_institucion'), $id_proyecto);
                 $datos['proyecto'] = $this->modelo_socio->get_proyecto($id_proyecto);
                 $this->load->view('socio/vista_modificar_proyecto', $datos);
             }
@@ -216,7 +220,9 @@ class Socio extends CI_Controller {
                     }
                 }
             } else {
+                $datos = Array();
                 $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
+                $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto_con_id($datos['actividad']->id_proyecto, $id_actividad);
                 $this->load->view('socio/vista_modificar_actividad', $datos);
             }
         }
@@ -535,16 +541,34 @@ class Socio extends CI_Controller {
             }
         }
     }
-    
+
     public function ver_reportes() {
         $this->verificar_sesion();
-        
+
         $this->load->view('socio/vista_reportes');
     }
-    
+
+    public function existe_nombre_proyecto_institucion_ajax() {
+        if ($this->input->is_ajax_request() && isset($_POST['nombre_proyecto'])) {
+            $existe = false;
+            if (isset($_POST['id_proyecto'])) {
+                $existe = $this->modelo_socio->existe_nombre_proyecto_institucion_con_id($this->session->userdata('id_institucion'), $_POST['id_proyecto'], $_POST['nombre_proyecto']);
+            } else {
+                $existe = $this->modelo_socio->existe_nombre_proyecto_institucion($this->session->userdata('id_institucion'), $_POST['nombre_proyecto']);
+            }
+            if ($existe) {
+                echo('false');
+            } else {
+                echo('true');
+            }
+        } else {
+            echo('true');
+        }
+    }
+
     public function error() {
         $this->verificar_sesion();
-        
+
         $this->load->view('vista_error');
     }
 
