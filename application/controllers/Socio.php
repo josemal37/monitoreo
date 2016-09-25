@@ -176,6 +176,7 @@ class Socio extends CI_Controller {
             } else {
                 $datos = Array();
                 $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion_con_id($this->session->userdata('id_institucion'), $id_proyecto);
+                $datos['presupuesto_actividades'] = $this->modelo_socio->get_suma_presupuestos_actividades_proyecto($id_proyecto);
                 $datos['proyecto'] = $this->modelo_socio->get_proyecto($id_proyecto);
                 $this->load->view('socio/vista_modificar_proyecto', $datos);
             }

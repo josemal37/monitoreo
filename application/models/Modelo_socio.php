@@ -1098,7 +1098,7 @@ class Modelo_socio extends CI_Model {
             }
         }
     }
-    
+
     public function existe_nombre_proyecto_institucion($id_institucion, $nombre_proyecto) {
         try {
             $sql = "SELECT
@@ -1110,7 +1110,7 @@ class Modelo_socio extends CI_Model {
                         PROYECTO.nombre_proyecto = ?
                     ";
             $query = $this->db->query($sql, Array($id_institucion, $nombre_proyecto));
-            if($query->num_rows() > 0) {
+            if ($query->num_rows() > 0) {
                 return true;
             } else {
                 return false;
@@ -1119,7 +1119,7 @@ class Modelo_socio extends CI_Model {
             redirect(base_url() . 'socio/error');
         }
     }
-    
+
     public function existe_nombre_proyecto_institucion_con_id($id_institucion, $id_proyecto, $nombre_proyecto) {
         try {
             $sql = "SELECT
@@ -1132,7 +1132,7 @@ class Modelo_socio extends CI_Model {
                         PROYECTO.nombre_proyecto = ?
                     ";
             $query = $this->db->query($sql, Array($id_institucion, $id_proyecto, $nombre_proyecto));
-            if($query->num_rows() > 0) {
+            if ($query->num_rows() > 0) {
                 return true;
             } else {
                 return false;
@@ -1141,10 +1141,10 @@ class Modelo_socio extends CI_Model {
             redirect(base_url() . 'socio/error');
         }
     }
-    
+
     public function get_presupuesto_disponible_institucion($id_institucion) {
         try {
-            if(!is_numeric($id_institucion)) {
+            if (!is_numeric($id_institucion)) {
                 redirect(base_url() . 'socio/error');
             } else {
                 $sql = "SELECT 
@@ -1161,10 +1161,10 @@ class Modelo_socio extends CI_Model {
                             INSTITUCION.id_institucion
                         ";
                 $query = $this->db->query($sql, Array($id_institucion));
-                if(!$query) {
+                if (!$query) {
                     return false;
                 } else {
-                    if($query->num_rows() != 1) {
+                    if ($query->num_rows() != 1) {
                         return false;
                     } else {
                         return $query->row();
@@ -1175,10 +1175,10 @@ class Modelo_socio extends CI_Model {
             redirect(base_url() . 'socio/error');
         }
     }
-    
+
     public function get_presupuesto_disponible_institucion_con_id($id_institucion, $id_proyecto) {
         try {
-            if(!is_numeric($id_institucion) || !is_numeric($id_proyecto)) {
+            if (!is_numeric($id_institucion) || !is_numeric($id_proyecto)) {
                 redirect(base_url() . 'socio/error');
             } else {
                 $sql = "SELECT 
@@ -1196,10 +1196,10 @@ class Modelo_socio extends CI_Model {
                             INSTITUCION.id_institucion
                         ";
                 $query = $this->db->query($sql, Array($id_institucion, $id_proyecto));
-                if(!$query) {
+                if (!$query) {
                     return false;
                 } else {
-                    if($query->num_rows() != 1) {
+                    if ($query->num_rows() != 1) {
                         return false;
                     } else {
                         return $query->row();
@@ -1210,9 +1210,9 @@ class Modelo_socio extends CI_Model {
             redirect(base_url() . 'socio/error');
         }
     }
-    
+
     public function get_presupuesto_disponible_proyecto($id_proyecto) {
-        if(!is_numeric($id_proyecto)) {
+        if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
@@ -1226,24 +1226,23 @@ class Modelo_socio extends CI_Model {
                             PROYECTO.id_proyecto = ?
                         ";
                 $query = $this->db->query($sql, Array($id_proyecto));
-                if(!$query) {
+                if (!$query) {
                     return false;
                 } else {
-                    if($query->num_rows() != 1) {
+                    if ($query->num_rows() != 1) {
                         return false;
                     } else {
                         return $query->row();
                     }
                 }
-                
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
         }
     }
-    
+
     public function get_presupuesto_disponible_proyecto_con_id($id_proyecto, $id_actividad) {
-        if(!is_numeric($id_proyecto) || !is_numeric($id_actividad)) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_actividad)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
@@ -1258,18 +1257,41 @@ class Modelo_socio extends CI_Model {
                             ACTIVIDAD.id_actividad != ?
                         ";
                 $query = $this->db->query($sql, Array($id_proyecto, $id_actividad));
-                if(!$query) {
+                if (!$query) {
                     return false;
                 } else {
-                    if($query->num_rows() != 1) {
+                    if ($query->num_rows() != 1) {
                         return false;
                     } else {
                         return $query->row();
                     }
                 }
-                
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+
+    public function get_suma_presupuestos_actividades_proyecto($id_proyecto) {
+        if (!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            $sql = "SELECT
+                        COALESCE(SUM(ACTIVIDAD.presupuesto_actividad), 0) AS suma_presupuesto_actividades
+                    FROM
+                        ACTIVIDAD
+                    WHERE
+                        ACTIVIDAD.id_proyecto = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_proyecto));
+            if (!$query) {
+                return false;
+            } else {
+                if ($query->num_rows() != 1) {
+                    return false;
+                } else {
+                    return $query->row();
+                }
             }
         }
     }

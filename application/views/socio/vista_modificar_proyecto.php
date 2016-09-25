@@ -40,9 +40,10 @@
                         <input type="text" name="presupuesto_proyecto_vista" id="presupuesto_proyecto_vista" value="<?= $proyecto->presupuesto_proyecto ?>" placeholder="Presupuesto" class="form-control">
                         <input type="hidden" name="presupuesto_proyecto" id="presupuesto_proyecto" value="<?= $proyecto->presupuesto_proyecto ?>">
                         <p><?= form_error('presupuesto_proyecto') ?></p>
-                        <label>Disponible: Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_institucion ?></span></label>
+                        <label>Disponible: Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_institucion ?></span></label><br>
+                        <label>Destinado a actividades: Bs. <span class="number_decimal"><?= $presupuesto_actividades->suma_presupuesto_actividades ?></span></label>
                     </div>
-                    <input type="hidden" name="id_proyecto" id="id_proyecto" value="<?= $proyecto->id_proyecto ?>" id="id_proyecto">
+                    <input type="hidden" name="id_proyecto" id="id_proyecto" value="<?= $proyecto->id_proyecto ?>">
                     <input type="submit" name="submit" value="Modificar proyecto" title="Modificar proyecto" class="btn btn-primary">
                 </form>
             </div>
@@ -81,7 +82,7 @@
                         presupuesto_proyecto: {
                             required: true,
                             number: true,
-                            min: 0,
+                            min: <?= $presupuesto_actividades->suma_presupuesto_actividades ?>,
                             max: <?= $presupuesto_disponible->presupuesto_disponible_institucion ?>
                         }
                     },
@@ -90,6 +91,7 @@
                             remote: 'Este nombre de proyecto ya se encuentra registrado.'
                         },
                         presupuesto_proyecto: {
+                            min: 'Por favor, escribe un valor mayor o igual al destinado a actividades.',
                             max: 'Por favor, escribe un valor menor o igual al disponible.'
                         }
                     }
