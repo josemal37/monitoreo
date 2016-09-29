@@ -49,7 +49,7 @@
                     </div>
                     <div class="form-group">
                         <label for="presupuesto_actividad_vista">Presupuesto (Bs.)</label>
-                        <input type="text" name="presupuesto_actividad_vista" id="presupuesto_actividad_vista" value="<?= $actividad->presupuesto_actividad ?>" placeholder="Presupuesto" class="form-control" required>
+                        <input type="text" name="presupuesto_actividad_vista" id="presupuesto_actividad_vista" value="<?= $actividad->presupuesto_actividad ?>" placeholder="Presupuesto" class="form-control">
                         <input type="hidden" name="presupuesto_actividad" id="presupuesto_actividad" value="<?= $actividad->presupuesto_actividad ?>">
                         <p><?= form_error('presupuesto_actividad') ?></p>
                         <label>Disponible: Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_proyecto ?></span></label>
@@ -63,6 +63,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#modificar_actividad').validate({
+                    ignore: [],
                     errorClass: 'has-error',
                     validClass: 'has-success',
                     rules: {

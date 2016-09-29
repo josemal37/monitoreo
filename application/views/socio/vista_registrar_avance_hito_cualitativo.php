@@ -11,6 +11,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
 
@@ -76,17 +77,6 @@
                         documento_avance_hito: {
                             required: true
                         }
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
-                        $(element).addClass('control-label');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
-                    },
-                    errorPlacement: function(error, element) {
-                        $(error).addClass('control-label');
-                        error.insertAfter(element);
                     }
                 });
             });

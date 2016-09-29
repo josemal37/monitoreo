@@ -1147,20 +1147,45 @@ class Modelo_socio extends CI_Model {
             if (!is_numeric($id_institucion)) {
                 redirect(base_url() . 'socio/error');
             } else {
-                $sql = "SELECT 
-                            INSTITUCION.id_institucion, 
-                            INSTITUCION.nombre_institucion, 
-                            INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
-                        FROM 
-                            INSTITUCION, 
+                $this->db->trans_start();
+                $sql = "SELECT
+                            PROYECTO.id_proyecto
+                        FROM
                             PROYECTO
-                        WHERE 
-                            INSTITUCION.id_institucion = PROYECTO.id_institucion AND
-                            INSTITUCION.id_institucion = ? 
-                        GROUP BY
-                            INSTITUCION.id_institucion
+                        WHERE
+                            PROYECTO.id_institucion = ?
                         ";
                 $query = $this->db->query($sql, Array($id_institucion));
+                if($query->num_rows() > 0) {
+                    $sql = "SELECT 
+                                INSTITUCION.id_institucion, 
+                                INSTITUCION.nombre_institucion, 
+                                INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
+                            FROM 
+                                INSTITUCION, 
+                                PROYECTO
+                            WHERE 
+                                INSTITUCION.id_institucion = PROYECTO.id_institucion AND
+                                INSTITUCION.id_institucion = ? 
+                            GROUP BY
+                                INSTITUCION.id_institucion
+                            ";
+                    $query = $this->db->query($sql, Array($id_institucion));
+                } else {
+                    $sql = "SELECT 
+                                INSTITUCION.id_institucion, 
+                                INSTITUCION.nombre_institucion, 
+                                INSTITUCION.presupuesto_institucion AS presupuesto_disponible_institucion
+                            FROM 
+                                INSTITUCION
+                            WHERE
+                                INSTITUCION.id_institucion = ? 
+                            GROUP BY
+                                INSTITUCION.id_institucion
+                            ";
+                    $query = $this->db->query($sql, Array($id_institucion));
+                }
+                $this->db->trans_complete();
                 if (!$query) {
                     return false;
                 } else {
@@ -1181,21 +1206,47 @@ class Modelo_socio extends CI_Model {
             if (!is_numeric($id_institucion) || !is_numeric($id_proyecto)) {
                 redirect(base_url() . 'socio/error');
             } else {
-                $sql = "SELECT 
-                            INSTITUCION.id_institucion, 
-                            INSTITUCION.nombre_institucion, 
-                            INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
-                        FROM 
-                            INSTITUCION, 
+                $this->db->trans_start();
+                $sql = "SELECT
+                            PROYECTO.id_proyecto
+                        FROM
                             PROYECTO
-                        WHERE 
-                            INSTITUCION.id_institucion = PROYECTO.id_institucion AND
-                            INSTITUCION.id_institucion = ? AND
+                        WHERE
+                            PROYECTO.id_institucion = ? AND
                             PROYECTO.id_proyecto != ?
-                        GROUP BY
-                            INSTITUCION.id_institucion
                         ";
                 $query = $this->db->query($sql, Array($id_institucion, $id_proyecto));
+                if($query->num_rows() > 0) {
+                    $sql = "SELECT 
+                                INSTITUCION.id_institucion, 
+                                INSTITUCION.nombre_institucion, 
+                                INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
+                            FROM 
+                                INSTITUCION, 
+                                PROYECTO
+                            WHERE 
+                                INSTITUCION.id_institucion = PROYECTO.id_institucion AND
+                                INSTITUCION.id_institucion = ? AND
+                                PROYECTO.id_proyecto != ?
+                            GROUP BY
+                                INSTITUCION.id_institucion
+                            ";
+                    $query = $this->db->query($sql, Array($id_institucion, $id_proyecto));
+                } else {
+                    $sql = "SELECT 
+                                INSTITUCION.id_institucion, 
+                                INSTITUCION.nombre_institucion, 
+                                INSTITUCION.presupuesto_institucion AS presupuesto_disponible_institucion
+                            FROM 
+                                INSTITUCION
+                            WHERE 
+                                INSTITUCION.id_institucion = ?
+                            GROUP BY
+                                INSTITUCION.id_institucion
+                            ";
+                    $query = $this->db->query($sql, Array($id_institucion));
+                }
+                $this->db->trans_complete();
                 if (!$query) {
                     return false;
                 } else {

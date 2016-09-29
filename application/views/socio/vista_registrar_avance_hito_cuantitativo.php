@@ -32,7 +32,7 @@
                 <form action="<?= base_url() . 'socio/registrar_avance_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_avance_hito" role="form" method="post" accept-charset="utf-8" enctype="multipart/form-data" autocomplete="off">
                     <div class="form-group">
                         <label for="cantidad_avance_hito_vista">Cantidad de avance</label>
-                        <input type="text" name="cantidad_avance_hito_vista" id="cantidad_avance_hito_vista" placeholder="Cantidad de avance" class="form-control" required>
+                        <input type="text" name="cantidad_avance_hito_vista" id="cantidad_avance_hito_vista" placeholder="Cantidad de avance" class="form-control">
                         <input type="hidden" name="cantidad_avance_hito" id="cantidad_avance_hito">
                         <p><?= form_error('cantidad_avance_hito') ?></p>
                     </div>
@@ -62,6 +62,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_avance_hito').validate({
+                    ignore: [],
                     errorClass: 'has-error',
                     validClass: 'has-success',
                     rules: {

@@ -47,7 +47,7 @@
                                     <td><div class="form-group"><input type="text" name="fecha_gasto[]" id="fecha_gasto_1" class="form-control" required></div></td>
                                     <td>
                                         <div class="form-group">
-                                            <input type="text" name="importe_gasto_vista[]" id="importe_gasto_vista_1" class="form-control importe" required>
+                                            <input type="text" name="importe_gasto_vista[]" id="importe_gasto_vista_1" class="form-control importe">
                                             <input type="hidden" name="importe_gasto[]" id="importe_gasto_1">
                                         </div>
                                     </td>
@@ -73,6 +73,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_gastos').validate({
+                    ignore: [],
                     errorClass: 'has-error',
                     validClass: 'has-success',
                     rules: {
@@ -105,7 +106,7 @@
                 $('#tabla_gastos >tbody').append(
                         "<tr>" +
                         "<td><div class='form-group'><input type='text' name='fecha_gasto[]' id='fecha_gasto_" + num_filas + "' class='form-control' required></div></td>" +
-                        "<td><div class='form-group'><input type='text' name='importe_gasto_vista[]' id='importe_gasto_vista_" + num_filas + "' class='form-control importe' required>" +
+                        "<td><div class='form-group'><input type='text' name='importe_gasto_vista[]' id='importe_gasto_vista_" + num_filas + "' class='form-control importe'>" +
                         "<input type='hidden' name='importe_gasto[]' id='importe_gasto_" + num_filas + "'></div></td>" +
                         "<td><div class='form-group'><textarea name='concepto_gasto[]' id='concepto_gasto_" + num_filas + "' class='form-control vresize' required></textarea></div></td>" +
                         "<td><div class='form-group'><input type='file' name='respaldo_" + num_filas + "' id='respaldo_" + num_filas + "' title='Seleccionar archivo' required  class='required' aria-required='true' data-required></div></td>" +

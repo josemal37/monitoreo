@@ -72,7 +72,7 @@ class Coordinador extends CI_Controller {
 
     public function ver_avances_hito_cualitativo($id_institucion, $id_proyecto, $id_hito) {
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_institucion)) {
-            redirect(base_url() . 'socio');
+            redirect(base_url() . 'coordinador');
         } else {
             $datos = Array();
             $datos['id_proyecto'] = $id_proyecto;
@@ -119,52 +119,52 @@ class Coordinador extends CI_Controller {
             }
         }
     }
-    
+
     public function aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
-        if(!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
             $this->modelo_coordinador->modificar_estado_avance_hito_cuantitativo($id_estado_avance, true);
-            redirect(base_url() . 'coordinador/ver_avances_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito);
+            redirect(base_url() . 'coordinador/ver_avances_hito_cuantitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
         }
     }
-    
+
     public function no_aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
-        if(!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
             $this->modelo_coordinador->modificar_estado_avance_hito_cuantitativo($id_estado_avance, false);
-            redirect(base_url() . 'coordinador/ver_avances_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito);
+            redirect(base_url() . 'coordinador/ver_avances_hito_cuantitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
         }
     }
-    
+
     public function aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance) {
-        if(!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
             $this->modelo_coordinador->modificar_estado_avance_hito_cualitativo($id_estado_avance, true);
-            redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $id_proyecto . '/' . $id_hito);
+            redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
         }
     }
-    
+
     public function no_aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance) {
-        if(!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
             $this->modelo_coordinador->modificar_estado_avance_hito_cualitativo($id_estado_avance, false);
-            redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $id_proyecto . '/' . $id_hito);
+            redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
         }
     }
-    
+
     public function error() {
         $this->verificar_sesion();
-        
+
         $this->load->view('vista_error');
     }
 
     public function descarga($id_institucion, $nombre) {
         $this->verificar_sesion();
-        
+
         $institucion = $this->modelo_coordinador->get_institucion($id_institucion);
         $data = file_get_contents('./files/' . $institucion->carpeta_institucion . '/' . $nombre);
         force_download($nombre, $data);

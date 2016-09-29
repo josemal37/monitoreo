@@ -493,6 +493,12 @@ class Socio extends CI_Controller {
                     $titulo_avance_hito = $this->input->post('titulo_avance_hito');
                     $fecha_avance_hito = $this->input->post('fecha_avance_hito');
                     $descripcion_avance_hito = $this->input->post('descripcion_avance_hito');
+                    foreach ($_FILES as $clave => $archivo) {
+                        $nombre = $archivo['name'];
+                        $nombre = $this->modelo_socio->sanitizar_cadena($nombre);
+                        unset($_FILES[$clave]['name']);
+                        $_FILES[$clave]['name'] = $nombre;
+                    }
                     $this->modelo_socio->insert_avance_hito_cualitativo($id_hito, $titulo_avance_hito, $fecha_avance_hito, $descripcion_avance_hito);
                     redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
                 }

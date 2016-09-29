@@ -39,7 +39,7 @@
                     <div id="datos_cuantitativos">
                         <div class="form-group">
                             <label for="meta_hito_vista">Meta del hito</label>
-                            <input type="text" name="meta_hito_vista" id="meta_hito_vista" value="<?= $hito->meta_hito_cn ?>" placeholder="Meta del hito" class="form-control" required>
+                            <input type="text" name="meta_hito_vista" id="meta_hito_vista" value="<?= $hito->meta_hito_cn ?>" placeholder="Meta del hito" class="form-control">
                             <input type="hidden" name="meta_hito" id="meta_hito" value="<?= $hito->meta_hito_cn ?>">
                             <p><?= form_error('meta_hito') ?></p>
                         </div>
@@ -57,6 +57,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#formulario_hito').validate({
+                    ignore: [],
                     errorClass: 'has-error',
                     validClass: 'has-success',
                     rules: {

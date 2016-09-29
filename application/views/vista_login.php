@@ -28,7 +28,7 @@
                     </div>
                     <div class="form-group">
                         <label for="password_usuario" class="sr-only">Introduce tu password</label>
-                        <input type="password" name="password_usuario" placeholder="password" class="form-control">
+                        <input type="password" name="password_usuario" placeholder="contraseña" class="form-control">
                         <p><?= form_error('password_usuario') ?></p>
                     </div>
                     <input type="hidden" name="token" value="<?= $token ?>">
