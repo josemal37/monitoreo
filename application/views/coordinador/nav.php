@@ -18,6 +18,9 @@ $nombre_institucion = $this->session->userdata('nombre_institucion');
             <ul class="nav navbar-nav">
                 <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'coordinador/proyectos_activos', 'Proyectos activos') ?></li>
             </ul>
+            <ul class="nav navbar-nav">
+                <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'coordinador/reportes', 'Reportes') ?></li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"><?= $nombre_usuario . " " . $apellido_usuario ?><span class="caret"></span></a>

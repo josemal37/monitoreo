@@ -612,4 +612,94 @@ class Modelo_coordinador extends CI_Model {
         }
     }
 
+    public function get_datos_reporte_financiero() {
+        try {
+            $datos = Array();
+            $this->db->trans_start();
+            $sql = "SELECT
+                        PROYECTO.id_proyecto,
+                        PROYECTO.nombre_proyecto,
+                        PROYECTO.presupuesto_proyecto,
+                        INSTITUCION.id_institucion,
+                        INSTITUCION.nombre_institucion
+                    FROM
+                        PROYECTO,
+                        INSTITUCION
+                    WHERE
+                        PROYECTO.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO.en_edicion = false
+                    ORDER BY
+                        INSTITUCION.nombre_institucion ASC
+                ";
+            $query = $this->db->query($sql);
+            if (!$query) {
+                return Array();
+            } else {
+                if ($query->num_rows() == 0) {
+                    return Array();
+                } else {
+                    $datos = Array();
+                    $proyectos = $query->result();
+                    $datos['proyectos'] = $proyectos;
+                    foreach ($proyectos as $clave_proyecto => $proyecto) {
+                        $actividades;
+                        $sql = "SELECT
+                                ACTIVIDAD.id_actividad,
+                                ACTIVIDAD.nombre_actividad,
+                                ACTIVIDAD.presupuesto_actividad
+                            FROM
+                                ACTIVIDAD
+                            WHERE
+                                ACTIVIDAD.id_proyecto = ?
+                            ";
+                        $query = $this->db->query($sql, Array($proyecto->id_proyecto));
+                        if (!$query) {
+                            $actividades = Array();
+                            $datos['proyectos'][$clave_proyecto]->actividades = $actividades;
+                        } else {
+                            if ($query->num_rows() == 0) {
+                                $actividades = Array();
+                                $datos['proyectos'][$clave_proyecto]->actividades = $actividades;
+                            } else {
+                                $actividades = $query->result();
+                                $datos['proyectos'][$clave_proyecto]->actividades = $actividades;
+                                foreach ($actividades as $clave_actividad => $actividad) {
+                                    $gastos;
+                                    $sql = "SELECT
+                                            GASTO_ACTIVIDAD.id_gasto_actividad,
+                                            GASTO_ACTIVIDAD.fecha_gasto_actividad,
+                                            GASTO_ACTIVIDAD.concepto_gasto_actividad,
+                                            GASTO_ACTIVIDAD.importe_gasto_actividad,
+                                            GASTO_ACTIVIDAD.respaldo_gasto_actividad
+                                        FROM
+                                            GASTO_ACTIVIDAD
+                                        WHERE
+                                            GASTO_ACTIVIDAD.id_actividad = ?
+                                        ";
+                                    $query = $this->db->query($sql, Array($actividad->id_actividad));
+                                    if (!$query) {
+                                        $gastos = Array();
+                                        $datos['proyectos'][$clave_proyecto]->actividades[$clave_actividad]->gastos = $gastos;
+                                    } else {
+                                        if ($query->num_rows() == 0) {
+                                            $gastos = Array();
+                                            $datos['proyectos'][$clave_proyecto]->actividades[$clave_actividad]->gastos = $gastos;
+                                        } else {
+                                            $gastos = $query->result();
+                                            $datos['proyectos'][$clave_proyecto]->actividades[$clave_actividad]->gastos = $gastos;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $this->db->trans_complete();
+            return $datos;
+        } catch (Exception $ex) {
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
+
 }

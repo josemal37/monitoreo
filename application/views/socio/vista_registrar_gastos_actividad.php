@@ -11,6 +11,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/additional-methods.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.html.array.extend.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
@@ -62,6 +63,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <strong>Extensiones validas: </strong> pdf, doc, docx, rar, zip, xls, xlsx, gif, jpg, jpeg, png.
                     <div class="form-group">
                         <button type='button' name='nueva_fila' id='nueva_fila' class='btn btn-success'>Añadir fila</button>
                     </div>
@@ -90,6 +92,16 @@
                             required: true,
                             minlength: 5,
                             maxlength: 1024
+                        },
+                        respaldo_1: {
+                            required: true,
+                            extension: 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx'
+                        }
+                    },
+                    messages: {
+                        respaldo_1: {
+                            required: 'Seleccione un archivo.',
+                            extension: 'Extensión no valida.'
                         }
                     }
                 });
@@ -116,6 +128,14 @@
                 $("#fecha_gasto_" + num_filas).datepicker({dateFormat: 'yy-mm-dd'});
                 $('#importe_gasto_vista_' + num_filas).number(true, 2);
                 $('#respaldo_' + num_filas).bootstrapFileInput();
+                $('#respaldo_' + num_filas).rules('add', {
+                    required: true,
+                    extension: 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx',
+                    messages: {
+                        required: 'Seleccione un archivo.',
+                        extension: 'Extensión no valida.'
+                    }
+                });
                 num_filas = num_filas + 1;
             });
             $('#formulario_gastos').on('click', '#eliminar_fila', function() {

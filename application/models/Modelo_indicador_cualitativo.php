@@ -26,8 +26,8 @@ class Modelo_indicador_cualitativo extends Modelo_indicador {
         }
     }
 
-    protected function get_avances_aprobados_hito_cualitativo($id_indicador) {
-        if (!is_numeric($id_indicador)) {
+    protected function get_avances_aprobados_hito_cualitativo($id_hito) {
+        if (!is_numeric($id_hito)) {
             redirect(base_url());
         } else {
             $sql = "SELECT
@@ -43,9 +43,10 @@ class Modelo_indicador_cualitativo extends Modelo_indicador {
                         AVANCE_HITO_CUALITATIVO
                     WHERE
                         AVANCE_HITO_CUALITATIVO.en_revision_avance_hito_cl = false AND
-                        AVANCE_HITO_CUALITATIVO.aprobado_avance_hito_cl = true
+                        AVANCE_HITO_CUALITATIVO.aprobado_avance_hito_cl = true AND
+                        AVANCE_HITO_CUALITATIVO.id_hito_cl = ?
                     ";
-            $query = $this->db->query($sql);
+            $query = $this->db->query($sql, Array($id_hito));
             if (!$query) {
                 return false;
             } else {

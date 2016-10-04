@@ -31,7 +31,7 @@
                             <div class="panel-heading">
                                 <a data-toggle="collapse" href="#collapse_<?= $actividad->id_actividad ?>"><strong><?= $actividad->nombre_actividad ?></strong></a>
                             </div>
-                            <div class="panel-collapse collapse in" id="collapse_<?= $actividad->id_actividad ?>">
+                            <div class="panel-collapse collapse on" id="collapse_<?= $actividad->id_actividad ?>">
                                 <div class="panel-body">
                                     <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>

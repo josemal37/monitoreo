@@ -10,6 +10,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
@@ -29,10 +30,10 @@
                     <div class="form-group">
                         <label for="tipo_hito">Tipo de hito</label>
                         <div class="radio">
-                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cuantitativo" checked>Cuantitativo</label><br>
+                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cuantitativo">Cuantitativo</label><br>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cualitativo">Cualitativo</label><br>
+                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cualitativo" checked>Cualitativo</label><br>
                         </div>
                     </div>
                     <div class="form-group">
@@ -45,18 +46,7 @@
                         <textarea name="descripcion_hito" id="descripcion_hito" rows="4" placeholder="Descripción" class="form-control vresize"></textarea>
                         <p><?= form_error('descripcion_hito') ?></p>
                     </div>
-                    <div id="datos_cuantitativos">
-                        <div class="form-group">
-                            <label for="meta_hito_vista">Meta del hito</label>
-                            <input type="text" name="meta_hito_vista" id="meta_hito_vista" placeholder="Meta del hito" class="form-control">
-                            <input type="hidden" name="meta_hito" id="meta_hito">
-                            <p><?= form_error('meta_hito') ?></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="unidad_hito">Unidad</label>
-                            <input type="text" name="unidad_hito" id="unidad_hito" placeholder="Unidad del hito" class="form-control" required>
-                            <p><?= form_error('unidad_hito') ?></p>
-                        </div>
+                    <div id="datos_cuantitativos" style="display: none;">
                     </div>
                     <input type="hidden" name="id_actividad" value="<?= $id_actividad ?>" id="id_actividad">
                     <input type="submit" name="submit" value="Registrar hito" title="Registrar hito" class="btn btn-primary">
@@ -70,37 +60,26 @@
                     errorClass: 'has-error',
                     validClass: 'has-success',
                     rules: {
-                        nombre_hito_cn: {
+                        nombre_hito: {
                             required: true,
                             minlength: 5,
                             maxlength: 128
                         },
-                        descripcion_hito_cn: {
+                        descripcion_hito: {
                             required: true,
                             minlength: 5,
                             maxlength: 1024
                         },
-                        meta_hito_cn: {
+                        meta_hito: {
                             required: true,
                             number: true,
                             min: 0
                         },
-                        unidad_hito_cn: {
+                        unidad_hito: {
                             required: true,
                             minlength: 1,
                             maxlength: 32
                         }
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').addClass(errorClass).removeClass(validClass);
-                        $(element).addClass('control-label');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).parent('div').removeClass(errorClass).addClass(validClass);
-                    },
-                    errorPlacement: function(error, element) {
-                        $(error).addClass('control-label');
-                        error.insertAfter(element);
                     }
                 });
             });
@@ -108,10 +87,24 @@
         <script type="text/javascript">
             $('input[type=radio][name=tipo_hito]').change(function() {
                 if (this.value == 'cuantitativo') {
-                    $('#datos_cuantitativos').show('swing');
+                    $('#datos_cuantitativos').append(
+                    
+                     "<div class='form-group'>"+
+                            "<label for='meta_hito_vista'>Meta del hito</label>"+
+                            "<input type='text' name='meta_hito_vista' id='meta_hito_vista' placeholder='meta del hito' class='form-control'>"+
+                            "<input type='hidden' name='meta_hito' id='meta_hito'>"+
+                            "<p><?= form_error('meta_hito') ?></p>"+
+                        "</div>"+
+                        "<div class='form-group'>"+
+                            "<label for='unidad_hito'>Unidad</label>"+
+                            "<input type='text' name='unidad_hito' id='unidad_hito' placeholder='Unidad del hito' class='form-control' required>"+
+                            "<p><?= form_error('unidad_hito') ?></p>"+
+                        "</div>");
+                        $('#datos_cuantitativos').slideDown('swing');
                 }
                 else if (this.value == 'cualitativo') {
-                    $('#datos_cuantitativos').hide('swing');
+                    $('#datos_cuantitativos').slideUp('swing');
+                    $('#datos_cuantitativos').empty();
                 }
             });
         </script>
@@ -119,7 +112,7 @@
             $(document).ready(function(){
                 $('#meta_hito_vista').number(true);
             });
-            $('#meta_hito_vista').keyup(function(){
+            $('#datos_cuantitativos').on('keyup', '#meta_hito_vista', function(){
                 $('#meta_hito').val($('#meta_hito_vista').val());
             });
         </script>

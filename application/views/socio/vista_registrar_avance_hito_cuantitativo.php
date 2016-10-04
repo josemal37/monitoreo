@@ -10,6 +10,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/additional-methods.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.html.array.extend.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
@@ -117,17 +118,28 @@
                                                                 "<td><div class='form-group'><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance_1' class='form-control' required></div></td>"+
                                                                 "<td><div class='form-group'><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance_1' class='form-control vresize' required></textarea></div></td>"+
                                                                 "<td>"+
-                                                                    "<div class='form-group'><input type='file' name='documento_avance_1' id='documento_avance_1' title='Seleccionar archivo' required></div>"+
+                                                                    "<div class='form-group'><input type='file' name='documento_avance_1' id='documento_avance_1' class='file' title='Seleccionar archivo' required></div>"+
                                                                 "</td>"+
                                                                 "<td><button type='button' name='eliminar_fila' id='eliminar_fila' class='btn btn-danger btn-block btn-xs'>Eliminar fila</button></td>"+
                                                             "</tr>"+
                                                         "</tbody>"+
                                                     "</table>"+
                                                 "</div>"+
+                                                "<br>"+
                                                 "<button type='button' name='nueva_fila' id='nueva_fila' class='btn btn-success'>Añadir fila</button>"+
+                                                "<br>"+
+                                                "<strong>Extensiones validas: </strong> pdf, doc, docx, rar, zip, xls, xlsx, gif, jpg, jpeg, png."+
                                             "</div>");
                     $('#documentos_avance').show('swing');
                     $('#documento_avance_1').bootstrapFileInput();
+                    $('#documento_avance_1').rules('add', {
+                        required: true,
+                        extension: 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx',
+                        messages: {
+                            required: 'Seleccione un archivo.',
+                            extension: 'Extensión no valida.'
+                        }
+                    });
                 } else {
                     $('#documentos_avance').hide('swing');
                     $('#documentos_avance').remove();
@@ -142,12 +154,20 @@
                             "<td><div class='form-group'><input type='text' name='titulo_documento_avance[]' id='titulo_documento_avance_"+num_filas+"' class='form-control' required></div></td>"+
                             "<td><div class='form-group'><textarea name='descripcion_documento_avance[]' id='descripcion_documento_avance_"+num_filas+"' class='form-control vresize' required></textarea></div></td>"+
                             "<td>"+
-                                "<div class='form-group'><input type='file' name='documento_avance_"+num_filas+"' id='documento_avance_"+num_filas+"' title='Seleccionar archivo' required></div>"+
+                                "<div class='form-group'><input type='file' name='documento_avance_"+num_filas+"' id='documento_avance_"+num_filas+"' class='file' title='Seleccionar archivo' required></div>"+
                             "</td>"+
                             "<td><button type='button' name='eliminar_fila' id='eliminar_fila' class='btn btn-danger btn-block btn-xs'>Eliminar fila</button></td>"+
                         "</tr>"
                         );
                 $('#documento_avance_'+num_filas).bootstrapFileInput();
+                $('#documento_avance_'+num_filas).rules('add', {
+                    required: true,
+                    extension: 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx',
+                    messages: {
+                        required: 'Seleccione un archivo.',
+                        extension: 'Extensión no valida.'
+                    }
+                });
                 num_filas = num_filas + 1;
             });
             $('#respaldos').on('click', '#eliminar_fila', function(){

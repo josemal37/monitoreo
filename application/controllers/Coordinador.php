@@ -53,6 +53,8 @@ class Coordinador extends CI_Controller {
     }
 
     public function ver_avances_hito_cuantitativo($id_institucion, $id_proyecto, $id_hito) {
+        $this->verificar_sesion();
+        
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_institucion)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -71,6 +73,8 @@ class Coordinador extends CI_Controller {
     }
 
     public function ver_avances_hito_cualitativo($id_institucion, $id_proyecto, $id_hito) {
+        $this->verificar_sesion();
+        
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_institucion)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -86,6 +90,8 @@ class Coordinador extends CI_Controller {
     }
 
     public function registrar_indicador_cuantitativo($id_proyecto, $id_hito) {
+        $this->verificar_sesion();
+        
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -121,6 +127,8 @@ class Coordinador extends CI_Controller {
     }
 
     public function aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
+        $this->verificar_sesion();
+        
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -130,6 +138,8 @@ class Coordinador extends CI_Controller {
     }
 
     public function no_aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
+        $this->verificar_sesion();
+        
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -139,6 +149,8 @@ class Coordinador extends CI_Controller {
     }
 
     public function aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance) {
+        $this->verificar_sesion();
+        
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -148,11 +160,39 @@ class Coordinador extends CI_Controller {
     }
 
     public function no_aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance) {
+        $this->verificar_sesion();
+        
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
             $this->modelo_coordinador->modificar_estado_avance_hito_cualitativo($id_estado_avance, false);
             redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
+        }
+    }
+    
+    public function reportes() {
+        $this->verificar_sesion();
+        
+        $this->load->view('coordinador/vista_reportes');
+    }
+    
+    public function reporte_gastos() {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos = $this->modelo_coordinador->get_datos_reporte_financiero();
+        $this->load->view('coordinador/vista_reporte_gastos', $datos);
+    }
+    
+    public function reporte_estado_actual_proyecto($id_proyecto=NULL) {
+        $this->verificar_sesion();
+        if($id_proyecto != NULL) {
+            //reporte del proyecto
+        } else {
+            //lista de proyectos
+            $datos = Array();
+            $datos['proyectos'] = $this->modelo_coordinador->get_proyectos_activos();
+            $this->load->view('coordinador/vista_proyectos_activos_reporte', $datos);
         }
     }
 

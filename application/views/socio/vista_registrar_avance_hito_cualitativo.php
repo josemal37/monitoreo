@@ -11,6 +11,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/additional-methods.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
@@ -48,6 +49,8 @@
                         <div>
                             <input type="file" name="documento_avance_hito" id="documento_avance_hito" title="Seleccione un archivo" required>
                         </div>
+                        <br>
+                        <strong>Extensiones validas: </strong> pdf, doc, docx, rar, zip, xls, xlsx, gif, jpg, jpeg, png.
                     </div>
                     <input type="hidden" name="id_hito" value="<?= $id_hito ?>" id="id_hito">
                     <input type="submit" name="submit" value="Registrar avance" title="Registrar avance" class="btn btn-primary">
@@ -75,7 +78,14 @@
                             maxlength: 1024
                         },
                         documento_avance_hito: {
-                            required: true
+                            required: true,
+                            extension: 'gif|jpg|jpeg|jpe|png|pdf|doc|docx|rar|zip|xls|xlsx'
+                        }
+                    },
+                    messages: {
+                        documento_avance_hito: {
+                            required: 'Seleccione un archivo.',
+                            extension: 'Extensión no valida.'
                         }
                     }
                 });

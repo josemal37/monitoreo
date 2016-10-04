@@ -176,7 +176,7 @@ class Modelo_socio extends CI_Model {
                     WHERE
                         ACTIVIDAD.id_proyecto = ?
                     ORDER BY
-                        ACTIVIDAD.fecha_inicio_actividad ASC
+                        ACTIVIDAD.nombre_actividad ASC
                     ";
             $query_actividades = $this->db->query($sql, Array($id_proyecto));
             return $query_actividades->result();
@@ -281,7 +281,7 @@ class Modelo_socio extends CI_Model {
                                 case 'Porcentaje':
                                     $estado = $this->modelo_indicador_porcentaje->get_estado_indicador($indicador);
                                     break;
-                                case 'promedio menor que':
+                                case 'Promedio menor que':
                                     $estado = $this->modelo_indicador_promedio_menor_que->get_estado_indicador($indicador);
                                     break;
                             }
