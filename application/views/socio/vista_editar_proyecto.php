@@ -39,6 +39,9 @@
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
                                     <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span></p>
+                                    <?php if(isset($actividad->nombre_producto)): ?>
+                                        <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
+                                    <?php endif; ?>
                                     <div>
                                         <a href="<?= base_url() . 'socio/modificar_actividad/' . $actividad->id_actividad ?>" class="btn btn-default">Modificar actividad</a>
                                         <a href="<?= base_url() . 'socio/eliminar_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-danger">Eliminar actividad</a>

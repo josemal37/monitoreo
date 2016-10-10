@@ -33,7 +33,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr class="hidden">
                                 <td>Reporte de gastos</td>
                                 <td>Un reporte que muestra los gastos realizados por los socios en el desarrollo de sus proyectos.</td>
                                 <td><a href="<?= base_url() . 'coordinador/reporte_gastos' ?>" class="btn btn-success btn-xs btn-block">Ver reporte</a></td>

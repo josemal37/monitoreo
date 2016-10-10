@@ -108,14 +108,15 @@ class Socio extends CI_Controller {
     public function registrar_nueva_actividad($id_proyecto) {
         $this->verificar_sesion();
 
-        if (isset($_POST['id_proyecto']) && isset($_POST['nombre_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
+        if (isset($_POST['id_proyecto']) && isset($_POST['nombre_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad']) && isset($_POST['id_producto'])) {
             $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
             $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[2]|max_length[128]');
             $this->form_validation->set_rules('fecha_inicio_actividad', 'fecha_inicio_actividad', 'required');
             $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
             $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[2]|max_length[1024]');
             $this->form_validation->set_rules('presupuesto_actividad', 'presupuesto_actividad', 'required|numeric');
-
+            $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
+            
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['id_proyecto']);
                 $this->registrar_nueva_actividad($id_proyecto);
@@ -126,8 +127,9 @@ class Socio extends CI_Controller {
                     $fecha_inicio_actividad = $this->input->post('fecha_inicio_actividad');
                     $fecha_fin_actividad = $this->input->post('fecha_fin_actividad');
                     $presupuesto_actividad = $this->input->post('presupuesto_actividad');
+                    $id_producto = $this->input->post('id_producto');
                     if ($this->comparar_fechas($fecha_inicio_actividad, $fecha_fin_actividad) <= 0) {
-                        $this->modelo_socio->insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad);
+                        $this->modelo_socio->insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto);
                         redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
                     } else {
                         //fechas incoherentes
@@ -141,6 +143,7 @@ class Socio extends CI_Controller {
         } else {
             $datos = Array();
             $datos['id_proyecto'] = $id_proyecto;
+            $datos['productos'] = $this->modelo_socio->get_productos();
             $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto($id_proyecto);
             $this->load->view('socio/vista_registrar_nueva_actividad', $datos);
         }
@@ -189,7 +192,7 @@ class Socio extends CI_Controller {
         if (!is_numeric($id_actividad)) {
             redirect(base_url() . 'socio');
         } else {
-            if (isset($_POST['id_proyecto']) && isset($_POST['id_actividad']) && isset($_POST['nombre_actividad']) && isset($_POST['descripcion_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
+            if (isset($_POST['id_proyecto']) && isset($_POST['id_actividad']) && isset($_POST['nombre_actividad']) && isset($_POST['descripcion_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad']) && isset($_POST['id_producto'])) {
                 $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
                 $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric|is_natural');
                 $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[5]|max_length[128]');
@@ -197,7 +200,8 @@ class Socio extends CI_Controller {
                 $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
                 $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('presupuesto_actividad', 'presupuesto_actividad', 'required|numeric');
-
+                $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
+                
                 if ($this->form_validation->run() == FALSE) {
                     unset($_POST['id_actividad']);
                     $this->modificar_actividad($id_actividad);
@@ -209,8 +213,9 @@ class Socio extends CI_Controller {
                         $fecha_inicio_actividad = $this->input->post('fecha_inicio_actividad');
                         $fecha_fin_actividad = $this->input->post('fecha_fin_actividad');
                         $presupuesto_actividad = $this->input->post('presupuesto_actividad');
+                        $id_producto = $this->input->post('id_producto');
                         if ($this->comparar_fechas($fecha_inicio_actividad, $fecha_fin_actividad) <= 0) {
-                            $this->modelo_socio->update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad);
+                            $this->modelo_socio->update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto);
                             redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
                         } else {
                             //fechas incoherentes
@@ -223,6 +228,7 @@ class Socio extends CI_Controller {
             } else {
                 $datos = Array();
                 $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
+                $datos['productos'] = $this->modelo_socio->get_productos();
                 $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto_con_id($datos['actividad']->id_proyecto, $id_actividad);
                 $this->load->view('socio/vista_modificar_actividad', $datos);
             }

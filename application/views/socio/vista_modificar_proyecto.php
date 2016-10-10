@@ -20,7 +20,7 @@
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Registrar proyectos";
+            $datos['activo'] = "Registrar proyecto";
             $this->load->view('socio/nav', $datos);
             ?>
             <div>

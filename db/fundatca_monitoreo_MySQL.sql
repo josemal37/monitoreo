@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     24/08/2016 12:08:02                          */
+/* Created on:     09/10/2016 20:39:13                          */
 /*==============================================================*/
 
 /*==============================================================*/
@@ -73,6 +73,18 @@ create table DOCUMENTO_AVANCE_HITO_CUANTITATIVO
    DESCRIPCION_DOCUMENTO_AVANCE_HITO_CN text not null,
    ARCHIVO_DOCUMENTO_AVANCE_HITO_CN varchar(128) not null,
    primary key (ID_DOCUMENTO_AVANCE_HITO_CN)
+);
+
+/*==============================================================*/
+/* Table: EFECTO                                                */
+/*==============================================================*/
+create table EFECTO
+(
+   ID_EFECTO            int not null auto_increment,
+   ID_PRODOC            int not null,
+   NOMBRE_EFECTO        varchar(1024) not null,
+   DESCRIPCION_EFECTO   varchar(1024),
+   primary key (ID_EFECTO)
 );
 
 /*==============================================================*/
@@ -159,6 +171,84 @@ create table INSTITUCION
 );
 
 /*==============================================================*/
+/* Table: META_ACTIVIDAD_APORTA_META_PRODUCTO_CL                */
+/*==============================================================*/
+create table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL
+(
+   ID_HITO_CL           int not null,
+   ID_META_PRODUCTO_CUALITATIVA int not null,
+   primary key (ID_HITO_CL, ID_META_PRODUCTO_CUALITATIVA)
+);
+
+/*==============================================================*/
+/* Table: META_ACTIVIDAD_APORTA_META_PRODUCTO_CN                */
+/*==============================================================*/
+create table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+(
+   ID_HITO_CN           int not null,
+   ID_META_PRODUCTO_CUANTITATIVA int not null,
+   primary key (ID_HITO_CN, ID_META_PRODUCTO_CUANTITATIVA)
+);
+
+/*==============================================================*/
+/* Table: META_PRODUCTO_CUALITATIVA                             */
+/*==============================================================*/
+create table META_PRODUCTO_CUALITATIVA
+(
+   ID_META_PRODUCTO_CUALITATIVA int not null auto_increment,
+   ID_PRODUCTO          int not null,
+   NOMBRE_META_PRODUCTO_CUALITATIVA varchar(256) not null,
+   DESCRIPCION_META_PRODUCTO_CUALITATIVA varchar(1024),
+   primary key (ID_META_PRODUCTO_CUALITATIVA)
+);
+
+/*==============================================================*/
+/* Table: META_PRODUCTO_CUANTITATIVA                            */
+/*==============================================================*/
+create table META_PRODUCTO_CUANTITATIVA
+(
+   ID_META_PRODUCTO_CUANTITATIVA int not null auto_increment,
+   ID_PRODUCTO          int not null,
+   CANTIDAD_META_PRODUCTO_CUANTITATIVA decimal(10,2) not null,
+   UNIDAD_META_PRODUCTO_CUANTITATIVA varchar(128) not null,
+   NOMBRE_META_PRODUCTO_CUANTITATIVA varchar(1024) not null,
+   DESCRIPCION_META_PRODUCTO_CUANTITATIVA varchar(1024) not null,
+   primary key (ID_META_PRODUCTO_CUANTITATIVA)
+);
+
+/*==============================================================*/
+/* Table: PRODOC                                                */
+/*==============================================================*/
+create table PRODOC
+(
+   ID_PRODOC            int not null auto_increment,
+   NOMBRE_PRODOC        varchar(1024) not null,
+   DESCRIPCION_PRODOC   varchar(1024),
+   primary key (ID_PRODOC)
+);
+
+/*==============================================================*/
+/* Table: PRODUCTO                                              */
+/*==============================================================*/
+create table PRODUCTO
+(
+   ID_PRODUCTO          int not null auto_increment,
+   ID_EFECTO            int,
+   NOMBRE_PRODUCTO      varchar(1024) not null,
+   primary key (ID_PRODUCTO)
+);
+
+/*==============================================================*/
+/* Table: PRODUCTO_ACTIVIDAD                                    */
+/*==============================================================*/
+create table PRODUCTO_ACTIVIDAD
+(
+   ID_ACTIVIDAD         int not null,
+   ID_PRODUCTO_ASOCIADO int not null,
+   primary key (ID_ACTIVIDAD)
+);
+
+/*==============================================================*/
 /* Table: PROYECTO                                              */
 /*==============================================================*/
 create table PROYECTO
@@ -213,46 +303,74 @@ create table USUARIO
 );
 
 alter table ACTIVIDAD add constraint FK_PROYECTO_TIENE_ACTIVIDAD foreign key (ID_PROYECTO)
-      references PROYECTO (ID_PROYECTO) on delete cascade on update restrict;
+      references PROYECTO (ID_PROYECTO) on delete restrict on update restrict;
 
 alter table AVANCE_HITO_CUALITATIVO add constraint FK_HITO_CL_TIENE_AVANCE foreign key (ID_HITO_CL)
-      references HITO_CUALITATIVO (ID_HITO_CL) on delete cascade on update restrict;
+      references HITO_CUALITATIVO (ID_HITO_CL) on delete restrict on update restrict;
 
 alter table AVANCE_HITO_CUANTITATIVO add constraint FK_HITO_CN_TIENE_AVANCE foreign key (ID_HITO_CN)
-      references HITO_CUANTITATIVO (ID_HITO_CN) on delete cascade on update restrict;
+      references HITO_CUANTITATIVO (ID_HITO_CN) on delete restrict on update restrict;
 
 alter table DOCUMENTO_ACTIVIDAD add constraint FK_ACTIVIDAD_TIENE_DOCUMENTO foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
 
 alter table DOCUMENTO_AVANCE_HITO_CUANTITATIVO add constraint FK_AVANCE_CN_TIENE_RESPALDO foreign key (ID_AVANCE_HITO_CN)
-      references AVANCE_HITO_CUANTITATIVO (ID_AVANCE_HITO_CN) on delete cascade on update restrict;
+      references AVANCE_HITO_CUANTITATIVO (ID_AVANCE_HITO_CN) on delete restrict on update restrict;
+
+alter table EFECTO add constraint FK_PRODOC_TIENE_EFECTO foreign key (ID_PRODOC)
+      references PRODOC (ID_PRODOC) on delete restrict on update restrict;
 
 alter table GASTO_ACTIVIDAD add constraint FK_ACTIVIDAD_TIENE_GASTO foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
 
 alter table GASTO_PROYECTO add constraint FK_PROYECTO_TIENE_GASTO foreign key (ID_PROYECTO)
-      references PROYECTO (ID_PROYECTO) on delete cascade on update restrict;
+      references PROYECTO (ID_PROYECTO) on delete restrict on update restrict;
 
 alter table HITO_CUALITATIVO add constraint FK_ACTIVIDAD_TIENE_HITO_CL foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
 
 alter table HITO_CUANTITATIVO add constraint FK_ACTIVIDAD_TIENE_HITO_CN foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
 
 alter table INDICADOR_CUANTITATIVO add constraint FK_HITO_TIENE_INDICADOR_OP foreign key (ID_HITO_CN)
-      references HITO_CUANTITATIVO (ID_HITO_CN) on delete cascade on update restrict;
+      references HITO_CUANTITATIVO (ID_HITO_CN) on delete restrict on update restrict;
 
 alter table INDICADOR_CUANTITATIVO add constraint FK_INDICADOR_OP_ES_DE_TIPO foreign key (ID_TIPO_INDICADOR_CN)
-      references TIPO_INDICADOR_CUANTITATIVO (ID_TIPO_INDICADOR_CN) on delete cascade on update restrict;
+      references TIPO_INDICADOR_CUANTITATIVO (ID_TIPO_INDICADOR_CN) on delete restrict on update restrict;
+
+alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CL foreign key (ID_HITO_CL)
+      references HITO_CUALITATIVO (ID_HITO_CL) on delete restrict on update restrict;
+
+alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CL2 foreign key (ID_META_PRODUCTO_CUALITATIVA)
+      references META_PRODUCTO_CUALITATIVA (ID_META_PRODUCTO_CUALITATIVA) on delete restrict on update restrict;
+
+alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CN foreign key (ID_HITO_CN)
+      references HITO_CUANTITATIVO (ID_HITO_CN) on delete restrict on update restrict;
+
+alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CN2 foreign key (ID_META_PRODUCTO_CUANTITATIVA)
+      references META_PRODUCTO_CUANTITATIVA (ID_META_PRODUCTO_CUANTITATIVA) on delete restrict on update restrict;
+
+alter table META_PRODUCTO_CUALITATIVA add constraint FK_PRODUCTO_TIENE_META_CL foreign key (ID_PRODUCTO)
+      references PRODUCTO (ID_PRODUCTO) on delete restrict on update restrict;
+
+alter table META_PRODUCTO_CUANTITATIVA add constraint FK_PRODUCTO_TIENE_META_CN foreign key (ID_PRODUCTO)
+      references PRODUCTO (ID_PRODUCTO) on delete restrict on update restrict;
+
+alter table PRODUCTO add constraint FK_EFECTO_TIENE_PRODUCTO foreign key (ID_EFECTO)
+      references EFECTO (ID_EFECTO) on delete restrict on update restrict;
+
+alter table PRODUCTO_ACTIVIDAD add constraint FK_ACTIVIDAD_APORTA_PRODUCTO foreign key (ID_ACTIVIDAD)
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
 
 alter table PROYECTO add constraint FK_INSTITUCION_TIENE_PROYECTO foreign key (ID_INSTITUCION)
-      references INSTITUCION (ID_INSTITUCION) on delete cascade on update restrict;
+      references INSTITUCION (ID_INSTITUCION) on delete restrict on update restrict;
 
 alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_INSTITUCION)
-      references INSTITUCION (ID_INSTITUCION) on delete cascade on update restrict;
+      references INSTITUCION (ID_INSTITUCION) on delete restrict on update restrict;
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
-      references ROL (ID_ROL) on delete cascade on update restrict;
+      references ROL (ID_ROL) on delete restrict on update restrict;
+
 
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');

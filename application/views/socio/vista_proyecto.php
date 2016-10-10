@@ -174,7 +174,7 @@
                                         </div>
                                     <?php endif; ?>
                                     <?php if ($gastos_actividad): ?>
-                                        <div class="panel panel-default">
+                                        <div class="panel panel-default hidden">
                                             <div class="panel-heading">
                                                 <strong>Gastos actividad</strong>
                                             </div>
@@ -200,7 +200,7 @@
                                             </div>
                                         </div>
                                     <?php else: ?>
-                                        <div class="panel panel-warning">
+                                        <div class="panel panel-warning hidden">
                                             <div class="panel-heading">
                                                 Advertencia
                                             </div>
@@ -209,7 +209,7 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
-                                    <a href="<?= base_url() . 'socio/registrar_gastos_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default">Registrar gastos actividad</a>
+                                    <a href="<?= base_url() . 'socio/registrar_gastos_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default hidden">Registrar gastos actividad</a>
                                 </div>
                             </div>
                         </div>

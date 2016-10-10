@@ -38,6 +38,15 @@
                         <p><?= form_error('descripcion_actividad') ?></p>
                     </div>
                     <div class="form-group">
+                        <label for="id_producto">Producto asociado</label>
+                        <select name="id_producto" id="id_producto" class="form-control">
+                            <?php foreach ($productos as $producto): ?>
+                                <option value="<?= $producto->id_producto ?>"><?= $producto->nombre_producto ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p><?= form_error('id_producto') ?></p>
+                    </div>
+                    <div class="form-group">
                         <label for="fecha_inicio_actividad">Fecha de inicio</label>
                         <input type="text" name="fecha_inicio_actividad" id="fecha_inicio_actividad" class="form-control" required>
                         <p><?= form_error('fecha_inicio_actividad') ?></p>

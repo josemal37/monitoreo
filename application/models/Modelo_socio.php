@@ -170,9 +170,13 @@ class Modelo_socio extends CI_Model {
                         ACTIVIDAD.descripcion_actividad,
                         ACTIVIDAD.fecha_inicio_actividad,
                         ACTIVIDAD.fecha_fin_actividad,
-                        ACTIVIDAD.presupuesto_actividad
+                        ACTIVIDAD.presupuesto_actividad,
+                        PRODUCTO.id_producto,
+                        PRODUCTO.nombre_producto
                     FROM
                         ACTIVIDAD
+                    LEFT JOIN PRODUCTO_ACTIVIDAD ON PRODUCTO_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
+                    LEFT JOIN PRODUCTO ON PRODUCTO_ACTIVIDAD.id_producto_asociado = PRODUCTO.id_producto
                     WHERE
                         ACTIVIDAD.id_proyecto = ?
                     ORDER BY
@@ -196,9 +200,15 @@ class Modelo_socio extends CI_Model {
                         HITO_CUANTITATIVO.nombre_hito_cn,
                         HITO_CUANTITATIVO.descripcion_hito_cn,
                         HITO_CUANTITATIVO.meta_hito_cn,
-                        HITO_CUANTITATIVO.unidad_hito_cn
+                        HITO_CUANTITATIVO.unidad_hito_cn,
+                        META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa
                     FROM
                         HITO_CUANTITATIVO
+                    LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
+                    LEFT JOIN META_PRODUCTO_CUANTITATIVA ON META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
                     WHERE
                         HITO_CUANTITATIVO.id_actividad = $id_actividad
                     ORDER BY
@@ -473,9 +483,13 @@ class Modelo_socio extends CI_Model {
                             ACTIVIDAD.descripcion_actividad,
                             ACTIVIDAD.fecha_inicio_actividad,
                             ACTIVIDAD.fecha_fin_actividad,
-                            ACTIVIDAD.presupuesto_actividad
+                            ACTIVIDAD.presupuesto_actividad,
+                            PRODUCTO.id_producto,
+                            PRODUCTO.nombre_producto
                         FROM
                             ACTIVIDAD
+                        LEFT JOIN PRODUCTO_ACTIVIDAD ON PRODUCTO_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
+                        LEFT JOIN PRODUCTO ON PRODUCTO_ACTIVIDAD.id_producto_asociado = PRODUCTO.id_producto
                         WHERE
                             ACTIVIDAD.id_actividad = $id_actividad
                         ";
@@ -495,11 +509,12 @@ class Modelo_socio extends CI_Model {
         }
     }
 
-    public function insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad) {
+    public function insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto) {
         if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
+                $this->db->trans_start();
                 $sql = "INSERT INTO ACTIVIDAD
                         (
                             id_proyecto,
@@ -520,17 +535,32 @@ class Modelo_socio extends CI_Model {
                         )
                         ";
                 $query = $this->db->query($sql);
+                $id_actividad = $this->db->insert_id();
+                $sql = "INSERT INTO PRODUCTO_ACTIVIDAD
+                        (
+                            PRODUCTO_ACTIVIDAD.id_actividad,
+                            PRODUCTO_ACTIVIDAD.id_producto_asociado
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?
+                        )
+                        ";
+                $query = $this->db->query($sql, Array($id_actividad, $id_producto));
+                $this->db->trans_complete();
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
         }
     }
 
-    public function update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad) {
+    public function update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto) {
         if (!is_numeric($id_actividad)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
+                $this->db->trans_start();
                 $sql = "UPDATE ACTIVIDAD SET
                             ACTIVIDAD.nombre_actividad = '$nombre_actividad',
                             ACTIVIDAD.descripcion_actividad = '$descripcion_actividad',
@@ -541,6 +571,37 @@ class Modelo_socio extends CI_Model {
                             ACTIVIDAD.id_actividad = $id_actividad
                         ";
                 $query = $this->db->query($sql);
+                $sql = "SELECT
+                            PRODUCTO_ACTIVIDAD.id_actividad,
+                            PRODUCTO_ACTIVIDAD.id_producto_asociado
+                        FROM
+                            PRODUCTO_ACTIVIDAD
+                        WHERE
+                            PRODUCTO_ACTIVIDAD.id_actividad = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_actividad));
+                if($query->num_rows() > 0) {
+                    $sql = "UPDATE PRODUCTO_ACTIVIDAD SET
+                                PRODUCTO_ACTIVIDAD.id_producto_asociado = ?
+                            WHERE
+                                PRODUCTO_ACTIVIDAD.id_actividad = ?
+                            ";
+                    $query = $this->db->query($sql, Array($id_producto, $id_actividad));
+                } else {
+                    $sql = "INSERT INTO PRODUCTO_ACTIVIDAD
+                            (
+                                PRODUCTO_ACTIVIDAD.id_actividad,
+                                PRODUCTO_ACTIVIDAD.id_producto_asociado
+                            )
+                            VALUES
+                            (
+                                ?,
+                                ?
+                            )
+                            ";
+                    $query = $this->db->query($sql, Array($id_actividad, $id_producto));
+                }
+                $this->db->trans_complete();
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -1139,6 +1200,26 @@ class Modelo_socio extends CI_Model {
             }
         } catch (Exception $ex) {
             redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function get_productos() {
+        try {
+            $sql = "SELECT
+                        PRODUCTO.id_producto,
+                        PRODUCTO.id_efecto,
+                        PRODUCTO.nombre_producto
+                    FROM
+                        PRODUCTO
+                    ";
+            $query = $this->db->query($sql);
+            if(!$query) {
+                return Array();
+            } else {
+                return $query->result();
+            }
+        } catch (Exception $ex) {
+
         }
     }
 
