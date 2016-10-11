@@ -175,8 +175,8 @@ class Modelo_socio extends CI_Model {
                         PRODUCTO.nombre_producto
                     FROM
                         ACTIVIDAD
-                    LEFT JOIN PRODUCTO_ACTIVIDAD ON PRODUCTO_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
-                    LEFT JOIN PRODUCTO ON PRODUCTO_ACTIVIDAD.id_producto_asociado = PRODUCTO.id_producto
+                    LEFT JOIN PRODUCTO_RECIBE_ACTIVIDAD ON PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
+                    LEFT JOIN PRODUCTO ON PRODUCTO_RECIBE_ACTIVIDAD.id_producto = PRODUCTO.id_producto
                     WHERE
                         ACTIVIDAD.id_proyecto = ?
                     ORDER BY
@@ -228,7 +228,7 @@ class Modelo_socio extends CI_Model {
         try {
             $sql = "SELECT
                         HITO_CUALITATIVO.id_hito_cl,
-                     HITO_CUALITATIVO.id_actividad,
+                        HITO_CUALITATIVO.id_actividad,
                         HITO_CUALITATIVO.nombre_hito_cl,
                         HITO_CUALITATIVO.descripcion_hito_cl
                     FROM
@@ -488,8 +488,8 @@ class Modelo_socio extends CI_Model {
                             PRODUCTO.nombre_producto
                         FROM
                             ACTIVIDAD
-                        LEFT JOIN PRODUCTO_ACTIVIDAD ON PRODUCTO_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
-                        LEFT JOIN PRODUCTO ON PRODUCTO_ACTIVIDAD.id_producto_asociado = PRODUCTO.id_producto
+                        LEFT JOIN PRODUCTO_RECIBE_ACTIVIDAD ON PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
+                        LEFT JOIN PRODUCTO ON PRODUCTO_RECIBE_ACTIVIDAD.id_producto = PRODUCTO.id_producto
                         WHERE
                             ACTIVIDAD.id_actividad = $id_actividad
                         ";
@@ -536,10 +536,10 @@ class Modelo_socio extends CI_Model {
                         ";
                 $query = $this->db->query($sql);
                 $id_actividad = $this->db->insert_id();
-                $sql = "INSERT INTO PRODUCTO_ACTIVIDAD
+                $sql = "INSERT INTO PRODUCTO_RECIBE_ACTIVIDAD
                         (
-                            PRODUCTO_ACTIVIDAD.id_actividad,
-                            PRODUCTO_ACTIVIDAD.id_producto_asociado
+                            PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
+                            PRODUCTO_RECIBE_ACTIVIDAD.id_producto
                         )
                         VALUES
                         (
@@ -572,26 +572,43 @@ class Modelo_socio extends CI_Model {
                         ";
                 $query = $this->db->query($sql);
                 $sql = "SELECT
-                            PRODUCTO_ACTIVIDAD.id_actividad,
-                            PRODUCTO_ACTIVIDAD.id_producto_asociado
+                            PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
+                            PRODUCTO_RECIBE_ACTIVIDAD.id_producto
                         FROM
-                            PRODUCTO_ACTIVIDAD
+                            PRODUCTO_RECIBE_ACTIVIDAD
                         WHERE
-                            PRODUCTO_ACTIVIDAD.id_actividad = ?
+                            PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ?
                         ";
                 $query = $this->db->query($sql, Array($id_actividad));
                 if($query->num_rows() > 0) {
-                    $sql = "UPDATE PRODUCTO_ACTIVIDAD SET
-                                PRODUCTO_ACTIVIDAD.id_producto_asociado = ?
-                            WHERE
-                                PRODUCTO_ACTIVIDAD.id_actividad = ?
-                            ";
-                    $query = $this->db->query($sql, Array($id_producto, $id_actividad));
+                    $producto_recibe_actividad = $query->row();
+                    if($producto_recibe_actividad->id_producto != $id_producto) {
+                        $sql = "UPDATE PRODUCTO_RECIBE_ACTIVIDAD SET
+                                    PRODUCTO_RECIBE_ACTIVIDAD.id_producto = ?
+                                WHERE
+                                    PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ?
+                                ";
+                        $query = $this->db->query($sql, Array($id_producto, $id_actividad));
+                        $sql = "DELETE FROM META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+                                WHERE
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn IN
+                                    (
+                                        SELECT
+                                            HITO_CUANTITATIVO.id_hito_cn
+                                        FROM
+                                            HITO_CUANTITATIVO,
+                                            ACTIVIDAD
+                                        WHERE
+                                            HITO_CUANTITATIVO.id_actividad = ?
+                                    )
+                                ";
+                        $query = $this->db->query($sql, Array($id_actividad));
+                    }
                 } else {
-                    $sql = "INSERT INTO PRODUCTO_ACTIVIDAD
+                    $sql = "INSERT INTO PRODUCTO_RECIBE_ACTIVIDAD
                             (
-                                PRODUCTO_ACTIVIDAD.id_actividad,
-                                PRODUCTO_ACTIVIDAD.id_producto_asociado
+                                PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
+                                PRODUCTO_RECIBE_ACTIVIDAD.id_producto
                             )
                             VALUES
                             (
@@ -641,11 +658,12 @@ class Modelo_socio extends CI_Model {
         }
     }
 
-    public function insert_hito_cuantitativo($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito) {
+    public function insert_hito_cuantitativo($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_meta_producto, $aporta_producto) {
         if (!is_numeric($id_actividad)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
+                $this->db->trans_start();
                 $sql = "INSERT INTO HITO_CUANTITATIVO
                         (
                             HITO_CUANTITATIVO.id_actividad,
@@ -664,17 +682,34 @@ class Modelo_socio extends CI_Model {
                         )
                         ";
                 $query = $this->db->query($sql);
+                if($aporta_producto == "directo") {
+                    $id_hito = $this->db->insert_id();
+                    $sql = "INSERT INTO META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+                         (
+                            META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn,
+                            META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
+                         )
+                         VALUES
+                         (
+                            ?,
+                            ?
+                         )
+                            ";
+                    $query = $this->db->query($sql, Array($id_hito, $id_meta_producto));
+                }
+                $this->db->trans_complete();
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
         }
     }
 
-    public function update_hito_cuantitativo($id_hito, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito) {
+    public function update_hito_cuantitativo($id_hito, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $aporta_producto, $id_meta_producto) {
         if (!is_numeric($id_hito)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
+                $this->db->trans_start();
                 $sql = "UPDATE HITO_CUANTITATIVO SET
                             HITO_CUANTITATIVO.nombre_hito_cn = '$nombre_hito',
                             HITO_CUANTITATIVO.descripcion_hito_cn = '$descripcion_hito',
@@ -684,6 +719,58 @@ class Modelo_socio extends CI_Model {
                             HITO_CUANTITATIVO.id_hito_cn = $id_hito
                         ";
                 $query = $this->db->query($sql);
+                if($aporta_producto == "directo") {
+                    $sql = "SELECT
+                                META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn,
+                                META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
+                            FROM
+                                META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+                            WHERE
+                                META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = ?
+                            ";
+                    $query = $this->db->query($sql, Array($id_hito));
+                    if($query->num_rows() > 0) {
+                        $sql = "UPDATE META_ACTIVIDAD_APORTA_META_PRODUCTO_CN SET
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa = ?
+                                WHERE
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = ?
+                                ";
+                        $sql = $this->db->query($sql, Array($id_meta_producto, $id_hito));
+                    } else {
+                        $sql = "INSERT INTO META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+                                (
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa,
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn
+                                )
+                                VALUES
+                                (
+                                    ?,
+                                    ?
+                                )
+                                ";
+                        $sql = $this->db->query($sql, Array($id_meta_producto, $id_hito));
+                    }
+                } else {
+                    if($aporta_producto == "indirecto") {
+                        $sql = "SELECT
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn,
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
+                                FROM
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+                                WHERE
+                                    META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = ?
+                            ";
+                        $query = $this->db->query($sql, Array($id_hito));
+                        if($query->num_rows() > 0) {
+                            $sql = "DELETE FROM META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+                                    WHERE
+                                        META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = ?
+                                    ";
+                            $query = $this->db->query($sql, Array($id_hito));
+                        }
+                    }
+                }
+                $this->db->trans_complete();
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -1220,6 +1307,56 @@ class Modelo_socio extends CI_Model {
             }
         } catch (Exception $ex) {
 
+        }
+    }
+    
+    public function get_metas_cuantitativas_producto($id_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            $sql = "SELECT
+                        META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.id_producto,
+                        META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa
+                    FROM
+                        META_PRODUCTO_CUANTITATIVA
+                    INNER JOIN PRODUCTO ON META_PRODUCTO_CUANTITATIVA.id_producto = PRODUCTO.id_producto
+                    WHERE
+                        META_PRODUCTO_CUANTITATIVA.id_producto = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_producto));
+            if(!$query) {
+                return Array();
+            } else {
+                return $query->result();
+            }
+        }
+    }
+    
+    public function get_metas_cualitativas_producto($id_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            $sql = "SELECT
+                        META_PRODUCTO_CUALITATIVA.id_meta_producto_cualitativa,
+                        META_PRODUCTO_CUALITATIVA.id_producto,
+                        META_PRODUCTO_CUALITATIVA.nombre_meta_producto_cualitativa,
+                        META_PRODUCTO_CUALITATIVA.descripcion_meta_producto_cualitativa
+                    FROM
+                        META_PRODUCTO_CUALITATIVA
+                    INNER JOIN PRODUCTO ON META_PRODUCTO_CUALITATIVA.id_producto = PRODUCTO.id_producto
+                    WHERE
+                        META_PRODUCTO_CUALITATIVA.id_producto = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_producto));
+            if(!$query) {
+                return Array();
+            } else {
+                return $query->result();
+            }
         }
     }
 

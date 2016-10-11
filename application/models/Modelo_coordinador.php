@@ -124,9 +124,13 @@ class Modelo_coordinador extends CI_Model {
                         ACTIVIDAD.descripcion_actividad,
                         ACTIVIDAD.fecha_inicio_actividad,
                         ACTIVIDAD.fecha_fin_actividad,
-                        ACTIVIDAD.presupuesto_actividad
+                        ACTIVIDAD.presupuesto_actividad,
+                        PRODUCTO.id_producto,
+                        PRODUCTO.nombre_producto
                     FROM
                         ACTIVIDAD
+                    LEFT JOIN PRODUCTO_RECIBE_ACTIVIDAD ON PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
+                    LEFT JOIN PRODUCTO ON PRODUCTO_RECIBE_ACTIVIDAD.id_producto = PRODUCTO.id_producto
                     WHERE
                         ACTIVIDAD.id_proyecto = $id_proyecto
                     ORDER BY
@@ -152,9 +156,15 @@ class Modelo_coordinador extends CI_Model {
                         HITO_CUANTITATIVO.nombre_hito_cn,
                         HITO_CUANTITATIVO.descripcion_hito_cn,
                         HITO_CUANTITATIVO.meta_hito_cn,
-                        HITO_CUANTITATIVO.unidad_hito_cn
+                        HITO_CUANTITATIVO.unidad_hito_cn,
+                        META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa
                     FROM
                         HITO_CUANTITATIVO
+                    LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
+                    LEFT JOIN META_PRODUCTO_CUANTITATIVA ON META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
                     WHERE
                         HITO_CUANTITATIVO.id_actividad = $id_actividad
                     ORDER BY

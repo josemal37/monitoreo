@@ -14,7 +14,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
-        <title>Registrar hito</title>
+        <title>Registrar meta</title>
     </head>
     <body>
         <div class="container">
@@ -28,17 +28,17 @@
                 <h4><?= $actividad->nombre_actividad . ' (' . $actividad->fecha_inicio_actividad . ' - ' . $actividad->fecha_fin_actividad . ')' ?></h4>
                 <form action="<?= base_url() . 'socio/registrar_nuevo_hito/' . $id_proyecto . '/' . $id_actividad ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
-                        <label for="tipo_hito">Tipo de hito</label>
+                        <label for="tipo_hito">Tipo de meta</label>
                         <div class="radio">
-                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cuantitativo">Cuantitativo</label><br>
+                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cuantitativo">Cuantitativa</label><br>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cualitativo" checked>Cualitativo</label><br>
+                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cualitativo" checked>Cualitativa</label><br>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="nombre_hito">Nombre del hito</label>
-                        <input type="text" name="nombre_hito" id="nombre_hito" placeholder="Nombre del hito" class="form-control" required>
+                        <label for="nombre_hito">Nombre de la meta</label>
+                        <input type="text" name="nombre_hito" id="nombre_hito" placeholder="Nombre" class="form-control" required>
                         <p><?= form_error('nombre_hito') ?></p>
                     </div>
                     <div class="form-group">
@@ -47,6 +47,7 @@
                         <p><?= form_error('descripcion_hito') ?></p>
                     </div>
                     <div id="datos_cuantitativos" style="display: none;">
+                        
                     </div>
                     <input type="hidden" name="id_actividad" value="<?= $id_actividad ?>" id="id_actividad">
                     <input type="submit" name="submit" value="Registrar hito" title="Registrar hito" class="btn btn-primary">
@@ -90,21 +91,60 @@
                     $('#datos_cuantitativos').append(
                     
                      "<div class='form-group'>"+
-                            "<label for='meta_hito_vista'>Meta del hito</label>"+
-                            "<input type='text' name='meta_hito_vista' id='meta_hito_vista' placeholder='meta del hito' class='form-control'>"+
+                            "<label for='meta_hito_vista'>Meta</label>"+
+                            "<input type='text' name='meta_hito_vista' id='meta_hito_vista' placeholder='Meta' class='form-control'>"+
                             "<input type='hidden' name='meta_hito' id='meta_hito'>"+
                             "<p><?= form_error('meta_hito') ?></p>"+
                         "</div>"+
                         "<div class='form-group'>"+
                             "<label for='unidad_hito'>Unidad</label>"+
-                            "<input type='text' name='unidad_hito' id='unidad_hito' placeholder='Unidad del hito' class='form-control' required>"+
+                            "<input type='text' name='unidad_hito' id='unidad_hito' placeholder='Unidad' class='form-control' required>"+
                             "<p><?= form_error('unidad_hito') ?></p>"+
-                        "</div>");
+                        "</div>"+
+                        <?php if(isset($actividad->nombre_producto)): ?>
+                        "<div class='form-group'>"+
+                            "<label for='tipo_hito'>Aporta al producto (<?= $actividad->nombre_producto ?>)</label>"+
+                            "<div class='radio'>"+
+                                "<label><input type='radio' name='aporta_producto' id='tipo_hito' value='directo'>Aporta directamente</label><br>"+
+                            "</div>"+
+                            "<div class='radio'>"+
+                                "<label><input type='radio' name='aporta_producto' id='tipo_hito' value='indirecto' checked>Aporta indirectamente</label><br>"+
+                            "</div>"+
+                        "</div>"+
+                        "<div id='div_aporta_producto' style='display: none;'>"+
+
+                        "</div>"+
+                        <?php else: ?>
+                            
+                        <?php endif; ?>
+                        "");
                         $('#datos_cuantitativos').slideDown('swing');
                 }
                 else if (this.value == 'cualitativo') {
                     $('#datos_cuantitativos').slideUp('swing');
                     $('#datos_cuantitativos').empty();
+                }
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).on('change', 'input[type=radio][name=aporta_producto]', function() {
+                if (this.value == 'directo') {
+                    $('#div_aporta_producto').append(
+                    
+                     "<div class='form-group'>"+
+                        "<label for='id_meta_producto'>Meta del producto a la que aporta directamente</label>"+
+                        "<select name='id_meta_producto' id='id_meta_producto' class='form-control'>"+
+                            <?php foreach ($metas_cuantitativas as $meta_cuantitativa): ?>
+                                "<option value='<?= $meta_cuantitativa->id_meta_producto_cuantitativa ?>'><?= $meta_cuantitativa->nombre_meta_producto_cuantitativa ?></option>"+
+                            <?php endforeach; ?>
+                        "</select>"+
+                        "<p><?= form_error('id_meta_producto') ?></p>"+
+                    "</div>");
+                    $('#div_aporta_producto').slideDown('swing');
+                }
+                else if (this.value == 'indirecto') {
+                    $('#div_aporta_producto').slideUp('swing');
+                    $('#div_aporta_producto').empty();
                 }
             });
         </script>

@@ -17,7 +17,7 @@
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Ver proyecto";
+            $datos['activo'] = "Proyectos activos";
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
@@ -38,6 +38,9 @@
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
                                     <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span></p>
+                                    <?php if(isset($actividad->nombre_producto)): ?>
+                                        <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
+                                    <?php endif; ?>
                                     <?php
                                     $id_actividad = $actividad->id_actividad;
                                     $hitos_cuantitativos = $datos_hitos_cuantitativos[$actividad->nombre_actividad];
@@ -49,16 +52,16 @@
                                     <?php if ((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <strong>Hitos</strong>
+                                                <strong>Metas</strong>
                                             </div>
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th>Nombre del hito</th>
+                                                            <th>Nombre de la meta</th>
                                                             <th>Descripción</th>
                                                             <th>Meta</th>
-                                                            <th>Unidad</th>
+                                                            <th>Meta asociada</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                     </thead>
@@ -68,8 +71,14 @@
                                                                 <tr>
                                                                     <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
-                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span></td>
-                                                                    <td><?= $hito_cuantitativo->unidad_hito_cn ?></td>
+                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
+                                                                    <td>
+                                                                        <?php if(isset($hito_cuantitativo->id_meta_producto_cuantitativa)): ?>
+                                                                            <span class="number_integer"><?= $hito_cuantitativo->cantidad_meta_producto_cuantitativa?></span> <?= $hito_cuantitativo->unidad_meta_producto_cuantitativa ?>
+                                                                        <?php else: ?>
+                                                                            -----
+                                                                        <?php endif; ?>
+                                                                    </td>
                                                                     <td width="15%">
                                                                         <a href="<?= base_url() . 'socio/registrar_avance_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-primary btn-xs btn-block">Registrar avance</a>
                                                                         <a href="<?= base_url() . 'socio/ver_avances_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>

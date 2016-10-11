@@ -12,7 +12,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         
-        <title>Modificar hito</title>
+        <title>Modificar meta</title>
     </head>
     <body>
         <div class="container">
@@ -26,8 +26,8 @@
                 <h4><?= $actividad->nombre_actividad . ' (' . $actividad->fecha_inicio_actividad . ' - ' . $actividad->fecha_fin_actividad . ')' ?></h4>
                 <form action="<?= base_url() . 'socio/modificar_hito_cualitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
-                        <label for="nombre_hito">Nombre del hito</label>
-                        <input type="text" name="nombre_hito" id="nombre_hito" value="<?= $hito->nombre_hito_cl ?>" placeholder="Nombre del hito" class="form-control" required>
+                        <label for="nombre_hito">Nombre de la meta</label>
+                        <input type="text" name="nombre_hito" id="nombre_hito" value="<?= $hito->nombre_hito_cl ?>" placeholder="Nombre" class="form-control" required>
                         <p><?= form_error('nombre_hito') ?></p>
                     </div>
                     <div class="form-group">

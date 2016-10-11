@@ -116,7 +116,7 @@ class Socio extends CI_Controller {
             $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[2]|max_length[1024]');
             $this->form_validation->set_rules('presupuesto_actividad', 'presupuesto_actividad', 'required|numeric');
             $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
-            
+
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['id_proyecto']);
                 $this->registrar_nueva_actividad($id_proyecto);
@@ -201,7 +201,7 @@ class Socio extends CI_Controller {
                 $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('presupuesto_actividad', 'presupuesto_actividad', 'required|numeric');
                 $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
-                
+
                 if ($this->form_validation->run() == FALSE) {
                     unset($_POST['id_actividad']);
                     $this->modificar_actividad($id_actividad);
@@ -269,6 +269,8 @@ class Socio extends CI_Controller {
                     $descripcion_hito = $this->input->post('descripcion_hito');
                     $meta_hito = $this->input->post('meta_hito');
                     $unidad_hito = $this->input->post('unidad_hito');
+                    $id_meta_producto = $this->input->post('id_meta_producto');
+                    $aporta_producto = $this->input->post('aporta_producto');
                     switch ($this->input->post('tipo_hito')) {
                         case 'cuantitativo':
                             $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
@@ -276,11 +278,14 @@ class Socio extends CI_Controller {
                             $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                             $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
                             $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
+                            if (isset($_POST['id_meta_producto'])) {
+                                $this->form_validation->set_rules('id_meta_producto', 'id_meta_producto', 'required|numeric');
+                            }
                             if ($this->form_validation->run() == FALSE) {
                                 unset($_POST['id_actividad']);
                                 $this->registrar_nuevo_hito($id_proyecto, $id_actividad);
                             } else {
-                                $this->registrar_hito_cuantitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito);
+                                $this->registrar_hito_cuantitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_meta_producto, $aporta_producto);
                             }
                             break;
                         case 'cualitativo':
@@ -304,13 +309,17 @@ class Socio extends CI_Controller {
                 $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
                 $datos['id_proyecto'] = $id_proyecto;
                 $datos['id_actividad'] = $id_actividad;
+                if(isset($datos['actividad']->id_producto)) {
+                    $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
+                    $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
+                }
                 $this->load->view('socio/vista_registrar_nuevo_hito', $datos);
             }
         }
     }
 
-    private function registrar_hito_cuantitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito) {
-        $this->modelo_socio->insert_hito_cuantitativo($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito);
+    private function registrar_hito_cuantitativo($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_meta_producto, $aporta_producto) {
+        $this->modelo_socio->insert_hito_cuantitativo($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_meta_producto, $aporta_producto);
         redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
     }
 
@@ -338,7 +347,13 @@ class Socio extends CI_Controller {
                         $descripcion_hito = $this->input->post('descripcion_hito');
                         $meta_hito = $this->input->post('meta_hito');
                         $unidad_hito = $this->input->post('unidad_hito');
-                        $this->modelo_socio->update_hito_cuantitativo($id_hito, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito);
+                        $aporta_producto = "indirecto";
+                        $id_meta_producto = -1;
+                        if(isset($_POST['aporta_producto'])) {
+                            $aporta_producto = $this->input->post('aporta_producto');
+                            $id_meta_producto = $this->input->post('id_meta_producto');
+                        }
+                        $this->modelo_socio->update_hito_cuantitativo($id_hito, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $aporta_producto, $id_meta_producto);
                         redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
                     }
                 } else {
@@ -350,6 +365,8 @@ class Socio extends CI_Controller {
                 $datos['id_proyecto'] = $id_proyecto;
                 $datos['hito'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
                 $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
+                $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
+                $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
                 $this->load->view('socio/vista_modificar_hito_cuantitativo', $datos);
             }
         }

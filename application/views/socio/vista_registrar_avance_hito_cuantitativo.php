@@ -178,7 +178,7 @@
         </script>
         <script type="text/javascript">
             $(document).ready(function(){
-                $('#cantidad_avance_hito_vista').number(true, 2);
+                $('#cantidad_avance_hito_vista').number(true, 0);
             });
             $('#cantidad_avance_hito_vista').keyup(function(){
                 $('#cantidad_avance_hito').val($('#cantidad_avance_hito_vista').val());

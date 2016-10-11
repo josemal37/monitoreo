@@ -55,16 +55,16 @@
                                     <?php if ((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <strong>Hitos</strong>
+                                                <strong>Metas</strong>
                                             </div>
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th>Nombre del hito</th>
+                                                            <th>Nombre de la meta</th>
                                                             <th>Descripción</th>
                                                             <th>Meta</th>
-                                                            <th>Unidad</th>
+                                                            <th>Meta asociada</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                     </thead>
@@ -74,11 +74,17 @@
                                                                 <tr>
                                                                     <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
-                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span></td>
-                                                                    <td><?= $hito_cuantitativo->unidad_hito_cn ?></td>
+                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
+                                                                    <td>
+                                                                        <?php if(isset($hito_cuantitativo->id_meta_producto_cuantitativa)): ?>
+                                                                            <span class="number_integer"><?= $hito_cuantitativo->cantidad_meta_producto_cuantitativa?></span> <?= $hito_cuantitativo->unidad_meta_producto_cuantitativa ?>
+                                                                        <?php else: ?>
+                                                                            -----
+                                                                        <?php endif; ?>
+                                                                    </td>
                                                                     <td width="15%">
-                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-default btn-xs btn-block">Modificar hito</a>
-                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-danger btn-xs btn-block">Eliminar hito</a>
+                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-default btn-xs btn-block">Modificar meta</a>
+                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-danger btn-xs btn-block">Eliminar meta</a>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
@@ -91,8 +97,8 @@
                                                                     <td>-----</td>
                                                                     <td>-----</td>
                                                                     <td width="15%">
-                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-default btn-xs btn-block">Modificar hito</a>
-                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-danger btn-xs btn-block">Eliminar hito</a>
+                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-default btn-xs btn-block">Modificar meta</a>
+                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-danger btn-xs btn-block">Eliminar meta</a>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
@@ -107,11 +113,11 @@
                                                 Advertencia
                                             </div>
                                             <div class="panel-body">
-                                                Todavía no se registraron hitos.
+                                                Todavía no se registraron metas.
                                             </div>
                                         </div>
                                     <?php endif; ?>    
-                                    <a href="<?= base_url() . 'socio/registrar_nuevo_hito/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar nuevo hito</a>
+                                    <a href="<?= base_url() . 'socio/registrar_nuevo_hito/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar nueva meta</a>
                                 </div>
                             </div>
                         </div>

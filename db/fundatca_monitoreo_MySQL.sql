@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     09/10/2016 20:39:13                          */
+/* Created on:     10/10/2016 09:20:33                          */
 /*==============================================================*/
 
 /*==============================================================*/
@@ -83,7 +83,7 @@ create table EFECTO
    ID_EFECTO            int not null auto_increment,
    ID_PRODOC            int not null,
    NOMBRE_EFECTO        varchar(1024) not null,
-   DESCRIPCION_EFECTO   varchar(1024),
+   DESCRIPCION_EFECTO   text,
    primary key (ID_EFECTO)
 );
 
@@ -198,7 +198,7 @@ create table META_PRODUCTO_CUALITATIVA
    ID_META_PRODUCTO_CUALITATIVA int not null auto_increment,
    ID_PRODUCTO          int not null,
    NOMBRE_META_PRODUCTO_CUALITATIVA varchar(256) not null,
-   DESCRIPCION_META_PRODUCTO_CUALITATIVA varchar(1024),
+   DESCRIPCION_META_PRODUCTO_CUALITATIVA text,
    primary key (ID_META_PRODUCTO_CUALITATIVA)
 );
 
@@ -212,7 +212,7 @@ create table META_PRODUCTO_CUANTITATIVA
    CANTIDAD_META_PRODUCTO_CUANTITATIVA decimal(10,2) not null,
    UNIDAD_META_PRODUCTO_CUANTITATIVA varchar(128) not null,
    NOMBRE_META_PRODUCTO_CUANTITATIVA varchar(1024) not null,
-   DESCRIPCION_META_PRODUCTO_CUANTITATIVA varchar(1024) not null,
+   DESCRIPCION_META_PRODUCTO_CUANTITATIVA text not null,
    primary key (ID_META_PRODUCTO_CUANTITATIVA)
 );
 
@@ -223,7 +223,9 @@ create table PRODOC
 (
    ID_PRODOC            int not null auto_increment,
    NOMBRE_PRODOC        varchar(1024) not null,
-   DESCRIPCION_PRODOC   varchar(1024),
+   DESCRIPCION_PRODOC   text,
+   OBJETIVO_GLOBAL_PRODOC text,
+   OBJETIVO_PROYECTO_PRODOC text,
    primary key (ID_PRODOC)
 );
 
@@ -235,17 +237,18 @@ create table PRODUCTO
    ID_PRODUCTO          int not null auto_increment,
    ID_EFECTO            int,
    NOMBRE_PRODUCTO      varchar(1024) not null,
+   DESCRIPCION_PRODUCTO text,
    primary key (ID_PRODUCTO)
 );
 
 /*==============================================================*/
-/* Table: PRODUCTO_ACTIVIDAD                                    */
+/* Table: PRODUCTO_RECIBE_ACTIVIDAD                             */
 /*==============================================================*/
-create table PRODUCTO_ACTIVIDAD
+create table PRODUCTO_RECIBE_ACTIVIDAD
 (
    ID_ACTIVIDAD         int not null,
-   ID_PRODUCTO_ASOCIADO int not null,
-   primary key (ID_ACTIVIDAD)
+   ID_PRODUCTO          int not null,
+   primary key (ID_ACTIVIDAD, ID_PRODUCTO)
 );
 
 /*==============================================================*/
@@ -339,13 +342,13 @@ alter table INDICADOR_CUANTITATIVO add constraint FK_INDICADOR_OP_ES_DE_TIPO for
       references TIPO_INDICADOR_CUANTITATIVO (ID_TIPO_INDICADOR_CN) on delete restrict on update restrict;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CL foreign key (ID_HITO_CL)
-      references HITO_CUALITATIVO (ID_HITO_CL) on delete restrict on update restrict;
+      references HITO_CUALITATIVO (ID_HITO_CL) on delete cascade on update cascade;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CL2 foreign key (ID_META_PRODUCTO_CUALITATIVA)
       references META_PRODUCTO_CUALITATIVA (ID_META_PRODUCTO_CUALITATIVA) on delete restrict on update restrict;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CN foreign key (ID_HITO_CN)
-      references HITO_CUANTITATIVO (ID_HITO_CN) on delete restrict on update restrict;
+      references HITO_CUANTITATIVO (ID_HITO_CN) on delete cascade on update cascade;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CN2 foreign key (ID_META_PRODUCTO_CUANTITATIVA)
       references META_PRODUCTO_CUANTITATIVA (ID_META_PRODUCTO_CUANTITATIVA) on delete restrict on update restrict;
@@ -359,8 +362,11 @@ alter table META_PRODUCTO_CUANTITATIVA add constraint FK_PRODUCTO_TIENE_META_CN 
 alter table PRODUCTO add constraint FK_EFECTO_TIENE_PRODUCTO foreign key (ID_EFECTO)
       references EFECTO (ID_EFECTO) on delete restrict on update restrict;
 
-alter table PRODUCTO_ACTIVIDAD add constraint FK_ACTIVIDAD_APORTA_PRODUCTO foreign key (ID_ACTIVIDAD)
+alter table PRODUCTO_RECIBE_ACTIVIDAD add constraint FK_PRODUCTO_RECIBE_ACTIVIDAD foreign key (ID_ACTIVIDAD)
       references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
+
+alter table PRODUCTO_RECIBE_ACTIVIDAD add constraint FK_PRODUCTO_RECIBE_ACTIVIDAD2 foreign key (ID_PRODUCTO)
+      references PRODUCTO (ID_PRODUCTO) on delete restrict on update restrict;
 
 alter table PROYECTO add constraint FK_INSTITUCION_TIENE_PROYECTO foreign key (ID_INSTITUCION)
       references INSTITUCION (ID_INSTITUCION) on delete restrict on update restrict;
@@ -370,7 +376,6 @@ alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
       references ROL (ID_ROL) on delete restrict on update restrict;
-
 
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');

@@ -45,6 +45,7 @@
                             <?php endforeach; ?>
                         </select>
                         <p><?= form_error('id_producto') ?></p>
+                        <label class="text-warning">Advertencia: </label> <label>Modificar el producto asociado, eliminará las asociaciones existentes en las metas de esta actividad.</label>
                     </div>
                     <div class="form-group">
                         <label for="fecha_inicio_actividad">Fecha de inicio</label>
