@@ -306,76 +306,76 @@ create table USUARIO
 );
 
 alter table ACTIVIDAD add constraint FK_PROYECTO_TIENE_ACTIVIDAD foreign key (ID_PROYECTO)
-      references PROYECTO (ID_PROYECTO) on delete restrict on update restrict;
+      references PROYECTO (ID_PROYECTO) on delete cascade on update cascade;
 
 alter table AVANCE_HITO_CUALITATIVO add constraint FK_HITO_CL_TIENE_AVANCE foreign key (ID_HITO_CL)
-      references HITO_CUALITATIVO (ID_HITO_CL) on delete restrict on update restrict;
+      references HITO_CUALITATIVO (ID_HITO_CL) on delete cascade on update cascade;
 
 alter table AVANCE_HITO_CUANTITATIVO add constraint FK_HITO_CN_TIENE_AVANCE foreign key (ID_HITO_CN)
-      references HITO_CUANTITATIVO (ID_HITO_CN) on delete restrict on update restrict;
+      references HITO_CUANTITATIVO (ID_HITO_CN) on delete cascade on update cascade;
 
 alter table DOCUMENTO_ACTIVIDAD add constraint FK_ACTIVIDAD_TIENE_DOCUMENTO foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
 
 alter table DOCUMENTO_AVANCE_HITO_CUANTITATIVO add constraint FK_AVANCE_CN_TIENE_RESPALDO foreign key (ID_AVANCE_HITO_CN)
-      references AVANCE_HITO_CUANTITATIVO (ID_AVANCE_HITO_CN) on delete restrict on update restrict;
+      references AVANCE_HITO_CUANTITATIVO (ID_AVANCE_HITO_CN) on delete cascade on update cascade;
 
 alter table EFECTO add constraint FK_PRODOC_TIENE_EFECTO foreign key (ID_PRODOC)
-      references PRODOC (ID_PRODOC) on delete restrict on update restrict;
+      references PRODOC (ID_PRODOC) on delete cascade on update cascade;
 
 alter table GASTO_ACTIVIDAD add constraint FK_ACTIVIDAD_TIENE_GASTO foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
 
 alter table GASTO_PROYECTO add constraint FK_PROYECTO_TIENE_GASTO foreign key (ID_PROYECTO)
-      references PROYECTO (ID_PROYECTO) on delete restrict on update restrict;
+      references PROYECTO (ID_PROYECTO) on delete cascade on update cascade;
 
 alter table HITO_CUALITATIVO add constraint FK_ACTIVIDAD_TIENE_HITO_CL foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
 
 alter table HITO_CUANTITATIVO add constraint FK_ACTIVIDAD_TIENE_HITO_CN foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
 
 alter table INDICADOR_CUANTITATIVO add constraint FK_HITO_TIENE_INDICADOR_OP foreign key (ID_HITO_CN)
-      references HITO_CUANTITATIVO (ID_HITO_CN) on delete restrict on update restrict;
+      references HITO_CUANTITATIVO (ID_HITO_CN) on delete cascade on update cascade;
 
 alter table INDICADOR_CUANTITATIVO add constraint FK_INDICADOR_OP_ES_DE_TIPO foreign key (ID_TIPO_INDICADOR_CN)
-      references TIPO_INDICADOR_CUANTITATIVO (ID_TIPO_INDICADOR_CN) on delete restrict on update restrict;
+      references TIPO_INDICADOR_CUANTITATIVO (ID_TIPO_INDICADOR_CN) on delete cascade on update cascade;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CL foreign key (ID_HITO_CL)
       references HITO_CUALITATIVO (ID_HITO_CL) on delete cascade on update cascade;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CL2 foreign key (ID_META_PRODUCTO_CUALITATIVA)
-      references META_PRODUCTO_CUALITATIVA (ID_META_PRODUCTO_CUALITATIVA) on delete restrict on update restrict;
+      references META_PRODUCTO_CUALITATIVA (ID_META_PRODUCTO_CUALITATIVA) on delete cascade on update cascade;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CN foreign key (ID_HITO_CN)
       references HITO_CUANTITATIVO (ID_HITO_CN) on delete cascade on update cascade;
 
 alter table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN add constraint FK_META_ACTIVIDAD_APORTA_META_PRODUCTO_CN2 foreign key (ID_META_PRODUCTO_CUANTITATIVA)
-      references META_PRODUCTO_CUANTITATIVA (ID_META_PRODUCTO_CUANTITATIVA) on delete restrict on update restrict;
+      references META_PRODUCTO_CUANTITATIVA (ID_META_PRODUCTO_CUANTITATIVA) on delete cascade on update cascade;
 
 alter table META_PRODUCTO_CUALITATIVA add constraint FK_PRODUCTO_TIENE_META_CL foreign key (ID_PRODUCTO)
-      references PRODUCTO (ID_PRODUCTO) on delete restrict on update restrict;
+      references PRODUCTO (ID_PRODUCTO) on delete cascade on update cascade;
 
 alter table META_PRODUCTO_CUANTITATIVA add constraint FK_PRODUCTO_TIENE_META_CN foreign key (ID_PRODUCTO)
-      references PRODUCTO (ID_PRODUCTO) on delete restrict on update restrict;
+      references PRODUCTO (ID_PRODUCTO) on delete cascade on update cascade;
 
 alter table PRODUCTO add constraint FK_EFECTO_TIENE_PRODUCTO foreign key (ID_EFECTO)
-      references EFECTO (ID_EFECTO) on delete restrict on update restrict;
+      references EFECTO (ID_EFECTO) on delete cascade on update cascade;
 
 alter table PRODUCTO_RECIBE_ACTIVIDAD add constraint FK_PRODUCTO_RECIBE_ACTIVIDAD foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete restrict on update restrict;
+      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
 
 alter table PRODUCTO_RECIBE_ACTIVIDAD add constraint FK_PRODUCTO_RECIBE_ACTIVIDAD2 foreign key (ID_PRODUCTO)
-      references PRODUCTO (ID_PRODUCTO) on delete restrict on update restrict;
+      references PRODUCTO (ID_PRODUCTO) on delete cascade on update cascade;
 
 alter table PROYECTO add constraint FK_INSTITUCION_TIENE_PROYECTO foreign key (ID_INSTITUCION)
-      references INSTITUCION (ID_INSTITUCION) on delete restrict on update restrict;
+      references INSTITUCION (ID_INSTITUCION) on delete cascade on update cascade;
 
 alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_INSTITUCION)
-      references INSTITUCION (ID_INSTITUCION) on delete restrict on update restrict;
+      references INSTITUCION (ID_INSTITUCION) on delete cascade on update cascade;
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
-      references ROL (ID_ROL) on delete restrict on update restrict;
+      references ROL (ID_ROL) on delete cascade on update cascade;
 
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');

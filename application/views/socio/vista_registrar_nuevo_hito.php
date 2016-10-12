@@ -50,7 +50,7 @@
                         
                     </div>
                     <input type="hidden" name="id_actividad" value="<?= $id_actividad ?>" id="id_actividad">
-                    <input type="submit" name="submit" value="Registrar hito" title="Registrar hito" class="btn btn-primary">
+                    <input type="submit" name="submit" value="Registrar meta" title="Registrar meta" class="btn btn-primary">
                 </form>
             </div>
         </div>

@@ -62,7 +62,7 @@
 
                         </div>
                     <input type="hidden" name="id_hito" value="<?= $hito->id_hito_cn ?>" id="id_hito">
-                    <input type="submit" name="submit" value="Modificar hito" title="Modificar hito" class="btn btn-primary">
+                    <input type="submit" name="submit" value="Modificar meta" title="Modificar meta" class="btn btn-primary">
                 </form>
             </div>
         </div>
