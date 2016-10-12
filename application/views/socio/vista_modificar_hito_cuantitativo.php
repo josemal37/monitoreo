@@ -49,18 +49,18 @@
                             <p><?= form_error('unidad_hito') ?></p>
                         </div>
                     </div>
-                    <div class='form-group'>
-                            <label for='tipo_hito'>Aporta al producto (<?= $actividad->nombre_producto ?>)</label>
-                            <div class='radio'>
-                                <label><input type='radio' name='aporta_producto' id='tipo_hito' value='directo'>Aporta directamente</label><br>
-                            </div>
-                            <div class='radio'>
-                                <label><input type='radio' name='aporta_producto' id='tipo_hito' value='indirecto' checked>Aporta indirectamente</label><br>
-                            </div>
+                    <div class='form-group' <?php if(!isset($actividad->nombre_producto)):?>style='display: none;'<?php endif; ?>>
+                        <label for='tipo_hito'>Aporta al producto (<?= $actividad->nombre_producto ?>)</label>
+                        <div class='radio'>
+                            <label><input type='radio' name='aporta_producto' id='tipo_hito' value='directo'>Aporta directamente</label><br>
                         </div>
-                        <div id='div_aporta_producto' style='display: none;'>
+                        <div class='radio'>
+                            <label><input type='radio' name='aporta_producto' id='tipo_hito' value='indirecto' checked>Aporta indirectamente</label><br>
+                        </div>
+                    </div>
+                    <div id='div_aporta_producto' style='display: none;'>
 
-                        </div>
+                    </div>
                     <input type="hidden" name="id_hito" value="<?= $hito->id_hito_cn ?>" id="id_hito">
                     <input type="submit" name="submit" value="Modificar meta" title="Modificar meta" class="btn btn-primary">
                 </form>
@@ -112,7 +112,7 @@
             $(document).on('change', 'input[type=radio][name=aporta_producto]', function() {
                 if (this.value == 'directo') {
                     $('#div_aporta_producto').append(
-                    
+                    <?php if(isset($actividad->nombre_producto)):?>
                      "<div class='form-group'>"+
                             "<label for='id_meta_producto'>Meta del producto a la que aporta directamente</label>"+
                             "<select name='id_meta_producto' id='id_meta_producto' class='form-control'>"+
@@ -121,7 +121,9 @@
                                 <?php endforeach; ?>
                             "</select>"+
                             "<p><?= form_error('id_meta_producto') ?></p>"+
-                        "</div>");
+                        "</div>"+
+                        <?php endif; ?>
+                        "");
                         $('#div_aporta_producto').slideDown('swing');
                 }
                 else if (this.value == 'indirecto') {

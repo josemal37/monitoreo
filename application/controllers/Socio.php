@@ -365,8 +365,10 @@ class Socio extends CI_Controller {
                 $datos['id_proyecto'] = $id_proyecto;
                 $datos['hito'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
                 $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
-                $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
-                $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
+                if(isset($datos['actividad']->id_producto)) {
+                    $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
+                    $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
+                }
                 $this->load->view('socio/vista_modificar_hito_cuantitativo', $datos);
             }
         }
