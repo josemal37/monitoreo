@@ -39,12 +39,12 @@ class Modelo_login extends CI_Model {
                 WHERE
                     USUARIO.id_rol = ROL.id_rol AND 
                     USUARIO.id_institucion = INSTITUCION.id_institucion AND 
-                    USUARIO.login_usuario = '" . $login_usuario . "' AND 
-                    USUARIO.password_usuario = '" . $password_usuario . "' AND
+                    BINARY USUARIO.login_usuario = ? AND 
+                    BINARY USUARIO.password_usuario = ? AND
                     USUARIO.activo_usuario = true AND
                     INSTITUCION.activa_institucion = true
                     ";
-        $query = $this->db->query($sql);
+        $query = $this->db->query($sql, Array($login_usuario, $password_usuario));
         if ($query->num_rows() == 1) {
             return $query->row();
         } else {
