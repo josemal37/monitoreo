@@ -11,7 +11,6 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.bootstrap.defaults.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
 
         <title>Modificar institución</title>
     </head>
@@ -34,12 +33,6 @@
                     <label for="sigla_institucion">Sigla</label>
                     <input type="text" name="sigla_institucion" id="sigla_institucion" value="<?= $institucion->sigla_institucion ?>" placeholder="Sigla" class="form-control">
                     <p><?= form_error('sigla_institucion') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="presupuesto_institucion_vista">Presupuesto (Bs.)</label>
-                    <input type="text" name="presupuesto_institucion_vista" id="presupuesto_institucion_vista" value="<?= $institucion->presupuesto_institucion ?>" placeholder="Presupuesto" class="form-control">
-                    <input type="hidden" name="presupuesto_institucion" id="presupuesto_institucion" value="<?= $institucion->presupuesto_institucion ?>">
-                    <p><?= form_error('presupuesto_institucion') ?></p>
                 </div>
                 <input type="hidden" name="id_institucion" id="id_institucion" value="<?= $institucion->id_institucion ?>">
                 <input type="submit" name="submit" value="Modificar institución" title="Modificar institución" class="btn btn-primary">
@@ -88,11 +81,6 @@
                                     }
                                 }
                             }
-                        },
-                        presupuesto_institucion: {
-                            required: true,
-                            number: true,
-                            min: 0
                         }
                     },
                     messages: {
@@ -104,13 +92,6 @@
                         }
                     }
                 });
-            });</script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $('#presupuesto_institucion_vista').number(true, 2);
-            });
-            $('#presupuesto_institucion_vista').keyup(function() {
-                $('#presupuesto_institucion').val($('#presupuesto_institucion_vista').val());
             });
         </script>
     </body>

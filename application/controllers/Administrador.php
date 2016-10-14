@@ -210,19 +210,17 @@ class Administrador extends CI_Controller {
     public function nueva_institucion() {
         $this->verificar_sesion();
 
-        if (isset($_POST['nombre_institucion']) && isset($_POST['sigla_institucion']) && isset($_POST['presupuesto_institucion'])) {
+        if (isset($_POST['nombre_institucion']) && isset($_POST['sigla_institucion'])) {
             $this->form_validation->set_rules('nombre_institucion', 'nombre_institucion', 'required|trim|min_length[2]|max_length[128]');
             $this->form_validation->set_rules('sigla_institucion', 'sigla_institucion', 'required|trim|alpha|min_length[2]|max_length[8]');
-            $this->form_validation->set_rules('presupuesto_institucion', 'presupuesto_institucion', 'required|numeric');
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['nombre_institucion']);
                 $this->nueva_institucion();
             } else {
                 $nombre_institucion = $this->input->post('nombre_institucion');
                 $sigla_institucion = $this->input->post('sigla_institucion');
-                $presupuesto_institucion = $this->input->post('presupuesto_institucion');
                 $carpeta_institucion = strtolower($sigla_institucion);
-                $this->modelo_administrador->insert_institucion($nombre_institucion, $sigla_institucion, $presupuesto_institucion, $carpeta_institucion);
+                $this->modelo_administrador->insert_institucion($nombre_institucion, $sigla_institucion, $carpeta_institucion);
                 redirect(base_url() . 'administrador/instituciones');
             }
         } else {
@@ -236,11 +234,10 @@ class Administrador extends CI_Controller {
         if (!is_numeric($id_institucion)) {
             redirect(base_url() . 'administrador');
         } else {
-            if (isset($_POST['id_institucion']) && isset($_POST['nombre_institucion']) && isset($_POST['sigla_institucion']) && isset($_POST['presupuesto_institucion'])) {
+            if (isset($_POST['id_institucion']) && isset($_POST['nombre_institucion']) && isset($_POST['sigla_institucion'])) {
                 $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
                 $this->form_validation->set_rules('nombre_institucion', 'nombre_institucion', 'required|trim|min_length[3]|max_length[128]');
                 $this->form_validation->set_rules('sigla_institucion', 'sigla_institucion', 'required|trim|alpha|min_length[3]|max_length[8]');
-                $this->form_validation->set_rules('presupuesto_institucion', 'presupuesto_institucion', 'required|numeric');
                 if ($this->form_validation->run() == FALSE) {
                     unset($_POST['id_institucion']);
                     $this->modificar_institucion($id_institucion);
@@ -249,8 +246,7 @@ class Administrador extends CI_Controller {
                         $id_institucion = $this->input->post('id_institucion');
                         $nombre_institucion = $this->input->post('nombre_institucion');
                         $sigla_institucion = $this->input->post('sigla_institucion');
-                        $presupuesto_institucion = $this->input->post('presupuesto_institucion');
-                        $this->modelo_administrador->update_institucion($id_institucion, $nombre_institucion, $sigla_institucion, $presupuesto_institucion);
+                        $this->modelo_administrador->update_institucion($id_institucion, $nombre_institucion, $sigla_institucion);
                         redirect(base_url() . 'administrador/instituciones');
                     } else {
                         redirect(base_url() . 'administrador');

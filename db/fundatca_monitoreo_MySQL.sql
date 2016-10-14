@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     10/10/2016 09:20:33                          */
+/* Created on:     14/10/2016 08:40:09                          */
 /*==============================================================*/
 
 /*==============================================================*/
@@ -10,12 +10,23 @@ create table ACTIVIDAD
 (
    ID_ACTIVIDAD         int not null auto_increment,
    ID_PROYECTO          int not null,
-   NOMBRE_ACTIVIDAD     varchar(128) not null,
+   NOMBRE_ACTIVIDAD     varchar(1024) not null,
    DESCRIPCION_ACTIVIDAD text,
-   FECHA_INICIO_ACTIVIDAD date not null,
-   FECHA_FIN_ACTIVIDAD  date not null,
-   PRESUPUESTO_ACTIVIDAD decimal(9,2),
+   FECHA_INICIO_ACTIVIDAD date,
+   FECHA_FIN_ACTIVIDAD  date,
+   PRESUPUESTO_ACTIVIDAD decimal(12,2),
+   EN_EDICION_ACTIVIDAD bool,
    primary key (ID_ACTIVIDAD)
+);
+
+/*==============================================================*/
+/* Table: ANIO                                                  */
+/*==============================================================*/
+create table ANIO
+(
+   ID_ANIO              int not null auto_increment,
+   VALOR_ANIO           int,
+   primary key (ID_ANIO)
 );
 
 /*==============================================================*/
@@ -25,12 +36,13 @@ create table AVANCE_HITO_CUALITATIVO
 (
    ID_AVANCE_HITO_CL    int not null auto_increment,
    ID_HITO_CL           int,
-   FECHA_AVANCE_HITO_CL date not null,
-   TITULO_AVANCE_HITO_CL varchar(128) not null,
-   DESCRIPCION_AVANCE_HITO_CL text not null,
-   DOCUMENTO_AVANCE_HITO_CL varchar(128) not null,
-   APROBADO_AVANCE_HITO_CL bool not null,
-   EN_REVISION_AVANCE_HITO_CL bool not null,
+   FECHA_AVANCE_HITO_CL date,
+   TITULO_AVANCE_HITO_CL varchar(1024),
+   DESCRIPCION_AVANCE_HITO_CL text,
+   DOCUMENTO_AVANCE_HITO_CL varchar(128),
+   APROBADO_AVANCE_HITO_CL bool,
+   EN_REVISION_AVANCE_HITO_CL bool,
+   COSTO_AVANCE_HITO_CL decimal(8,2),
    primary key (ID_AVANCE_HITO_CL)
 );
 
@@ -41,11 +53,13 @@ create table AVANCE_HITO_CUANTITATIVO
 (
    ID_AVANCE_HITO_CN    int not null auto_increment,
    ID_HITO_CN           int,
-   CANTIDAD_AVANCE_HITO_CN decimal(9,2) not null,
-   FECHA_AVANCE_HITO_CN date not null,
-   DESCRIPCION_AVANCE_HITO_CN text not null,
-   APROBADO_AVANCE_HITO_CN bool not null,
-   EN_REVISION_AVANCE_HITO_CN bool not null,
+   CANTIDAD_AVANCE_HITO_CN decimal(9,2),
+   FECHA_AVANCE_HITO_CN date,
+   DESCRIPCION_AVANCE_HITO_CN text,
+   APROBADO_AVANCE_HITO_CN bool,
+   EN_REVISION_AVANCE_HITO_CN bool,
+   FECHA_REGISTRO_AVANCE_HITO_CN date,
+   COSTO_AVANCE_HITO_CN decimal(9,2),
    primary key (ID_AVANCE_HITO_CN)
 );
 
@@ -69,7 +83,7 @@ create table DOCUMENTO_AVANCE_HITO_CUANTITATIVO
 (
    ID_DOCUMENTO_AVANCE_HITO_CN int not null auto_increment,
    ID_AVANCE_HITO_CN    int not null,
-   TITULO_DOCUMENTO_AVANCE_HITO_CN varchar(64) not null,
+   TITULO_DOCUMENTO_AVANCE_HITO_CN varchar(1024) not null,
    DESCRIPCION_DOCUMENTO_AVANCE_HITO_CN text not null,
    ARCHIVO_DOCUMENTO_AVANCE_HITO_CN varchar(128) not null,
    primary key (ID_DOCUMENTO_AVANCE_HITO_CN)
@@ -94,10 +108,10 @@ create table GASTO_ACTIVIDAD
 (
    ID_GASTO_ACTIVIDAD   int not null auto_increment,
    ID_ACTIVIDAD         int not null,
-   FECHA_GASTO_ACTIVIDAD date not null,
-   CONCEPTO_GASTO_ACTIVIDAD varchar(512) not null,
-   IMPORTE_GASTO_ACTIVIDAD decimal(9,2) not null,
-   RESPALDO_GASTO_ACTIVIDAD varchar(128) not null,
+   FECHA_GASTO_ACTIVIDAD date,
+   CONCEPTO_GASTO_ACTIVIDAD text,
+   IMPORTE_GASTO_ACTIVIDAD decimal(12,2),
+   RESPALDO_GASTO_ACTIVIDAD varchar(128),
    primary key (ID_GASTO_ACTIVIDAD)
 );
 
@@ -122,8 +136,8 @@ create table HITO_CUALITATIVO
 (
    ID_HITO_CL           int not null auto_increment,
    ID_ACTIVIDAD         int,
-   NOMBRE_HITO_CL       varchar(128) not null,
-   DESCRIPCION_HITO_CL  text not null,
+   NOMBRE_HITO_CL       varchar(1024),
+   DESCRIPCION_HITO_CL  text,
    primary key (ID_HITO_CL)
 );
 
@@ -134,10 +148,10 @@ create table HITO_CUANTITATIVO
 (
    ID_HITO_CN           int not null auto_increment,
    ID_ACTIVIDAD         int not null,
-   NOMBRE_HITO_CN       varchar(128) not null,
-   DESCRIPCION_HITO_CN  text not null,
-   META_HITO_CN         numeric(8,0) not null,
-   UNIDAD_HITO_CN       varchar(32) not null,
+   NOMBRE_HITO_CN       varchar(1024),
+   DESCRIPCION_HITO_CN  text,
+   META_HITO_CN         numeric(8,0),
+   UNIDAD_HITO_CN       varchar(32),
    primary key (ID_HITO_CN)
 );
 
@@ -149,7 +163,7 @@ create table INDICADOR_CUANTITATIVO
    ID_INDICADOR_CN      int not null auto_increment,
    ID_TIPO_INDICADOR_CN int not null,
    ID_HITO_CN           int,
-   NOMBRE_INDICADOR_CN  varchar(128) not null,
+   NOMBRE_INDICADOR_CN  varchar(1024) not null,
    ACEPTABLE_CN         decimal(9,2) not null,
    LIMITADO_CN          decimal(9,2) not null,
    NO_ACEPTABLE_CN      decimal(9,2) not null,
@@ -164,7 +178,6 @@ create table INSTITUCION
    ID_INSTITUCION       int not null auto_increment,
    NOMBRE_INSTITUCION   varchar(128) not null,
    SIGLA_INSTITUCION    varchar(8) not null,
-   PRESUPUESTO_INSTITUCION decimal(9,2) not null,
    CARPETA_INSTITUCION  varchar(32),
    ACTIVA_INSTITUCION   bool not null,
    primary key (ID_INSTITUCION)
@@ -197,7 +210,7 @@ create table META_PRODUCTO_CUALITATIVA
 (
    ID_META_PRODUCTO_CUALITATIVA int not null auto_increment,
    ID_PRODUCTO          int not null,
-   NOMBRE_META_PRODUCTO_CUALITATIVA varchar(256) not null,
+   NOMBRE_META_PRODUCTO_CUALITATIVA varchar(1024) not null,
    DESCRIPCION_META_PRODUCTO_CUALITATIVA text,
    primary key (ID_META_PRODUCTO_CUALITATIVA)
 );
@@ -257,12 +270,38 @@ create table PRODUCTO_RECIBE_ACTIVIDAD
 create table PROYECTO
 (
    ID_PROYECTO          int not null auto_increment,
-   ID_INSTITUCION       int not null,
-   NOMBRE_PROYECTO      varchar(128) not null,
+   ID_PROYECTO_GLOBAL   int not null,
+   NOMBRE_PROYECTO      varchar(1024) not null,
    DESCRIPCION_PROYECTO text,
-   PRESUPUESTO_PROYECTO decimal(9,2),
-   EN_EDICION           bool not null,
+   PRESUPUESTO_PROYECTO decimal(12,2),
+   EN_EDICION           bool,
+   CONCLUIDO            bool,
    primary key (ID_PROYECTO)
+);
+
+/*==============================================================*/
+/* Table: PROYECTO_GLOBAL                                       */
+/*==============================================================*/
+create table PROYECTO_GLOBAL
+(
+   ID_PROYECTO_GLOBAL   int not null auto_increment,
+   ID_INSTITUCION       int not null,
+   NOMBRE_PROYECTO_GLOBAL varchar(1024),
+   DESCRIPCION_PROYECTO_GLOBAL text,
+   PRESUPUESTO_PROYECTO_GLOBAL decimal(12,2),
+   primary key (ID_PROYECTO_GLOBAL)
+);
+
+/*==============================================================*/
+/* Table: PROYECTO_TIENE_ANIO                                   */
+/*==============================================================*/
+create table PROYECTO_TIENE_ANIO
+(
+   ID_PROYECTO          int not null,
+   ID_ANIO              int not null,
+   FECHA_INICIO_REGISTRO date,
+   FECHA_FIN_REGISTRO   date,
+   primary key (ID_PROYECTO, ID_ANIO)
 );
 
 /*==============================================================*/
@@ -298,7 +337,7 @@ create table USUARIO
    APELLIDO_PATERNO_USUARIO varchar(32) not null,
    APELLIDO_MATERNO_USUARIO varchar(32) not null,
    LOGIN_USUARIO        varchar(32) not null,
-   PASSWORD_USUARIO     varchar(32) not null,
+   PASSWORD_USUARIO     varchar(1024) not null,
    TELEFONO_USUARIO     int,
    CORREO_USUARIO       varchar(64),
    ACTIVO_USUARIO       bool not null,
@@ -368,8 +407,17 @@ alter table PRODUCTO_RECIBE_ACTIVIDAD add constraint FK_PRODUCTO_RECIBE_ACTIVIDA
 alter table PRODUCTO_RECIBE_ACTIVIDAD add constraint FK_PRODUCTO_RECIBE_ACTIVIDAD2 foreign key (ID_PRODUCTO)
       references PRODUCTO (ID_PRODUCTO) on delete cascade on update cascade;
 
-alter table PROYECTO add constraint FK_INSTITUCION_TIENE_PROYECTO foreign key (ID_INSTITUCION)
+alter table PROYECTO add constraint FK_PROYECTO_GLOBAL_TIENE_PROYECTO foreign key (ID_PROYECTO_GLOBAL)
+      references PROYECTO_GLOBAL (ID_PROYECTO_GLOBAL) on delete cascade on update cascade;
+
+alter table PROYECTO_GLOBAL add constraint FK_INSTITUCION_TIENE_PROYECTO_GLOBAL foreign key (ID_INSTITUCION)
       references INSTITUCION (ID_INSTITUCION) on delete cascade on update cascade;
+
+alter table PROYECTO_TIENE_ANIO add constraint FK_PROYECTO_TIENE_ANIO foreign key (ID_PROYECTO)
+      references PROYECTO (ID_PROYECTO) on delete cascade on update cascade;
+
+alter table PROYECTO_TIENE_ANIO add constraint FK_PROYECTO_TIENE_ANIO2 foreign key (ID_ANIO)
+      references ANIO (ID_ANIO) on delete cascade on update cascade;
 
 alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_INSTITUCION)
       references INSTITUCION (ID_INSTITUCION) on delete cascade on update cascade;
@@ -381,8 +429,9 @@ INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');
 INSERT INTO ROL (nombre_rol) VALUES ('coordinador');
 INSERT INTO ROL (nombre_rol) VALUES ('socio');
+INSERT INTO ROL (nombre_rol) VALUES ('socio observador');
 
-INSERT INTO INSTITUCION (nombre_institucion, sigla_institucion, presupuesto_institucion, carpeta_institucion, activa_institucion) VALUES ('Fundación Atica', 'ATICA', '0', 'atica', '1');
+INSERT INTO INSTITUCION (nombre_institucion, sigla_institucion, carpeta_institucion, activa_institucion) VALUES ('Fundación Atica', 'ATICA', 'atica', '1');
 
 INSERT INTO USUARIO (id_institucion, id_rol, nombre_usuario, apellido_paterno_usuario, apellido_materno_usuario, login_usuario, password_usuario, telefono_usuario, correo_usuario, activo_usuario) VALUES ('1', '1', 'Jose Manuel', 'Arandia', 'Luna', 'admin1', 'admin1123', '70349697', 'jose.arandia.luna@gmail.com', '1');
 

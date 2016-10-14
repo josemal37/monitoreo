@@ -8,7 +8,6 @@
         
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-3.1.0.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
         <title>Instituciones</title>
     </head>
@@ -31,7 +30,6 @@
                             <tr>
                                 <th>Sigla</th>
                                 <th>Nombre de la institución</th>
-                                <th>Presupuesto (Bs.)</th>
                                 <th>Activa</th>
                                 <th width="15%">Administrar</th>
                             </tr>
@@ -41,7 +39,6 @@
                                 <tr>
                                     <td><?= $institucion->sigla_institucion ?></td>
                                     <td><?= $institucion->nombre_institucion ?></td>
-                                    <td><span class="presupuesto_institucion"><?= $institucion->presupuesto_institucion ?></span></td>
                                     <td>
                                         <?php if($institucion->activa_institucion): ?>
                                             SI
@@ -75,8 +72,5 @@
             <?php endif; ?>
             <a href="<?= base_url() . 'administrador/nueva_institucion' ?>" class="btn btn-primary">Nueva institución</a>
         </div>
-        <script>
-            $('.presupuesto_institucion').number(true, 2);
-        </script>
     </body>
 </html>

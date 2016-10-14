@@ -68,7 +68,6 @@ class Modelo_administrador extends CI_Model {
                         INSTITUCION.id_institucion,
                         INSTITUCION.nombre_institucion,
                         INSTITUCION.sigla_institucion,
-                        INSTITUCION.presupuesto_institucion,
                         INSTITUCION.carpeta_institucion,
                         INSTITUCION.activa_institucion
                     FROM
@@ -145,9 +144,9 @@ class Modelo_administrador extends CI_Model {
                         WHERE
                             USUARIO.id_institucion = INSTITUCION.id_institucion AND
                             USUARIO.id_rol = ROL.id_rol AND
-                            USUARIO.id_usuario = $id_usuario
+                            USUARIO.id_usuario = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_usuario));
                 if (!$query) {
                     return false;
                 } else {
@@ -183,19 +182,19 @@ class Modelo_administrador extends CI_Model {
                         )
                         VALUES
                         (
-                            $id_institucion,
-                            $id_rol,
-                            '$nombre_usuario',
-                            '$apellido_paterno_usuario',
-                            '$apellido_materno_usuario',
-                            '$login_usuario',
-                            '$password_usuario',
-                            $telefono_usuario,
-                            '$correo_usuario',
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
                             true
                         )
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }
@@ -208,19 +207,19 @@ class Modelo_administrador extends CI_Model {
         } else {
             try {
                 $sql = "UPDATE USUARIO SET
-                            USUARIO.id_institucion = $id_institucion,
-                            USUARIO.id_rol = $id_rol,
-                            USUARIO.nombre_usuario = '$nombre_usuario',
-                            USUARIO.apellido_paterno_usuario = '$apellido_paterno_usuario',
-                            USUARIO.apellido_materno_usuario = '$apellido_materno_usuario',
-                            USUARIO.login_usuario = '$login_usuario',
-                            USUARIO.password_usuario = '$password_usuario',
-                            USUARIO.telefono_usuario = $telefono_usuario,
-                            USUARIO.correo_usuario = '$correo_usuario'
+                            USUARIO.id_institucion = ?,
+                            USUARIO.id_rol = ?,
+                            USUARIO.nombre_usuario = ?,
+                            USUARIO.apellido_paterno_usuario = ?,
+                            USUARIO.apellido_materno_usuario = ?,
+                            USUARIO.login_usuario = ?,
+                            USUARIO.password_usuario = ?,
+                            USUARIO.telefono_usuario = ?,
+                            USUARIO.correo_usuario = ?
                         WHERE
-                            USUARIO.id_usuario = $id_usuario
+                            USUARIO.id_usuario = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario, $id_usuario));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }
@@ -367,7 +366,6 @@ class Modelo_administrador extends CI_Model {
                             INSTITUCION.id_institucion,
                             INSTITUCION.nombre_institucion,
                             INSTITUCION.sigla_institucion,
-                            INSTITUCION.presupuesto_institucion,
                             INSTITUCION.carpeta_institucion,
                             INSTITUCION.activa_institucion
                         FROM
@@ -424,7 +422,6 @@ class Modelo_administrador extends CI_Model {
                         (
                             INSTITUCION.nombre_institucion,
                             INSTITUCION.sigla_institucion,
-                            INSTITUCION.presupuesto_institucion,
                             INSTITUCION.carpeta_institucion,
                             INSTITUCION.activa_institucion
                         )
@@ -432,7 +429,6 @@ class Modelo_administrador extends CI_Model {
                         (
                             '$nombre_institucion',
                             '$sigla_institucion',
-                            $presupuesto_institucion,
                             '$carpeta_institucion',
                             true
                         )
@@ -455,8 +451,7 @@ class Modelo_administrador extends CI_Model {
             try {
                 $sql = "UPDATE INSTITUCION SET
                             INSTITUCION.nombre_institucion = '$nombre_institucion',
-                            INSTITUCION.sigla_institucion = '$sigla_institucion',
-                            INSTITUCION.presupuesto_institucion = $presupuesto_institucion
+                            INSTITUCION.sigla_institucion = '$sigla_institucion'
                         WHERE
                             INSTITUCION.id_institucion = $id_institucion
                         ";
