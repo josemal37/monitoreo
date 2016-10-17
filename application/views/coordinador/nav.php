@@ -16,7 +16,16 @@ $nombre_institucion = $this->session->userdata('nombre_institucion');
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'coordinador/proyectos_activos', 'Proyectos activos') ?></li>
+                <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'coordinador/ver_proyectos', 'Proyectos') ?></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li class="dropdown <?php if ($activo == "Gestion actual"): ?>active<?php endif; ?>">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">Gestión actual<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><?= anchor(base_url() . 'coordinador/gestion_actual', 'Ver POA\'s de la gestión actual') ?></li>
+                        <li><?= anchor(base_url() . 'coordinador/gestiones_registradas', 'Gestiones registradas') ?></li>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav">
                 <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'coordinador/reportes', 'Reportes') ?></li>

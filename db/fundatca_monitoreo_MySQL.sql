@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     14/10/2016 08:40:09                          */
+/* Created on:     17/10/2016 09:35:56                          */
 /*==============================================================*/
 
 /*==============================================================*/
@@ -10,7 +10,7 @@ create table ACTIVIDAD
 (
    ID_ACTIVIDAD         int not null auto_increment,
    ID_PROYECTO          int not null,
-   NOMBRE_ACTIVIDAD     varchar(1024) not null,
+   NOMBRE_ACTIVIDAD     varchar(1024),
    DESCRIPCION_ACTIVIDAD text,
    FECHA_INICIO_ACTIVIDAD date,
    FECHA_FIN_ACTIVIDAD  date,
@@ -43,6 +43,7 @@ create table AVANCE_HITO_CUALITATIVO
    APROBADO_AVANCE_HITO_CL bool,
    EN_REVISION_AVANCE_HITO_CL bool,
    COSTO_AVANCE_HITO_CL decimal(8,2),
+   FECHA_REGISTRO_AVANCE_HITO_CL date,
    primary key (ID_AVANCE_HITO_CL)
 );
 
@@ -271,7 +272,7 @@ create table PROYECTO
 (
    ID_PROYECTO          int not null auto_increment,
    ID_PROYECTO_GLOBAL   int not null,
-   NOMBRE_PROYECTO      varchar(1024) not null,
+   NOMBRE_PROYECTO      varchar(1024),
    DESCRIPCION_PROYECTO text,
    PRESUPUESTO_PROYECTO decimal(12,2),
    EN_EDICION           bool,
@@ -299,8 +300,6 @@ create table PROYECTO_TIENE_ANIO
 (
    ID_PROYECTO          int not null,
    ID_ANIO              int not null,
-   FECHA_INICIO_REGISTRO date,
-   FECHA_FIN_REGISTRO   date,
    primary key (ID_PROYECTO, ID_ANIO)
 );
 
@@ -424,6 +423,7 @@ alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
       references ROL (ID_ROL) on delete cascade on update cascade;
+
 
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');

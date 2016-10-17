@@ -20,6 +20,250 @@ class Modelo_coordinador extends CI_Model {
     public function __construct() {
         parent::__construct();
     }
+    
+    public function get_proyectos() {
+        try {
+            $sql = "SELECT
+                        PROYECTO_GLOBAL.id_proyecto_global,
+                        PROYECTO_GLOBAL.id_institucion,
+                        PROYECTO_GLOBAL.nombre_proyecto_global,
+                        PROYECTO_GLOBAL.descripcion_proyecto_global,
+                        PROYECTO_GLOBAL.presupuesto_proyecto_global,
+                        INSTITUCION.nombre_institucion,
+                        INSTITUCION.sigla_institucion
+                    FROM
+                        PROYECTO_GLOBAL,
+                        INSTITUCION
+                    WHERE
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion
+                    ";
+            $query = $this->db->query($sql);
+            if(!$query) {
+                return Array();
+            } else {
+                return $query->result();
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
+    
+    public function get_proyecto_global($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PROYECTO_GLOBAL.id_proyecto_global,
+                            PROYECTO_GLOBAL.id_institucion,
+                            PROYECTO_GLOBAL.nombre_proyecto_global,
+                            PROYECTO_GLOBAL.descripcion_proyecto_global,
+                            PROYECTO_GLOBAL.presupuesto_proyecto_global
+                        FROM
+                            PROYECTO_GLOBAL
+                        WHERE
+                            PROYECTO_GLOBAL.id_proyecto_global = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto));
+                if(!$query) {
+                    return Array();
+                } else {
+                    if($query->num_rows() != 1) {
+                        return Array();
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion) {
+        if(!is_numeric($id_institucion)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "INSERT INTO PROYECTO_GLOBAL
+                        (
+                            PROYECTO_GLOBAL.nombre_proyecto_global,
+                            PROYECTO_GLOBAL.descripcion_proyecto_global,
+                            PROYECTO_GLOBAL.presupuesto_proyecto_global,
+                            PROYECTO_GLOBAL.id_institucion
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?,
+                            ?,
+                            ?
+                        )
+                        ";
+                $query = $this->db->query($sql, Array($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion));
+            } catch (Exception $ex) {
+
+            }
+        }
+    }
+    
+    public function update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion) {
+        if(!is_numeric($id_proyecto) || !is_numeric($id_institucion)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE PROYECTO_GLOBAL SET
+                            PROYECTO_GLOBAL.nombre_proyecto_global = ?,
+                            PROYECTO_GLOBAL.descripcion_proyecto_global = ?,
+                            PROYECTO_GLOBAL.presupuesto_proyecto_global = ?,
+                            PROYECTO_GLOBAL.id_institucion = ?
+                        WHERE
+                            PROYECTO_GLOBAL.id_proyecto_global = ?
+                        ";
+                $query = $this->db->query($sql, Array($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion, $id_proyecto));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function delete_proyecto($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "DELETE FROM PROYECTO_GLOBAL
+                        WHERE
+                            PROYECTO_GLOBAL.id_proyecto_global = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+
+    public function get_instituciones() {
+        try {
+            $sql = "SELECT
+                        INSTITUCION.id_institucion,
+                        INSTITUCION.nombre_institucion,
+                        INSTITUCION.sigla_institucion,
+                        INSTITUCION.carpeta_institucion,
+                        INSTITUCION.activa_institucion
+                    FROM
+                        INSTITUCION
+                    ORDER BY
+                        INSTITUCION.nombre_institucion ASC
+                    ";
+            $query = $this->db->query($sql);
+            if (!$query) {
+                return false;
+            } else {
+                if ($query->num_rows() == 0) {
+                    return false;
+                } else {
+                    return $query->result();
+                }
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+    
+    public function get_anios() {
+        try {
+            $sql = "SELECT
+                        ANIO.id_anio,
+                        ANIO.valor_anio
+                    FROM
+                        ANIO
+                    ORDER BY
+                        ANIO.valor_anio ASC
+                    ";
+            $query = $this->db->query($sql);
+            if(!$query) {
+                return Array();
+            } else {
+                return $query->result();
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+    
+    public function insert_anio($valor_anio) {
+        if(!is_numeric($valor_anio)) {
+            redirect(base_url() . 'administrador/error');
+        }
+        try {
+            $this->db->trans_start();
+            $sql = "SELECT
+                        ANIO.id_anio
+                    FROM
+                        ANIO
+                    WHERE
+                        ANIO.valor_anio = ?
+                    ";
+            $query = $this->db->query($sql, Array($valor_anio));
+            if($query->num_rows() > 0) {
+                $this->session->set_flashdata('anio_registrado', 'El año ya se encuentra registrado.');
+                redirect(base_url() . 'coordinador/habilitar_registro_poa_gestion', 'refresh');
+            } else {
+                $sql = "INSERT INTO ANIO
+                        (
+                            ANIO.valor_anio
+                        )
+                        VALUES
+                        (
+                            ?
+                        )
+                        ";
+                $query = $this->db->query($sql, Array($valor_anio));
+                $this->db->trans_complete();
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'administrador/error');
+        }
+    }
+
+    public function get_proyectos_activos_gestion_actual() {
+        try {
+            $sql = "SELECT
+                        PROYECTO.id_proyecto,
+                        PROYECTO.nombre_proyecto,
+                        PROYECTO.descripcion_proyecto,
+                        PROYECTO.presupuesto_proyecto,
+                        INSTITUCION.id_institucion,
+                        INSTITUCION.nombre_institucion,
+                        INSTITUCION.sigla_institucion
+                    FROM
+                        PROYECTO,
+                        PROYECTO_GLOBAL,
+                        INSTITUCION,
+                        PROYECTO_TIENE_ANIO,
+                        ANIO
+                    WHERE
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto AND
+                        PROYECTO.id_proyecto = PROYECTO_TIENE_ANIO.id_proyecto AND
+                        ANIO.id_anio = PROYECTO_TIENE_ANIO.id_anio AND
+                        PROYECTO.en_edicion = false
+                    ";
+            $query = $this->db->query($sql);
+            if (!$query) {
+                return false;
+            } else {
+                if ($query->num_rows() == 0) {
+                    return false;
+                } else {
+                    return $query->result();
+                }
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
 
     public function get_proyectos_activos() {
         try {
@@ -33,9 +277,11 @@ class Modelo_coordinador extends CI_Model {
                         INSTITUCION.sigla_institucion
                     FROM
                         PROYECTO,
+                        PROYECTO_GLOBAL,
                         INSTITUCION
                     WHERE
-                        PROYECTO.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto AND
                         PROYECTO.en_edicion = false
                     ";
             $query = $this->db->query($sql);

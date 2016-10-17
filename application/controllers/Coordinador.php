@@ -26,12 +26,122 @@ class Coordinador extends CI_Controller {
     }
 
     public function index() {
-        $this->proyectos_activos();
+        $this->ver_proyectos();
     }
 
     private function verificar_sesion() {
         if ($this->session->userdata('nombre_rol') == FALSE || $this->session->userdata('nombre_rol') != 'coordinador') {
             redirect(base_url() . 'login');
+        }
+    }
+    
+    public function ver_proyectos() {
+        $this->verificar_sesion();
+        
+        $datos['proyectos'] = $this->modelo_coordinador->get_proyectos();
+        $this->load->view('coordinador/vista_proyectos', $datos);
+    }
+    
+    public function registrar_proyecto() {
+        $this->verificar_sesion();
+        
+        if(isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
+            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
+            $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
+            $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['nombre_proyecto']);
+                $this->registrar_proyecto();
+            } else {
+                $nombre_proyecto = $this->input->post('nombre_proyecto');
+                $descripcion_proyecto = $this->input->post('descripcion_proyecto');
+                $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
+                $id_insititucion = $this->input->post('id_institucion');
+                $this->modelo_coordinador->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_insititucion);
+                redirect(base_url() . 'coordinador/ver_proyectos');
+            }
+        } else {
+            $datos = Array();
+            $datos['instituciones'] = $this->modelo_coordinador->get_instituciones();
+            $this->load->view('coordinador/vista_registrar_proyecto', $datos);
+        }
+    }
+    
+    public function modificar_proyecto($id_proyecto) {
+        $this->verificar_sesion();
+        
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'coordinador/error');
+        }
+        if(isset($_POST['id_proyecto']) && isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
+            $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric');
+            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
+            $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
+            $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
+            if ($this->form_validation->run() == FALSE || $id_proyecto != $this->input->post('id_proyecto')) {
+                unset($_POST['nombre_proyecto']);
+                $this->registrar_proyecto();
+            } else {
+                $nombre_proyecto = $this->input->post('nombre_proyecto');
+                $descripcion_proyecto = $this->input->post('descripcion_proyecto');
+                $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
+                $id_insititucion = $this->input->post('id_institucion');
+                $this->modelo_coordinador->update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_insititucion);
+                redirect(base_url() . 'coordinador/ver_proyectos');
+            }
+        } else {
+            $datos = Array();
+            $datos['instituciones'] = $this->modelo_coordinador->get_instituciones();
+            $datos['proyecto'] = $this->modelo_coordinador->get_proyecto_global($id_proyecto);
+            $this->load->view('coordinador/vista_modificar_proyecto', $datos);
+        }
+    }
+    
+    public function eliminar_proyecto($id_proyecto) {
+        $this->verificar_sesion();
+
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            $this->modelo_coordinador->delete_proyecto($id_proyecto);
+            redirect(base_url() . 'coordinador/ver_proyectos');
+        }
+    }
+    
+    public function gestion_actual() {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['proyectos'] = $this->modelo_coordinador->get_proyectos_activos_gestion_actual();
+        $this->load->view('coordinador/vista_gestion_actual', $datos);
+    }
+    
+    public function gestiones_registradas() {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['anios'] = $this->modelo_coordinador->get_anios();
+        $this->load->view('coordinador/vista_gestiones_registradas', $datos);
+    }
+    
+    public function habilitar_registro_poa_gestion() {
+        $this->verificar_sesion();
+        if(isset($_POST['valor_anio'])) {
+            $this->form_validation->set_rules('valor_anio', 'valor_anio', 'required|numeric');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['valor_anio']);
+                $this->habilitar_registro_poa_gestion();
+            } else {
+                $valor_anio = $this->input->post('valor_anio');
+                $this->modelo_coordinador->insert_anio($valor_anio);
+                redirect(base_url() . 'coordinador/gestiones_registradas');
+            }
+        } else {
+            $datos = Array();
+            $datos['anios'] = $this->modelo_coordinador->get_anios();
+            $this->load->view('coordinador/vista_habilitar_registro_poa_gestion', $datos);
         }
     }
 
