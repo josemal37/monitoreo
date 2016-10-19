@@ -77,19 +77,27 @@ class Socio extends CI_Controller {
                 $nombre_proyecto = $this->input->post('nombre_proyecto');
                 $descripcion_proyecto = $this->input->post('descripcion_proyecto');
                 $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
-                $id_proyecto = $this->modelo_socio->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto);
+                $id_anio = $this->input->post('id_anio');
+                $id_proyecto = $this->modelo_socio->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_anio);
+                //redirect(base_url() . 'socio/proyectos_en_edicion/');
                 redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
             }
         } else {
             $datos = Array();
-            $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion($this->session->userdata('id_institucion'));
-            $this->load->view('socio/vista_registrar_nuevo_proyecto', $datos);
+            $datos['proyecto_global'] = $this->modelo_socio->get_proyecto_global($this->session->userdata('id_institucion'));
+            if (!$datos['proyecto_global']) {
+                $this->session->set_flashdata('error_proyecto_global', 'El sistema no tiene registrado un proyecto para su institución, por favor contacte con el Coordinador del proyecto para solucionar el problema.');
+                redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
+            } else {
+                $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion($this->session->userdata('id_institucion'));
+                $datos['anios'] = $this->modelo_socio->get_anios();
+                $this->load->view('socio/vista_registrar_nuevo_proyecto', $datos);
+            }
         }
     }
 
     public function editar_proyecto($id_proyecto) {
         $this->verificar_sesion();
-
         $datos = $this->modelo_socio->get_proyecto_completo_en_edicion($id_proyecto);
         $this->load->view('socio/vista_editar_proyecto', $datos);
     }
@@ -142,10 +150,15 @@ class Socio extends CI_Controller {
             }
         } else {
             $datos = Array();
-            $datos['id_proyecto'] = $id_proyecto;
             $datos['productos'] = $this->modelo_socio->get_productos();
-            $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto($id_proyecto);
-            $this->load->view('socio/vista_registrar_nueva_actividad', $datos);
+            if (sizeof($datos['productos']) == 0) {
+                $this->session->set_flashdata('error_sin_productos', 'El PRODOC no tiene productos registrados actualmente, por favor contacte con el Coordinador del proyecto para solucionar el problema.');
+                redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+            } else {
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto($id_proyecto);
+                $this->load->view('socio/vista_registrar_nueva_actividad', $datos);
+            }
         }
     }
 
@@ -160,6 +173,8 @@ class Socio extends CI_Controller {
                 $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
                 $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
                 $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
+                $this->form_validation->set_rules('id_anio', 'id_anio', 'required|numeric');
+                $this->form_validation->set_rules('id_anio_anterior', 'id_anio_anterior', 'required|numeric');
                 if ($this->form_validation->run() == FALSE) {
                     unset($_POST['id_proyecto']);
                     $this->modificar_proyecto($id_proyecto);
@@ -169,11 +184,12 @@ class Socio extends CI_Controller {
                         $nombre_proyecto = $this->input->post('nombre_proyecto');
                         $descripcion_proyecto = $this->input->post('descripcion_proyecto');
                         $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
-                        $this->modelo_socio->update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto);
+                        $id_anio = $this->input->post('id_anio');
+                        $id_anio_anterior = $this->input->post('id_anio_anterior');
+                        $this->modelo_socio->update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_anio, $id_anio_anterior);
                         redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
                     } else {
-                        //TODO controlar error
-                        redirect(base_url() . 'socio');
+                        redirect(base_url() . 'socio/error');
                     }
                 }
             } else {
@@ -181,6 +197,7 @@ class Socio extends CI_Controller {
                 $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion_con_id($this->session->userdata('id_institucion'), $id_proyecto);
                 $datos['presupuesto_actividades'] = $this->modelo_socio->get_suma_presupuestos_actividades_proyecto($id_proyecto);
                 $datos['proyecto'] = $this->modelo_socio->get_proyecto($id_proyecto);
+                $datos['anios'] = $this->modelo_socio->get_anios();
                 $this->load->view('socio/vista_modificar_proyecto', $datos);
             }
         }
@@ -309,7 +326,7 @@ class Socio extends CI_Controller {
                 $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
                 $datos['id_proyecto'] = $id_proyecto;
                 $datos['id_actividad'] = $id_actividad;
-                if(isset($datos['actividad']->id_producto)) {
+                if (isset($datos['actividad']->id_producto)) {
                     $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
                     $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
                 }
@@ -349,7 +366,7 @@ class Socio extends CI_Controller {
                         $unidad_hito = $this->input->post('unidad_hito');
                         $aporta_producto = "indirecto";
                         $id_meta_producto = -1;
-                        if(isset($_POST['aporta_producto'])) {
+                        if (isset($_POST['aporta_producto'])) {
                             $aporta_producto = $this->input->post('aporta_producto');
                             $id_meta_producto = $this->input->post('id_meta_producto');
                         }
@@ -365,7 +382,7 @@ class Socio extends CI_Controller {
                 $datos['id_proyecto'] = $id_proyecto;
                 $datos['hito'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
                 $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
-                if(isset($datos['actividad']->id_producto)) {
+                if (isset($datos['actividad']->id_producto)) {
                     $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
                     $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
                 }

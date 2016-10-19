@@ -19,6 +19,12 @@
             $datos['activo'] = "Inicio";
             $this->load->view('socio/nav', $datos);
             ?>
+            <?php if ($this->session->flashdata('error_proyecto_global')): ?>
+                <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>¡Error de registro!</strong> <?= $this->session->flashdata('error_proyecto_global') ?>
+                </div>
+            <?php endif; ?>
             <div class="row hidden-sm hidden-xs">
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
                     <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>">
@@ -42,7 +48,7 @@
                     <div id="contenedor_formulario" class="hide">
                         <?php if ($proyectos): ?>
                             <?php foreach ($proyectos as $proyecto): ?>
-                        <p><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block white-space-normal"><?= $proyecto->nombre_proyecto ?></a></p>
+                                <p><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block white-space-normal"><?= $proyecto->nombre_proyecto ?></a></p>
                             <?php endforeach; ?>
                         <?php else: ?>
                             No existen proyectos activos.

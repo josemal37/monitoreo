@@ -32,10 +32,12 @@ class Modelo_socio extends CI_Model {
                         PROYECTO.presupuesto_proyecto
                     FROM 
                         PROYECTO, 
+                        PROYECTO_GLOBAL,
                         INSTITUCION
                     WHERE 
-                        PROYECTO.id_institucion = INSTITUCION.id_institucion AND
-                        PROYECTO.id_institucion = ? AND
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_GLOBAL.id_institucion = ? AND
                         PROYECTO.en_edicion = false
                         ";
             $query = $this->db->query($sql, Array($id_institucion));
@@ -52,6 +54,38 @@ class Modelo_socio extends CI_Model {
         } catch (Exception $ex) {
             $this->db->trans_rollback();
             redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function get_proyecto_global($id_institucion) {
+        if(!is_numeric($id_institucion)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PROYECTO_GLOBAL.id_proyecto_global,
+                            PROYECTO_GLOBAL.id_institucion,
+                            PROYECTO_GLOBAL.nombre_proyecto_global,
+                            PROYECTO_GLOBAL.descripcion_proyecto_global,
+                            PROYECTO_GLOBAL.presupuesto_proyecto_global
+                        FROM
+                            PROYECTO_GLOBAL
+                        WHERE
+                            PROYECTO_GLOBAL.id_institucion = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_institucion));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
         }
     }
 
@@ -122,13 +156,21 @@ class Modelo_socio extends CI_Model {
                         PROYECTO.id_proyecto, 
                         PROYECTO.nombre_proyecto, 
                         PROYECTO.descripcion_proyecto,
-                        PROYECTO.presupuesto_proyecto
+                        PROYECTO.presupuesto_proyecto,
+                        ANIO.id_anio,
+                        ANIO.valor_anio
                     FROM 
                         PROYECTO, 
-                        INSTITUCION
+                        PROYECTO_GLOBAL,
+                        INSTITUCION,
+                        PROYECTO_TIENE_ANIO,
+                        ANIO
                     WHERE 
-                        PROYECTO.id_institucion = INSTITUCION.id_institucion AND
-                        PROYECTO.id_institucion = ? AND
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                        PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
+                        PROYECTO_GLOBAL.id_institucion = ? AND
                         PROYECTO.id_proyecto = ?
                     ";
             $query_proyecto = $this->db->query($sql, Array($id_institucion, $id_proyecto));
@@ -363,16 +405,25 @@ class Modelo_socio extends CI_Model {
             $sql = "SELECT 
                         PROYECTO.id_proyecto, 
                         PROYECTO.nombre_proyecto, 
-                        PROYECTO.descripcion_proyecto
+                        PROYECTO.descripcion_proyecto,
+                        ANIO.valor_anio
                     FROM 
                         PROYECTO, 
+                        PROYECTO_GLOBAL,
+                        PROYECTO_TIENE_ANIO,
+                        ANIO,
                         INSTITUCION
                     WHERE 
-                        PROYECTO.id_institucion = INSTITUCION.id_institucion AND
-                        PROYECTO.id_institucion = $id_institucion AND
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_GLOBAL.id_institucion = ? AND
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                        PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
                         PROYECTO.en_edicion = true
+                    ORDER BY
+                        ANIO.valor_anio ASC
                         ";
-            $query = $this->db->query($sql);
+            $query = $this->db->query($sql, Array($id_institucion));
             if (!$query) {
                 return false;
             } else {
@@ -397,16 +448,24 @@ class Modelo_socio extends CI_Model {
                             PROYECTO.id_proyecto,
                             PROYECTO.nombre_proyecto,
                             PROYECTO.descripcion_proyecto,
-                            PROYECTO.presupuesto_proyecto
+                            PROYECTO.presupuesto_proyecto,
+                            ANIO.id_anio,
+                            ANIO.valor_anio
                         FROM
                             PROYECTO,
-                            INSTITUCION
+                            PROYECTO_GLOBAL,
+                            INSTITUCION,
+                            PROYECTO_TIENE_ANIO,
+                            ANIO
                         WHERE
-                            PROYECTO.id_institucion = INSTITUCION.id_institucion AND
-                            PROYECTO.id_institucion = $id_institucion AND
-                            PROYECTO.id_proyecto = $id_proyecto
+                            PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                            PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                            PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                            PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
+                            PROYECTO_GLOBAL.id_institucion = ? AND
+                            PROYECTO.id_proyecto = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_institucion, $id_proyecto));
                 if (!$query) {
                     return false;
                 } else {
@@ -422,49 +481,157 @@ class Modelo_socio extends CI_Model {
         }
     }
 
-    public function insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto) {
+    public function insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_anio) {
         try {
             $id_institucion = $this->session->userdata('id_institucion');
             $this->db->trans_start();
-            $sql = "INSERT INTO PROYECTO
-                    (
-                        nombre_proyecto,
-                        descripcion_proyecto,
-                        presupuesto_proyecto,
-                        id_institucion,
-                        en_edicion
-                    )
-                    VALUES
-                    (
-                        '$nombre_proyecto',
-                        '$descripcion_proyecto',
-                        '$presupuesto_proyecto',
-                        $id_institucion,
-                        true
-                    )
+            $sql = "SELECT
+                        PROYECTO_TIENE_ANIO.id_proyecto
+                    FROM
+                        PROYECTO_TIENE_ANIO,
+                        ANIO,
+                        PROYECTO,
+                        PROYECTO_GLOBAL,
+                        INSTITUCION
+                    WHERE
+                        PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                        PROYECTO.id_proyecto_global = PROYECTO_GLOBAL.id_proyecto_global AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        ANIO.id_anio = ?
                     ";
-            $query = $this->db->query($sql);
-            $id_proyecto = $this->db->insert_id();
+            $query = $this->db->query($sql, Array($id_anio));
+            if($query->num_rows() > 0) {
+                $this->session->set_flashdata('poa_gestion_registrado', 'El POA para la gestión seleccionada anteriormente ya fue registrado.');
+                redirect(base_url() . 'socio/registrar_nuevo_proyecto', 'refresh');
+            } else {
+                $sql = "SELECT
+                            PROYECTO_GLOBAL.id_proyecto_global
+                        FROM
+                            PROYECTO_GLOBAL
+                        WHERE
+                            PROYECTO_GLOBAL.id_institucion = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_institucion));
+                if($query->num_rows() > 0) {
+                    $datos_proyecto_global = $query->row();
+                    $id_proyecto_global = $datos_proyecto_global->id_proyecto_global;
+                    $sql = "INSERT INTO PROYECTO
+                            (
+                                nombre_proyecto,
+                                descripcion_proyecto,
+                                presupuesto_proyecto,
+                                id_proyecto_global,
+                                en_edicion
+                            )
+                            VALUES
+                            (
+                                ?,
+                                ?,
+                                ?,
+                                ?,
+                                true
+                            )
+                            ";
+                    $query = $this->db->query($sql, Array($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_proyecto_global));
+                    $id_proyecto = $this->db->insert_id();
+                    $sql = "INSERT INTO PROYECTO_TIENE_ANIO
+                            (
+                                PROYECTO_TIENE_ANIO.id_proyecto,
+                                PROYECTO_TIENE_ANIO.id_anio
+                            )
+                            VALUES
+                            (
+                                ?,
+                                ?
+                            )
+                            ";
+                    $query = $this->db->query($sql, Array($id_proyecto, $id_anio));
+                    $this->db->trans_complete();
+                    return $id_proyecto;
+                } else {
+                    redirect(base_url() . 'socio/error');
+                }
+            }
             $this->db->trans_complete();
-            return $id_proyecto;
         } catch (Exception $ex) {
             redirect(base_url() . 'socio/error');
         }
     }
 
-    public function update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto) {
-        if (!is_numeric($id_proyecto)) {
+    public function update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_anio, $id_anio_anterior) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_anio) || !is_numeric($id_anio_anterior)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
-                $sql = "UPDATE PROYECTO SET
-                            PROYECTO.nombre_proyecto = '$nombre_proyecto',
-                            PROYECTO.descripcion_proyecto = '$descripcion_proyecto',
-                            PROYECTO.presupuesto_proyecto = $presupuesto_proyecto 
+                $this->db->trans_start();
+                $sql = "SELECT
+                            PROYECTO.id_proyecto_global
+                        FROM
+                            PROYECTO
                         WHERE
-                            PROYECTO.id_proyecto = $id_proyecto
+                            PROYECTO.id_proyecto = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_proyecto));
+                $proyecto = $query->row();
+                $id_proyecto_global = $proyecto->id_proyecto_global;
+                $sql = "SELECT
+                            PROYECTO_TIENE_ANIO.id_anio
+                        FROM
+                            PROYECTO_TIENE_ANIO,
+                            PROYECTO
+                        WHERE
+                            PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                            PROYECTO.id_proyecto_global = ? AND
+                            PROYECTO_TIENE_ANIO.id_anio = ? AND
+                            PROYECTO_TIENE_ANIO.id_anio != ?
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto_global, $id_anio, $id_anio_anterior));
+                if($query->num_rows() == 0) {
+                    $sql = "UPDATE PROYECTO SET
+                                PROYECTO.nombre_proyecto = ?,
+                                PROYECTO.descripcion_proyecto = ?,
+                                PROYECTO.presupuesto_proyecto = ? 
+                            WHERE
+                                PROYECTO.id_proyecto = ?
+                            ";
+                    $query = $this->db->query($sql, Array($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_proyecto));
+                    $sql = "SELECT
+                                PROYECTO_TIENE_ANIO.id_anio
+                            FROM
+                                PROYECTO_TIENE_ANIO,
+                                PROYECTO
+                            WHERE
+                                PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                                PROYECTO.id_proyecto_global = ? AND
+                                PROYECTO_TIENE_ANIO.id_anio = ?
+                            ";
+                    $query = $this->db->query($sql, Array($id_proyecto_global, $id_anio_anterior));
+                    if($query->num_rows() > 0) {
+                        $sql = "DELETE FROM PROYECTO_TIENE_ANIO
+                                WHERE
+                                    PROYECTO_TIENE_ANIO.id_proyecto = ? AND
+                                    PROYECTO_TIENE_ANIO.id_anio = ?
+                                ";
+                        $query = $this->db->query($sql, Array($id_proyecto, $id_anio_anterior));
+                        $sql = "INSERT INTO PROYECTO_TIENE_ANIO
+                                (
+                                    PROYECTO_TIENE_ANIO.id_proyecto,
+                                    PROYECTO_TIENE_ANIO.id_anio
+                                )
+                                VALUES
+                                (
+                                    ?,
+                                    ?
+                                )
+                                ";
+                        $query = $this->db->query($sql, Array($id_proyecto, $id_anio));
+                    }
+                } else {
+                    $this->session->set_flashdata('poa_gestion_registrado', 'El POA para la gestión seleccionada anteriormente ya fue registrado.');
+                redirect(base_url() . 'socio/modificar_proyecto/' . $id_proyecto, 'refresh');
+                }
+                $this->db->trans_complete();
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -1369,37 +1536,33 @@ class Modelo_socio extends CI_Model {
                 $sql = "SELECT
                             PROYECTO.id_proyecto
                         FROM
-                            PROYECTO
+                            PROYECTO,
+                            PROYECTO_GLOBAL
                         WHERE
-                            PROYECTO.id_institucion = ?
+                            PROYECTO.id_proyecto_global = PROYECTO_GLOBAL.id_proyecto_global AND
+                            PROYECTO_GLOBAL.id_institucion = ?
                         ";
                 $query = $this->db->query($sql, Array($id_institucion));
                 if($query->num_rows() > 0) {
                     $sql = "SELECT 
-                                INSTITUCION.id_institucion, 
-                                INSTITUCION.nombre_institucion, 
-                                INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
+                                PROYECTO_GLOBAL.presupuesto_proyecto_global - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
                             FROM 
-                                INSTITUCION, 
-                                PROYECTO
+                                PROYECTO,
+                                PROYECTO_GLOBAL
                             WHERE 
-                                INSTITUCION.id_institucion = PROYECTO.id_institucion AND
-                                INSTITUCION.id_institucion = ? 
+                                PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                                PROYECTO_GLOBAL.id_institucion = ? 
                             GROUP BY
-                                INSTITUCION.id_institucion
+                                PROYECTO_GLOBAL.id_institucion
                             ";
                     $query = $this->db->query($sql, Array($id_institucion));
                 } else {
-                    $sql = "SELECT 
-                                INSTITUCION.id_institucion, 
-                                INSTITUCION.nombre_institucion, 
-                                INSTITUCION.presupuesto_institucion AS presupuesto_disponible_institucion
+                    $sql = "SELECT
+                                PROYECTO_GLOBAL.presupuesto_proyecto_global AS presupuesto_disponible_institucion
                             FROM 
-                                INSTITUCION
+                                PROYECTO_GLOBAL
                             WHERE
-                                INSTITUCION.id_institucion = ? 
-                            GROUP BY
-                                INSTITUCION.id_institucion
+                                PROYECTO_GLOBAL.id_institucion = ? 
                             ";
                     $query = $this->db->query($sql, Array($id_institucion));
                 }
@@ -1428,39 +1591,37 @@ class Modelo_socio extends CI_Model {
                 $sql = "SELECT
                             PROYECTO.id_proyecto
                         FROM
-                            PROYECTO
+                            PROYECTO,
+                            PROYECTO_GLOBAL
                         WHERE
-                            PROYECTO.id_institucion = ? AND
+                            PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                            PROYECTO_GLOBAL.id_institucion = ? AND
                             PROYECTO.id_proyecto != ?
                         ";
                 $query = $this->db->query($sql, Array($id_institucion, $id_proyecto));
                 if($query->num_rows() > 0) {
                     $sql = "SELECT 
-                                INSTITUCION.id_institucion, 
-                                INSTITUCION.nombre_institucion, 
-                                INSTITUCION.presupuesto_institucion - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
+                                PROYECTO_GLOBAL.presupuesto_proyecto_global - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) AS presupuesto_disponible_institucion
                             FROM 
-                                INSTITUCION, 
+                                PROYECTO_GLOBAL, 
                                 PROYECTO
                             WHERE 
-                                INSTITUCION.id_institucion = PROYECTO.id_institucion AND
-                                INSTITUCION.id_institucion = ? AND
+                                PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                                PROYECTO_GLOBAL.id_institucion = ? AND
                                 PROYECTO.id_proyecto != ?
                             GROUP BY
-                                INSTITUCION.id_institucion
+                                PROYECTO_GLOBAL.id_proyecto_global
                             ";
                     $query = $this->db->query($sql, Array($id_institucion, $id_proyecto));
                 } else {
                     $sql = "SELECT 
-                                INSTITUCION.id_institucion, 
-                                INSTITUCION.nombre_institucion, 
-                                INSTITUCION.presupuesto_institucion AS presupuesto_disponible_institucion
+                                PROYECTO_GLOBAL.presupuesto_proyecto_global AS presupuesto_disponible_institucion
                             FROM 
-                                INSTITUCION
+                                PROYECTO_GLOBAL
                             WHERE 
-                                INSTITUCION.id_institucion = ?
+                                PROYECTO_GLOBAL.id_institucion = ?
                             GROUP BY
-                                INSTITUCION.id_institucion
+                                PROYECTO_GLOBAL.id_institucion
                             ";
                     $query = $this->db->query($sql, Array($id_institucion));
                 }
@@ -1562,6 +1723,26 @@ class Modelo_socio extends CI_Model {
                     return $query->row();
                 }
             }
+        }
+    }
+    
+    public function get_anios() {
+        try {
+            $sql = "SELECT
+                        ANIO.id_anio,
+                        ANIO.valor_anio,
+                        ANIO.activo_anio
+                    FROM
+                        ANIO
+                    ";
+            $query = $this->db->query($sql);
+            if(!$query) {
+                return false;
+            } else {
+                return $query->result();
+            }
+        } catch (Exception $ex) {
+
         }
     }
 

@@ -17,8 +17,8 @@ $nombre_institucion = $this->session->userdata('nombre_institucion');
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li <?php if ($activo == "Inicio"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio', 'Inicio') ?></li>
-                <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_activos', 'Proyectos activos') ?></li>
-                <li <?php if ($activo == "Registrar proyecto"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_en_edicion', 'Proyectos en edición') ?></li>
+                <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_activos', 'POA\'s activos') ?></li>
+                <li <?php if ($activo == "Registrar proyecto"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_en_edicion', 'POA\'s en edición') ?></li>
                 <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/ver_reportes', 'Ver reportes') ?></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

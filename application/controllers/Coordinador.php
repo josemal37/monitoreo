@@ -126,6 +126,13 @@ class Coordinador extends CI_Controller {
         $this->load->view('coordinador/vista_gestiones_registradas', $datos);
     }
     
+    public function activar_anio($id_anio) {
+        $this->verificar_sesion();
+        
+        $this->modelo_coordinador->activar_anio($id_anio);
+        redirect(base_url() . 'coordinador/gestiones_registradas');
+    }
+    
     public function habilitar_registro_poa_gestion() {
         $this->verificar_sesion();
         if(isset($_POST['valor_anio'])) {

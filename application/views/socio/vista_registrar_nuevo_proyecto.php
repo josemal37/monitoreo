@@ -13,7 +13,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
 
-        <title>Registrar proyecto</title>
+        <title>Registrar POA</title>
     </head>
     <body>
         <div class="container">
@@ -25,13 +25,27 @@
             ?>
             <div>
                 <form action="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" id="proyecto" role="form" method="post" accept-charset="utf-8">
+                    <?php if ($this->session->flashdata('poa_gestion_registrado')): ?>
+                        <div class="alert alert-danger alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <strong>¡Error de registro!</strong> <?= $this->session->flashdata('poa_gestion_registrado') ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="form-group">
-                        <label for="nombre_proyecto">Nombre del proyecto</label>
-                        <input type="text" name="nombre_proyecto" id="nombre_proyecto" placeholder="Nombre del proyecto" class="form-control">
+                        <label for="nombre_proyecto">Nombre del POA</label>
+                        <input type="text" name="nombre_proyecto" id="nombre_proyecto" placeholder="Nombre" class="form-control">
                         <p><?= form_error('nombre_proyecto') ?></p>
                     </div>
                     <div id="load" style="display: none">
                         asd
+                    </div>
+                    <div class="form-group">
+                        <label for="id_anio">Gestión</label>
+                        <select name="id_anio" id="id_anio" class="form-control">
+                            <?php foreach ($anios as $anio): ?>
+                                <option value="<?= $anio->id_anio ?>" <?php if ($anio->activo_anio == true): ?>selected<?php endif; ?>><?= $anio->valor_anio ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="descripcion_proyecto">Descripción</label>
@@ -39,13 +53,13 @@
                         <p><?= form_error('descripcion_proyecto') ?></p>
                     </div>
                     <div class="form-group">
-                        <label for="presupuesto_proyecto_vista">Presupuesto (Bs.)</label>
+                        <label for="presupuesto_proyecto_vista">Presupuesto del POA (Bs.)</label>
                         <input type="text" name="presupuesto_proyecto_vista" id="presupuesto_proyecto_vista" placeholder="Presupuesto" class="form-control">
                         <input type="hidden" name="presupuesto_proyecto" id="presupuesto_proyecto">
                         <p><?= form_error('presupuesto_proyecto') ?></p>
-                        <label>Disponible: Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_institucion ?></span></label>
+                        <label>Presupuesto disponible: Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_institucion ?></span></label>
                     </div>
-                    <input type="submit" name="submit" id="submit" value="Registrar proyecto" title="Registrar proyecto" class="btn btn-primary">
+                    <input type="submit" name="submit" id="submit" value="Registrar POA" title="Registrar POA" class="btn btn-primary">
                 </form>
             </div>
         </div>
@@ -59,18 +73,7 @@
                         nombre_proyecto: {
                             required: true,
                             minlength: 5,
-                            maxlength: 128,
-                            remote: {
-                                url: '<?= base_url() . 'socio/existe_nombre_proyecto_institucion_ajax' ?>',
-                                method: 'POST',
-                                cache: false,
-                                dataType: "json",
-                                data: {
-                                    nombre_proyecto: function() {
-                                        return $('#nombre_proyecto').val();
-                                    }
-                                }
-                            }
+                            maxlength: 128
                         },
                         descripcion_proyecto: {
                             required: true,
@@ -85,9 +88,6 @@
                         }
                     },
                     messages: {
-                        nombre_proyecto: {
-                            remote: 'Este nombre de proyecto ya se encuentra registrado.'
-                        },
                         presupuesto_proyecto: {
                             max: 'Por favor, escribe un valor menor o igual al disponible.'
                         }

@@ -32,6 +32,7 @@
                             <thead>
                                 <tr>
                                     <th>Año</th>
+                                    <th>Activo</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -39,7 +40,16 @@
                                 <?php foreach ($anios as $anio): ?>
                                     <tr>
                                         <td><?= $anio->valor_anio ?></td>
-                                        <td width="15%"></td>
+                                        <td>
+                                            <?php if($anio->activo_anio): ?>
+                                                SI
+                                            <?php else: ?>
+                                                NO
+                                            <?php endif; ?>
+                                        </td>
+                                        <td width="15%">
+                                            <a href="<?= base_url() . 'coordinador/activar_anio/' . $anio->id_anio?>" class="btn btn-success btn-xs btn-block">Establecer gestión activa</a>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

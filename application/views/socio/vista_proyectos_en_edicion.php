@@ -20,30 +20,36 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <?php if ($proyectos): ?>
-                <div class="table-responsive">
-                    <h4>Lista de proyectos en edición</h4>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th width="20%">Nombre</th>
-                                <th width="65%">Descripción</th>
-                                <th width="15%">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($proyectos as $proyecto) : ?>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>Lista de POA's en edición</strong>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
                                 <tr>
-                                    <td><?= $proyecto->nombre_proyecto ?></td>
-                                    <td><?= $proyecto->descripcion_proyecto ?></td>
-                                    <td>
-                                        <a href="<?= base_url() . 'socio/editar_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Editar proyecto</a>
-                                        <a href="<?= base_url() . 'socio/terminar_edicion_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-primary btn-xs btn-block">Activar proyecto</a>
-                                        <a href="<?= base_url() . 'socio/eliminar_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-danger btn-xs btn-block">Eliminar proyecto</a>
-                                    </td>
+                                    <th width="10%">Año</th>
+                                    <th width="20%">Nombre</th>
+                                    <th width="55%">Descripción</th>
+                                    <th width="15%">Acciones</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($proyectos as $proyecto) : ?>
+                                    <tr>
+                                        <td><?= $proyecto->valor_anio ?></td>
+                                        <td><?= $proyecto->nombre_proyecto ?></td>
+                                        <td><?= $proyecto->descripcion_proyecto ?></td>
+                                        <td>
+                                            <a href="<?= base_url() . 'socio/editar_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Editar POA</a>
+                                            <a href="<?= base_url() . 'socio/terminar_edicion_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-primary btn-xs btn-block">Activar POA</a>
+                                            <a href="<?= base_url() . 'socio/eliminar_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-danger btn-xs btn-block">Eliminar POA</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             <?php else: ?>
                 <div class="panel panel-warning">
@@ -51,11 +57,11 @@
                         Advertencia
                     </div>
                     <div class="panel-body">
-                        No existen proyectos en edición actualmente.
+                        No existen POA's en edición actualmente.
                     </div>
                 </div>
             <?php endif; ?>
-            <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" class="btn btn-primary">Registrar nuevo proyecto</a>
+            <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" class="btn btn-primary">Registrar nuevo POA</a>
         </div>
     </body>
 </html>

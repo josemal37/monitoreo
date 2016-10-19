@@ -21,11 +21,19 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span>)</h4>
-                <p class="text-justify"><?= $datos_proyecto->descripcion_proyecto ?></p>
+                <h4><?= $datos_proyecto->nombre_proyecto ?></h4>
+                <p class="text-justify"><strong>Año:</strong> <span class="number_integer"><?= $datos_proyecto->valor_anio ?></span></p>
+                <p class="text-justify"><strong>Presupuesto:</strong> Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span></p>
+                <p class="text-justify"><strong>Descripción:</strong> <?= $datos_proyecto->descripcion_proyecto ?></p>
                 <p class="text-left"><a href="<?= base_url() . 'socio/modificar_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Modificar datos generales</a></p>
             </div>
             <div>
+                <?php if ($this->session->flashdata('error_sin_productos')): ?>
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>¡Error de registro!</strong> <?= $this->session->flashdata('error_sin_productos') ?>
+                    </div>
+                <?php endif; ?>
                 <?php if (sizeof($datos_actividades) > 0): ?>
                     <h4>Actividades</h4>
                     <?php foreach ($datos_actividades as $actividad): ?>
@@ -39,7 +47,7 @@
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
                                     <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span></p>
-                                    <?php if(isset($actividad->nombre_producto)): ?>
+                                    <?php if (isset($actividad->nombre_producto)): ?>
                                         <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
                                     <?php endif; ?>
                                     <div>
@@ -76,8 +84,8 @@
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
                                                                     <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
                                                                     <td>
-                                                                        <?php if(isset($hito_cuantitativo->id_meta_producto_cuantitativa)): ?>
-                                                                            <span class="number_integer"><?= $hito_cuantitativo->cantidad_meta_producto_cuantitativa?></span> <?= $hito_cuantitativo->unidad_meta_producto_cuantitativa ?>
+                                                                        <?php if (isset($hito_cuantitativo->id_meta_producto_cuantitativa)): ?>
+                                                                            <span class="number_integer"><?= $hito_cuantitativo->cantidad_meta_producto_cuantitativa ?></span> <?= $hito_cuantitativo->unidad_meta_producto_cuantitativa ?>
                                                                         <?php else: ?>
                                                                             -----
                                                                         <?php endif; ?>

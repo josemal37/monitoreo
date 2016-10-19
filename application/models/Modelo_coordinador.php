@@ -167,7 +167,7 @@ class Modelo_coordinador extends CI_Model {
                 }
             }
         } catch (Exception $ex) {
-            redirect(base_url() . 'administrador/error');
+            redirect(base_url() . 'coordinador/error');
         }
     }
     
@@ -175,7 +175,8 @@ class Modelo_coordinador extends CI_Model {
         try {
             $sql = "SELECT
                         ANIO.id_anio,
-                        ANIO.valor_anio
+                        ANIO.valor_anio,
+                        ANIO.activo_anio
                     FROM
                         ANIO
                     ORDER BY
@@ -188,13 +189,13 @@ class Modelo_coordinador extends CI_Model {
                 return $query->result();
             }
         } catch (Exception $ex) {
-            redirect(base_url() . 'administrador/error');
+            redirect(base_url() . 'coordinador/error');
         }
     }
     
     public function insert_anio($valor_anio) {
         if(!is_numeric($valor_anio)) {
-            redirect(base_url() . 'administrador/error');
+            redirect(base_url() . 'coordinador/error');
         }
         try {
             $this->db->trans_start();
@@ -212,18 +213,67 @@ class Modelo_coordinador extends CI_Model {
             } else {
                 $sql = "INSERT INTO ANIO
                         (
-                            ANIO.valor_anio
+                            ANIO.valor_anio,
+                            ANIO.activo_anio
                         )
                         VALUES
                         (
-                            ?
+                            ?,
+                            false
                         )
                         ";
                 $query = $this->db->query($sql, Array($valor_anio));
                 $this->db->trans_complete();
             }
         } catch (Exception $ex) {
-            redirect(base_url() . 'administrador/error');
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
+    
+    public function activar_anio($id_anio) {
+        if(!is_numeric($id_anio)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $this->db->trans_start();
+                $sql = "UPDATE ANIO SET
+                            ANIO.activo_anio = false
+                        ";
+                $this->db->query($sql);
+                $sql = "UPDATE ANIO SET
+                            ANIO.activo_anio = true
+                        WHERE
+                            ANIO.id_anio = ?
+                        ";
+                $this->db->query($sql, Array($id_anio));
+                $this->db->trans_complete();
+            } catch (Exception $ex) {
+
+            }
+        }
+    }
+    
+    public function get_anio_activo() {
+        try {
+            $sql = "SELECT
+                        ANIO.valor_anio
+                    FROM
+                        ANIO
+                    WHERE
+                        ANIO.activo_anio = true
+                    ";
+            $query = $this->db->query($sql);
+            if(!$query) {
+                return false;
+            } else {
+                if($query->num_rows() != 1) {
+                    return false;
+                } else {
+                    return $query->row();
+                }
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'coordinador/error');
         }
     }
 
@@ -303,7 +353,7 @@ class Modelo_coordinador extends CI_Model {
         if (!is_numeric($id_proyecto)) {
             $this->session->set_flashdata('acceso_no_autorizado', 'Operacion no permitida.');
             //TODO registrar intento de fallo
-            redirect(base_url() . 'socio');
+            redirect(base_url() . 'coordinador/error');
         }
         try {
             $id_institucion = $this->session->userdata('id_institucion');
@@ -348,7 +398,7 @@ class Modelo_coordinador extends CI_Model {
                 }
             } else {
                 $this->session->set_flashdata('no_existe_proyecto', 'El proyecto al que intenta acceder no existe.');
-                redirect(base_url() . 'socio');
+                redirect(base_url() . 'coordinador/error');
             }
 
             return $datos;
@@ -361,7 +411,7 @@ class Modelo_coordinador extends CI_Model {
         if (!is_numeric($id_proyecto)) {
             $this->session->set_flashdata('acceso_no_autorizado', 'Operacion no permitida.');
             //TODO registrar intento de fallo
-            redirect(base_url() . 'socio');
+            redirect(base_url() . 'coordinador/error');
         }
         try {
             $sql = "SELECT
@@ -393,7 +443,7 @@ class Modelo_coordinador extends CI_Model {
         if (!is_numeric($id_actividad)) {
             $this->session->set_flashdata('acceso_no_autorizado', 'Operacion no permitida.');
             //TODO registrar intento de fallo
-            redirect(base_url() . 'socio');
+            redirect(base_url() . 'coordinador/error');
         }
         try {
             $sql = "SELECT
@@ -427,7 +477,7 @@ class Modelo_coordinador extends CI_Model {
         if (!is_numeric($id_actividad)) {
             $this->session->set_flashdata('acceso_no_autorizado', 'Operacion no permitida.');
             //TODO registrar intento de fallo
-            redirect(base_url() . 'socio');
+            redirect(base_url() . 'coordinador/error');
         }
         try {
             $sql = "SELECT
@@ -451,7 +501,7 @@ class Modelo_coordinador extends CI_Model {
 
     public function get_indicadores_cuantitativos($id_actividad) {
         if (!is_numeric($id_actividad)) {
-            redirect(base_url() . 'socio');
+            redirect(base_url() . 'coordinador/error');
         } else {
             try {
                 $sql = "SELECT
