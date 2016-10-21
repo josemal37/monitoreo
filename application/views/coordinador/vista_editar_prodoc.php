@@ -10,7 +10,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
 
-        <title>Ver PRODOC</title>
+        <title>Editar PRODOC</title>
     </head>
     <body>
         <div class="container">

@@ -35,11 +35,11 @@ class Coordinador extends CI_Controller {
         }
     }
 
-    public function ver_prodoc() {
+    public function ver_prodoc($id_prodoc) {
         $this->verificar_sesion();
 
         $datos = Array();
-        $datos['prodoc'] = $this->modelo_coordinador->get_prodoc_completo();
+        $datos['prodoc'] = $this->modelo_coordinador->get_prodoc_completo($id_prodoc);
         $this->load->view('coordinador/vista_prodoc', $datos);
     }
 
