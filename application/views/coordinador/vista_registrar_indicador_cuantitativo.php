@@ -22,7 +22,7 @@
             <?php
             $datos = Array();
             $datos['activo'] = "Proyectos activos";
-            $this->load->view('socio/nav', $datos);
+            $this->load->view('coordinador/nav', $datos);
             ?>
             <div>
                 <h4><?= $actividad->nombre_actividad . ': ' . $hito->nombre_hito_cn ?></h4>

@@ -34,18 +34,248 @@ class Coordinador extends CI_Controller {
             redirect(base_url() . 'login');
         }
     }
+
+    public function ver_prodoc() {
+        $this->verificar_sesion();
+
+        $datos = Array();
+        $datos['prodoc'] = $this->modelo_coordinador->get_prodoc_completo();
+        $this->load->view('coordinador/vista_prodoc', $datos);
+    }
+
+    public function editar_prodoc($id_prodoc) {
+        $this->verificar_sesion();
+
+        $datos = Array();
+        $datos['prodoc'] = $this->modelo_coordinador->get_prodoc_completo($id_prodoc);
+        $this->load->view('coordinador/vista_editar_prodoc', $datos);
+    }
+
+    public function registrar_prodoc() {
+        $this->verificar_sesion();
+
+        if (isset($_POST['nombre_prodoc']) && isset($_POST['descripcion_prodoc']) && isset($_POST['objetivo_global_prodoc']) && isset($_POST['objetivo_proyecto_prodoc'])) {
+            $this->form_validation->set_rules('nombre_prodoc', 'nombre_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_prodoc', 'descripcion_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('objetivo_global_prodoc', 'objetivo_global_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('objetivo_proyecto_prodoc', 'objetivo_proyecto_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['nombre_prodoc']);
+                $this->registrar_prodoc();
+            } else {
+                $nombre_prodoc = $this->input->post('nombre_prodoc');
+                $descripcion_prodoc = $this->input->post('descripcion_prodoc');
+                $objetivo_global_prodoc = $this->input->post('objetivo_global_prodoc');
+                $objetivo_proyecto_prodoc = $this->input->post('objetivo_proyecto_prodoc');
+                $id_prodoc = $this->modelo_coordinador->insert_prodoc($nombre_prodoc, $descripcion_prodoc, $objetivo_global_prodoc, $objetivo_proyecto_prodoc);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $id_prodoc = $this->modelo_coordinador->get_id_prodoc();
+            if (!$id_prodoc) {
+                $this->load->view('coordinador/vista_registrar_prodoc', $datos);
+            } else {
+                $this->session->set_flashdata('advertencia_existe_prodoc', 'Usted ya tiene registrado un PRODOC en el sistema.');
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc, 'refresh');
+            }
+        }
+    }
+
+    public function modificar_prodoc($id_prodoc) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['id_prodoc']) && isset($_POST['nombre_prodoc']) && isset($_POST['descripcion_prodoc']) && isset($_POST['objetivo_global_prodoc']) && isset($_POST['objetivo_proyecto_prodoc'])) {
+            $this->form_validation->set_rules('id_prodoc', 'id_prodoc', 'required|numeric');
+            $this->form_validation->set_rules('nombre_prodoc', 'nombre_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_prodoc', 'descripcion_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('objetivo_global_prodoc', 'objetivo_global_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('objetivo_proyecto_prodoc', 'objetivo_proyecto_prodoc', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['id_prodoc']);
+                $this->modificar_prodoc($id_prodoc);
+            } else {
+                $nombre_prodoc = $this->input->post('nombre_prodoc');
+                $descripcion_prodoc = $this->input->post('descripcion_prodoc');
+                $objetivo_global_prodoc = $this->input->post('objetivo_global_prodoc');
+                $objetivo_proyecto_prodoc = $this->input->post('objetivo_proyecto_prodoc');
+                $this->modelo_coordinador->update_prodoc($id_prodoc, $nombre_prodoc, $descripcion_prodoc, $objetivo_global_prodoc, $objetivo_proyecto_prodoc);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $datos['id_prodoc'] = $id_prodoc;
+            $datos['prodoc'] = $this->modelo_coordinador->get_prodoc($id_prodoc);
+            $this->load->view('coordinador/vista_modificar_prodoc', $datos);
+        }
+    }
+
+    public function registrar_efecto($id_prodoc) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['nombre_efecto']) && isset($_POST['descripcion_efecto'])) {
+            $this->form_validation->set_rules('nombre_efecto', 'nombre_efecto', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_efecto', 'descripcion_efecto', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['nombre_efecto']);
+                $this->registrar_efecto($id_prodoc);
+            } else {
+                $nombre_efecto = $this->input->post('nombre_efecto');
+                $descripcion_efecto = $this->input->post('descripcion_efecto');
+                $this->modelo_coordinador->insert_efecto($id_prodoc, $nombre_efecto, $descripcion_efecto);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $datos['id_prodoc'] = $id_prodoc;
+            $this->load->view('coordinador/vista_registrar_efecto', $datos);
+        }
+    }
     
-    public function ver_proyectos() {
+    public function modificar_efecto($id_prodoc, $id_efecto) {
         $this->verificar_sesion();
         
+        if (isset($_POST['id_efecto']) && isset($_POST['nombre_efecto']) && isset($_POST['descripcion_efecto'])) {
+            $this->form_validation->set_rules('id_efecto', 'id_efecto', 'required|numeric');
+            $this->form_validation->set_rules('nombre_efecto', 'nombre_efecto', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_efecto', 'descripcion_efecto', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['id_efecto']);
+                $this->registrar_efecto($id_prodoc);
+            } else {
+                $nombre_efecto = $this->input->post('nombre_efecto');
+                $descripcion_efecto = $this->input->post('descripcion_efecto');
+                $this->modelo_coordinador->update_efecto($id_efecto, $nombre_efecto, $descripcion_efecto);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $datos['id_prodoc'] = $id_prodoc;
+            $datos['efecto'] = $this->modelo_coordinador->get_efecto($id_efecto);
+            $this->load->view('coordinador/vista_modificar_efecto', $datos);
+        }
+    }
+
+    public function registrar_producto($id_prodoc, $id_efecto) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['id_efecto']) && isset($_POST['nombre_producto']) && isset($_POST['descripcion_producto'])) {
+            $this->form_validation->set_rules('id_efecto', 'id_efecto', 'required|numeric');
+            $this->form_validation->set_rules('nombre_producto', 'nombre_producto', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_producto', 'descripcion_producto', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['id_efecto']);
+                $this->registrar_producto($id_prodoc, $id_efecto);
+            } else {
+                $nombre_producto = $this->input->post('nombre_producto');
+                $descripcion_producto = $this->input->post('descripcion_producto');
+                $this->modelo_coordinador->insert_producto($id_efecto, $nombre_producto, $descripcion_producto);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $datos['efecto'] = $this->modelo_coordinador->get_efecto($id_efecto);
+            $datos['id_prodoc'] = $id_prodoc;
+            $datos['id_efecto'] = $id_efecto;
+            $this->load->view('coordinador/vista_registrar_producto', $datos);
+        }
+    }
+
+    public function modificar_producto($id_prodoc, $id_producto) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['id_producto']) && isset($_POST['nombre_producto']) && isset($_POST['descripcion_producto'])) {
+            $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric');
+            $this->form_validation->set_rules('nombre_producto', 'nombre_producto', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_producto', 'descripcion_producto', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['id_producto']);
+                $this->registrar_producto($id_prodoc, $id_producto);
+            } else {
+                $nombre_producto = $this->input->post('nombre_producto');
+                $descripcion_producto = $this->input->post('descripcion_producto');
+                $this->modelo_coordinador->update_producto($id_producto, $nombre_producto, $descripcion_producto);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $datos['producto'] = $this->modelo_coordinador->get_producto($id_producto);
+            $datos['efecto'] = $this->modelo_coordinador->get_efecto($datos['producto']->id_efecto);
+            $datos['id_prodoc'] = $id_prodoc;
+            $this->load->view('coordinador/vista_modificar_producto', $datos);
+        }
+    }
+
+    public function registrar_meta_producto_cuantitativa($id_prodoc, $id_producto) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['id_producto']) && isset($_POST['cantidad_meta_producto_cuantitativa']) && isset($_POST['unidad_meta_producto_cuantitativa']) && isset($_POST['nombre_meta_producto_cuantitativa']) && isset($_POST['descripcion_meta_producto_cuantitativa'])) {
+            $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric');
+            $this->form_validation->set_rules('cantidad_meta_producto_cuantitativa', 'cantidad_meta_producto_cuantitativa', 'required|numeric');
+            $this->form_validation->set_rules('unidad_meta_producto_cuantitativa', 'unidad_meta_producto_cuantitativa', 'required|trim|min_length[5]|max_length[128]');
+            $this->form_validation->set_rules('nombre_meta_producto_cuantitativa', 'nombre_meta_producto_cuantitativa', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_meta_producto_cuantitativa', 'descripcion_meta_producto_cuantitativa', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['id_producto']);
+                $this->registrar_meta_cuantitativa($id_prodoc, $id_producto);
+            } else {
+                $cantidad_meta_producto_cuantitativa = $this->input->post('cantidad_meta_producto_cuantitativa');
+                $unidad_meta_producto_cuantitativa = $this->input->post('unidad_meta_producto_cuantitativa');
+                $nombre_meta_producto_cuantitativa = $this->input->post('nombre_meta_producto_cuantitativa');
+                $descripcion_meta_producto_cuantitativa = $this->input->post('descripcion_meta_producto_cuantitativa');
+                $this->modelo_coordinador->insert_meta_producto_cuantitativa($id_producto, $nombre_meta_producto_cuantitativa, $descripcion_meta_producto_cuantitativa, $cantidad_meta_producto_cuantitativa, $unidad_meta_producto_cuantitativa);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $datos['id_prodoc'] = $id_prodoc;
+            $datos['id_producto'] = $id_producto;
+            $datos['producto'] = $this->modelo_coordinador->get_producto($id_producto);
+            $this->load->view('coordinador/vista_registrar_meta_producto_cuantitativa', $datos);
+        }
+    }
+
+    public function modificar_meta_producto_cuantitativa($id_prodoc, $id_meta_producto_cuantitativa) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['id_meta_producto_cuantitativa']) && isset($_POST['cantidad_meta_producto_cuantitativa']) && isset($_POST['unidad_meta_producto_cuantitativa']) && isset($_POST['nombre_meta_producto_cuantitativa']) && isset($_POST['descripcion_meta_producto_cuantitativa'])) {
+            $this->form_validation->set_rules('id_meta_producto_cuantitativa', 'id_meta_producto_cuantitativa', 'required|numeric');
+            $this->form_validation->set_rules('cantidad_meta_producto_cuantitativa', 'cantidad_meta_producto_cuantitativa', 'required|numeric');
+            $this->form_validation->set_rules('unidad_meta_producto_cuantitativa', 'unidad_meta_producto_cuantitativa', 'required|trim|min_length[5]|max_length[128]');
+            $this->form_validation->set_rules('nombre_meta_producto_cuantitativa', 'nombre_meta_producto_cuantitativa', 'required|trim|min_length[5]|max_length[1024]');
+            $this->form_validation->set_rules('descripcion_meta_producto_cuantitativa', 'descripcion_meta_producto_cuantitativa', 'required|trim|min_length[5]|max_length[1024]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['id_meta_producto_cuantitativa']);
+                $this->registrar_meta_cuantitativa($id_prodoc, $id_meta_producto_cuantitativa);
+            } else {
+                $cantidad_meta_producto_cuantitativa = $this->input->post('cantidad_meta_producto_cuantitativa');
+                $unidad_meta_producto_cuantitativa = $this->input->post('unidad_meta_producto_cuantitativa');
+                $nombre_meta_producto_cuantitativa = $this->input->post('nombre_meta_producto_cuantitativa');
+                $descripcion_meta_producto_cuantitativa = $this->input->post('descripcion_meta_producto_cuantitativa');
+                $this->modelo_coordinador->update_meta_producto_cuantitativa($id_meta_producto_cuantitativa, $nombre_meta_producto_cuantitativa, $descripcion_meta_producto_cuantitativa, $cantidad_meta_producto_cuantitativa, $unidad_meta_producto_cuantitativa);
+                redirect(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc);
+            }
+        } else {
+            $datos = Array();
+            $datos['id_prodoc'] = $id_prodoc;
+            $datos['id_meta_producto_cuantitativa'] = $id_meta_producto_cuantitativa;
+            $datos['meta_producto_cuantitativa'] = $this->modelo_coordinador->get_meta_producto_cuantitativa($id_meta_producto_cuantitativa);
+            $datos['producto'] = $this->modelo_coordinador->get_producto($datos['meta_producto_cuantitativa']->id_producto);
+            $this->load->view('coordinador/vista_modificar_meta_producto_cuantitativa', $datos);
+        }
+    }
+
+    public function ver_proyectos() {
+        $this->verificar_sesion();
+
         $datos['proyectos'] = $this->modelo_coordinador->get_proyectos();
         $this->load->view('coordinador/vista_proyectos', $datos);
     }
-    
+
     public function registrar_proyecto() {
         $this->verificar_sesion();
-        
-        if(isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
+
+        if (isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
             $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
             $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
             $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
@@ -67,14 +297,14 @@ class Coordinador extends CI_Controller {
             $this->load->view('coordinador/vista_registrar_proyecto', $datos);
         }
     }
-    
+
     public function modificar_proyecto($id_proyecto) {
         $this->verificar_sesion();
-        
-        if(!is_numeric($id_proyecto)) {
+
+        if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'coordinador/error');
         }
-        if(isset($_POST['id_proyecto']) && isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
+        if (isset($_POST['id_proyecto']) && isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
             $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric');
             $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
             $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
@@ -98,44 +328,44 @@ class Coordinador extends CI_Controller {
             $this->load->view('coordinador/vista_modificar_proyecto', $datos);
         }
     }
-    
+
     public function eliminar_proyecto($id_proyecto) {
         $this->verificar_sesion();
 
-        if(!is_numeric($id_proyecto)) {
+        if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'coordinador/error');
         } else {
             $this->modelo_coordinador->delete_proyecto($id_proyecto);
             redirect(base_url() . 'coordinador/ver_proyectos');
         }
     }
-    
+
     public function gestion_actual() {
         $this->verificar_sesion();
-        
+
         $datos = Array();
         $datos['proyectos'] = $this->modelo_coordinador->get_proyectos_activos_gestion_actual();
         $this->load->view('coordinador/vista_gestion_actual', $datos);
     }
-    
+
     public function gestiones_registradas() {
         $this->verificar_sesion();
-        
+
         $datos = Array();
         $datos['anios'] = $this->modelo_coordinador->get_anios();
         $this->load->view('coordinador/vista_gestiones_registradas', $datos);
     }
-    
+
     public function activar_anio($id_anio) {
         $this->verificar_sesion();
-        
+
         $this->modelo_coordinador->activar_anio($id_anio);
         redirect(base_url() . 'coordinador/gestiones_registradas');
     }
-    
+
     public function habilitar_registro_poa_gestion() {
         $this->verificar_sesion();
-        if(isset($_POST['valor_anio'])) {
+        if (isset($_POST['valor_anio'])) {
             $this->form_validation->set_rules('valor_anio', 'valor_anio', 'required|numeric');
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['valor_anio']);
@@ -171,7 +401,7 @@ class Coordinador extends CI_Controller {
 
     public function ver_avances_hito_cuantitativo($id_institucion, $id_proyecto, $id_hito) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_institucion)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -191,7 +421,7 @@ class Coordinador extends CI_Controller {
 
     public function ver_avances_hito_cualitativo($id_institucion, $id_proyecto, $id_hito) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_institucion)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -208,7 +438,7 @@ class Coordinador extends CI_Controller {
 
     public function registrar_indicador_cuantitativo($id_proyecto, $id_hito) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -245,7 +475,7 @@ class Coordinador extends CI_Controller {
 
     public function aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -256,7 +486,7 @@ class Coordinador extends CI_Controller {
 
     public function no_aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -267,7 +497,7 @@ class Coordinador extends CI_Controller {
 
     public function aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -278,7 +508,7 @@ class Coordinador extends CI_Controller {
 
     public function no_aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance) {
         $this->verificar_sesion();
-        
+
         if (!is_numeric($id_proyecto) || !is_numeric($id_hito) || !is_numeric($id_estado_avance)) {
             redirect(base_url() . 'coordinador');
         } else {
@@ -286,24 +516,24 @@ class Coordinador extends CI_Controller {
             redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
         }
     }
-    
+
     public function reportes() {
         $this->verificar_sesion();
-        
+
         $this->load->view('coordinador/vista_reportes');
     }
-    
+
     public function reporte_gastos() {
         $this->verificar_sesion();
-        
+
         $datos = Array();
         $datos = $this->modelo_coordinador->get_datos_reporte_financiero();
         $this->load->view('coordinador/vista_reporte_gastos', $datos);
     }
-    
-    public function reporte_estado_actual_proyecto($id_proyecto=NULL) {
+
+    public function reporte_estado_actual_proyecto($id_proyecto = NULL) {
         $this->verificar_sesion();
-        if($id_proyecto != NULL) {
+        if ($id_proyecto != NULL) {
             //reporte del proyecto
         } else {
             //lista de proyectos

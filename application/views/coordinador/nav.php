@@ -19,6 +19,20 @@ $nombre_institucion = $this->session->userdata('nombre_institucion');
                 <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'coordinador/ver_proyectos', 'Proyectos') ?></li>
             </ul>
             <ul class="nav navbar-nav">
+                <li class="dropdown <?php if ($activo == "PRODOC"): ?>active<?php endif; ?>">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">PRODOC<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php $id_prodoc = $this->modelo_coordinador->get_id_prodoc(); ?>
+                        <?php if ($id_prodoc): ?>
+                            <li><?= anchor(base_url() . 'coordinador/ver_prodoc/' . $id_prodoc, 'Ver PRODOC') ?></li>
+                            <li><?= anchor(base_url() . 'coordinador/editar_prodoc/' . $id_prodoc, 'Editar PRODOC') ?></li>
+                        <?php else: ?>
+                            <li><?= anchor(base_url() . 'coordinador/registrar_prodoc', 'Registrar PRODOC') ?></li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav">
                 <li class="dropdown <?php if ($activo == "Gestion actual"): ?>active<?php endif; ?>">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">Gestión actual<span class="caret"></span></a>
                     <ul class="dropdown-menu">

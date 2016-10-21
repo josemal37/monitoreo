@@ -20,7 +20,511 @@ class Modelo_coordinador extends CI_Model {
     public function __construct() {
         parent::__construct();
     }
+
+    public function get_prodoc_completo($id_prodoc) {
+        try {
+            $sql = "SELECT
+                        PRODOC.id_prodoc,
+                        PRODOC.nombre_prodoc,
+                        PRODOC.descripcion_prodoc,
+                        PRODOC.objetivo_global_prodoc,
+                        PRODOC.objetivo_proyecto_prodoc
+                    FROM
+                        PRODOC
+                    WHERE
+                        PRODOC.id_prodoc = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_prodoc));
+            if (!$query) {
+                return false;
+            } else {
+                if ($query->num_rows() == 0) {
+                    return false;
+                } else {
+                    $prodoc = $query->row();
+                    $id_prodoc = $prodoc->id_prodoc;
+                    $prodoc->efectos = $this->get_efectos_prodoc($id_prodoc);
+                    if($prodoc->efectos) {
+                        $i = 0;
+                        foreach($prodoc->efectos as $efecto) {
+                            $prodoc->efectos[$i]->productos = $this->get_productos_efecto($efecto->id_efecto);
+                            if($prodoc->efectos[$i]->productos) {
+                                $j = 0;
+                                foreach($prodoc->efectos[$i]->productos as $producto) {
+                                    $prodoc->efectos[$i]->productos[$j]->metas_cuantitativas = $this->get_metas_producto_cuantitativa($producto->id_producto);
+                                    $prodoc->efectos[$i]->productos[$j]->metas_cualitativas = $this->get_metas_producto_cuantitativa($producto->id_producto);
+                                    $j += 1;
+                                }
+                            }
+                            $i += 1;
+                        }
+                    }
+                    return $prodoc;
+                }
+            }
+        } catch (Exception $ex) {
+            
+        }
+    }
     
+    public function get_efectos_prodoc($id_prodoc) {
+        if(!is_numeric($id_prodoc)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            EFECTO.id_efecto,
+                            EFECTO.id_prodoc,
+                            EFECTO.nombre_efecto,
+                            EFECTO.descripcion_efecto
+                        FROM
+                            EFECTO
+                        WHERE
+                            EFECTO.id_prodoc = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_prodoc));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function get_productos_efecto($id_efecto) {
+        if(!is_numeric($id_efecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PRODUCTO.id_producto,
+                            PRODUCTO.id_efecto, 
+                            PRODUCTO.nombre_producto,
+                            PRODUCTO.descripcion_producto
+                        FROM
+                            PRODUCTO
+                        WHERE
+                            PRODUCTO.id_efecto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_efecto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function get_metas_producto_cuantitativa($id_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.id_producto,
+                            META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa
+                        FROM
+                            META_PRODUCTO_CUANTITATIVA
+                        WHERE
+                            META_PRODUCTO_CUANTITATIVA.id_producto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_producto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function get_metas_producto_cualitativa($id_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            META_PRODUCTO_CUALITATIVA.id_meta_producto_cualitativa,
+                            META_PRODUCTO_CUALITATIVA.id_producto,
+                            META_PRODUCTO_CUALITATIVA.nombre_meta_producto_cualitativa,
+                            META_PRODUCTO_CUALITATIVA.descripcion_meta_producto_cualitativa
+                        FROM
+                            META_PRODUCTO_CUALITATIVA
+                        WHERE
+                            META_PRODUCTO_CUALITATIVA.id_producto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_producto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+
+    public function get_id_prodoc() {
+        try {
+            $sql = "SELECT
+                        PRODOC.id_prodoc,
+                        PRODOC.nombre_prodoc,
+                        PRODOC.descripcion_prodoc,
+                        PRODOC.objetivo_global_prodoc,
+                        PRODOC.objetivo_proyecto_prodoc
+                    FROM
+                        PRODOC
+                    ";
+            $query = $this->db->query($sql);
+            if ($query->num_rows() > 0) {
+                $prodoc = $query->row();
+                return $prodoc->id_prodoc;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
+    
+    public function get_prodoc($id_prodoc) {
+        if(!is_numeric($id_prodoc)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PRODOC.id_prodoc,
+                            PRODOC.nombre_prodoc,
+                            PRODOC.descripcion_prodoc,
+                            PRODOC.objetivo_global_prodoc,
+                            PRODOC.objetivo_proyecto_prodoc
+                        FROM
+                            PRODOC
+                        WHERE
+                            PRODOC.id_prodoc = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_prodoc));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+
+    public function insert_prodoc($nombre_prodoc, $descripcion_prodoc, $objetivo_global_prodoc, $objetivo_proyecto_prodoc) {
+        try {
+            $this->db->trans_start();
+            $sql = "INSERT INTO PRODOC
+                    (
+                        PRODOC.nombre_prodoc,
+                        PRODOC.descripcion_prodoc,
+                        PRODOC.objetivo_global_prodoc,
+                        PRODOC.objetivo_proyecto_prodoc
+                    )
+                    VALUES
+                    (
+                        ?,
+                        ?,
+                        ?,
+                        ?
+                    )
+                    ";
+            $query = $this->db->query($sql, Array($nombre_prodoc, $descripcion_prodoc, $objetivo_global_prodoc, $objetivo_proyecto_prodoc));
+            $id_prodoc = $this->db->insert_id();
+            $this->db->trans_complete();
+            return $id_prodoc;
+        } catch (Exception $ex) {
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
+    
+    public function update_prodoc($id_prodoc, $nombre_prodoc, $descripcion_prodoc, $objetivo_global_prodoc, $objetivo_proyecto_prodoc) {
+        if(!is_numeric($id_prodoc)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE PRODOC SET
+                            PRODOC.nombre_prodoc = ?,
+                            PRODOC.descripcion_prodoc = ?,
+                            PRODOC.objetivo_global_prodoc = ?,
+                            PRODOC.objetivo_proyecto_prodoc = ?
+                        WHERE
+                            PRODOC.id_prodoc = ?
+                        ";
+                $query = $this->db->query($sql, Array($nombre_prodoc, $descripcion_prodoc, $objetivo_global_prodoc, $objetivo_proyecto_prodoc, $id_prodoc));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function get_efecto($id_efecto) {
+        if(!is_numeric($id_efecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            EFECTO.id_efecto,
+                            EFECTO.id_prodoc,
+                            EFECTO.nombre_efecto,
+                            EFECTO.descripcion_efecto
+                        FROM
+                            EFECTO
+                        WHERE
+                            EFECTO.id_efecto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_efecto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function insert_efecto($id_prodoc, $nombre_efecto, $descripcion_efecto) {
+        if(!is_numeric($id_prodoc)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "INSERT INTO EFECTO
+                        (
+                            EFECTO.id_prodoc,
+                            EFECTO.nombre_efecto,
+                            EFECTO.descripcion_efecto
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?,
+                            ?
+                        )
+                        ";
+                $query = $this->db->query($sql, Array($id_prodoc, $nombre_efecto, $descripcion_efecto));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function update_efecto($id_efecto, $nombre_efecto, $descripcion_efecto) {
+        if(!is_numeric($id_efecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE EFECTO SET
+                            EFECTO.nombre_efecto = ?,
+                            EFECTO.descripcion_efecto = ?
+                        WHERE
+                            EFECTO.id_efecto = ?
+                        ";
+                $query = $this->db->query($sql, Array($nombre_efecto, $descripcion_efecto, $id_efecto));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function get_producto($id_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PRODUCTO.id_producto,
+                            PRODUCTO.id_efecto,
+                            PRODUCTO.nombre_producto,
+                            PRODUCTO.descripcion_producto
+                        FROM
+                            PRODUCTO
+                        WHERE
+                            PRODUCTO.id_producto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_producto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function insert_producto($id_efecto, $nombre_producto, $descripcion_producto) {
+        if(!is_numeric($id_efecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "INSERT INTO PRODUCTO
+                        (
+                            PRODUCTO.id_efecto,
+                            PRODUCTO.nombre_producto,
+                            PRODUCTO.descripcion_producto
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?,
+                            ?
+                        )
+                        ";
+                $query = $this->db->query($sql, Array($id_efecto, $nombre_producto, $descripcion_producto));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function update_producto($id_producto, $nombre_producto, $descripcion_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE PRODUCTO SET
+                            PRODUCTO.nombre_producto = ?,
+                            PRODUCTO.descripcion_producto = ?
+                        WHERE
+                            PRODUCTO.id_producto = ?
+                        ";
+                $query = $this->db->query($sql, Array($nombre_producto, $descripcion_producto, $id_producto));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function get_meta_producto_cuantitativa($id_meta_producto_cuantitativa) {
+        if(!is_numeric($id_meta_producto_cuantitativa)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.id_producto,
+                            META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa
+                        FROM
+                            META_PRODUCTO_CUANTITATIVA
+                        WHERE
+                            META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_meta_producto_cuantitativa));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function insert_meta_producto_cuantitativa($id_producto, $nombre_meta_producto_cuantitativa, $descripcion_meta_producto_cuantitativa, $cantidad_meta_producto_cuantitativa, $unidad_meta_producto_cuantitativa) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "INSERT INTO META_PRODUCTO_CUANTITATIVA
+                        (
+                            META_PRODUCTO_CUANTITATIVA.id_producto,
+                            META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?
+                        )
+                        ";
+                $query = $this->db->query($sql, Array($id_producto, $nombre_meta_producto_cuantitativa, $descripcion_meta_producto_cuantitativa, $cantidad_meta_producto_cuantitativa, $unidad_meta_producto_cuantitativa));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function update_meta_producto_cuantitativa($id_meta_producto_cuantitativa, $nombre_meta_producto_cuantitativa, $descripcion_meta_producto_cuantitativa, $cantidad_meta_producto_cuantitativa, $unidad_meta_producto_cuantitativa) {
+        if(!is_numeric($id_meta_producto_cuantitativa)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE META_PRODUCTO_CUANTITATIVA SET
+                            META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa = ?,
+                            META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa = ?,
+                            META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa = ?,
+                            META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa = ?
+                        WHERE
+                            META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = ?
+                        ";
+                $query = $this->db->query($sql, Array($nombre_meta_producto_cuantitativa, $descripcion_meta_producto_cuantitativa, $cantidad_meta_producto_cuantitativa, $unidad_meta_producto_cuantitativa, $id_meta_producto_cuantitativa));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+
     public function get_proyectos() {
         try {
             $sql = "SELECT
@@ -38,7 +542,7 @@ class Modelo_coordinador extends CI_Model {
                         PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion
                     ";
             $query = $this->db->query($sql);
-            if(!$query) {
+            if (!$query) {
                 return Array();
             } else {
                 return $query->result();
@@ -47,9 +551,9 @@ class Modelo_coordinador extends CI_Model {
             redirect(base_url() . 'coordinador/error');
         }
     }
-    
+
     public function get_proyecto_global($id_proyecto) {
-        if(!is_numeric($id_proyecto)) {
+        if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'coordinador/error');
         } else {
             try {
@@ -65,10 +569,10 @@ class Modelo_coordinador extends CI_Model {
                             PROYECTO_GLOBAL.id_proyecto_global = ?
                         ";
                 $query = $this->db->query($sql, Array($id_proyecto));
-                if(!$query) {
+                if (!$query) {
                     return Array();
                 } else {
-                    if($query->num_rows() != 1) {
+                    if ($query->num_rows() != 1) {
                         return Array();
                     } else {
                         return $query->row();
@@ -79,9 +583,9 @@ class Modelo_coordinador extends CI_Model {
             }
         }
     }
-    
+
     public function insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion) {
-        if(!is_numeric($id_institucion)) {
+        if (!is_numeric($id_institucion)) {
             redirect(base_url() . 'coordinador/error');
         } else {
             try {
@@ -102,13 +606,13 @@ class Modelo_coordinador extends CI_Model {
                         ";
                 $query = $this->db->query($sql, Array($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion));
             } catch (Exception $ex) {
-
+                
             }
         }
     }
-    
+
     public function update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion) {
-        if(!is_numeric($id_proyecto) || !is_numeric($id_institucion)) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_institucion)) {
             redirect(base_url() . 'coordinador/error');
         } else {
             try {
@@ -126,9 +630,9 @@ class Modelo_coordinador extends CI_Model {
             }
         }
     }
-    
+
     public function delete_proyecto($id_proyecto) {
-        if(!is_numeric($id_proyecto)) {
+        if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'coordinador/error');
         } else {
             try {
@@ -170,7 +674,7 @@ class Modelo_coordinador extends CI_Model {
             redirect(base_url() . 'coordinador/error');
         }
     }
-    
+
     public function get_anios() {
         try {
             $sql = "SELECT
@@ -183,7 +687,7 @@ class Modelo_coordinador extends CI_Model {
                         ANIO.valor_anio ASC
                     ";
             $query = $this->db->query($sql);
-            if(!$query) {
+            if (!$query) {
                 return Array();
             } else {
                 return $query->result();
@@ -192,9 +696,9 @@ class Modelo_coordinador extends CI_Model {
             redirect(base_url() . 'coordinador/error');
         }
     }
-    
+
     public function insert_anio($valor_anio) {
-        if(!is_numeric($valor_anio)) {
+        if (!is_numeric($valor_anio)) {
             redirect(base_url() . 'coordinador/error');
         }
         try {
@@ -207,7 +711,7 @@ class Modelo_coordinador extends CI_Model {
                         ANIO.valor_anio = ?
                     ";
             $query = $this->db->query($sql, Array($valor_anio));
-            if($query->num_rows() > 0) {
+            if ($query->num_rows() > 0) {
                 $this->session->set_flashdata('anio_registrado', 'El año ya se encuentra registrado.');
                 redirect(base_url() . 'coordinador/habilitar_registro_poa_gestion', 'refresh');
             } else {
@@ -229,9 +733,9 @@ class Modelo_coordinador extends CI_Model {
             redirect(base_url() . 'coordinador/error');
         }
     }
-    
+
     public function activar_anio($id_anio) {
-        if(!is_numeric($id_anio)) {
+        if (!is_numeric($id_anio)) {
             redirect(base_url() . 'coordinador/error');
         } else {
             try {
@@ -248,11 +752,11 @@ class Modelo_coordinador extends CI_Model {
                 $this->db->query($sql, Array($id_anio));
                 $this->db->trans_complete();
             } catch (Exception $ex) {
-
+                
             }
         }
     }
-    
+
     public function get_anio_activo() {
         try {
             $sql = "SELECT
@@ -263,10 +767,10 @@ class Modelo_coordinador extends CI_Model {
                         ANIO.activo_anio = true
                     ";
             $query = $this->db->query($sql);
-            if(!$query) {
+            if (!$query) {
                 return false;
             } else {
-                if($query->num_rows() != 1) {
+                if ($query->num_rows() != 1) {
                     return false;
                 } else {
                     return $query->row();
