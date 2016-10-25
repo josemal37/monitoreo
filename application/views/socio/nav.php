@@ -17,8 +17,13 @@ $nombre_institucion = $this->session->userdata('nombre_institucion');
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li <?php if ($activo == "Inicio"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio', 'Inicio') ?></li>
-                <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_activos', 'POA\'s activos') ?></li>
-                <li <?php if ($activo == "Registrar proyecto"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_en_edicion', 'POA\'s en edición') ?></li>
+                <li class="dropdown <?php if($activo == "Proyectos activos" || $activo == "Registrar proyecto"): ?>active<?php endif; ?>">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">POA<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_activos', 'POA\'s activos') ?></li>
+                        <li <?php if ($activo == "Registrar proyecto"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_en_edicion', 'POA\'s en edición') ?></li>
+                    </ul>
+                </li>
                 <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/ver_reportes', 'Ver reportes') ?></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

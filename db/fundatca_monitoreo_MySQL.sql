@@ -3,6 +3,7 @@
 /* Created on:     17/10/2016 09:35:56                          */
 /*==============================================================*/
 
+
 /*==============================================================*/
 /* Table: ACTIVIDAD                                             */
 /*==============================================================*/
@@ -16,6 +17,7 @@ create table ACTIVIDAD
    FECHA_FIN_ACTIVIDAD  date,
    PRESUPUESTO_ACTIVIDAD decimal(12,2),
    EN_EDICION_ACTIVIDAD bool,
+   CONTRAPARTE_ACTIVIDAD bool,
    primary key (ID_ACTIVIDAD)
 );
 
@@ -26,6 +28,7 @@ create table ANIO
 (
    ID_ANIO              int not null auto_increment,
    VALOR_ANIO           int,
+   ACTIVO_ANIO          bool,
    primary key (ID_ANIO)
 );
 
@@ -423,7 +426,6 @@ alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
       references ROL (ID_ROL) on delete cascade on update cascade;
-
 
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');

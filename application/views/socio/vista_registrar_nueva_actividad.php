@@ -38,14 +38,14 @@
                         <p><?= form_error('descripcion_actividad') ?></p>
                     </div>
                     <div class="form-group">
-                        <label for="id_producto">Producto asociado</label>
-                        <select name="id_producto" id="id_producto" class="form-control">
-                            <?php foreach ($productos as $producto): ?>
-                                <option value="<?= $producto->id_producto ?>"><?= $producto->nombre_producto ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <p><?= form_error('id_producto') ?></p>
+                        <div class="checkbox">
+                            <label for="asociado">
+                                <input type="checkbox" name="asociado" id="asociado"><strong>Asociado a un producto</strong>
+                            </label>
+                        </div>
+                        <p><?= form_error('asociado') ?></p>
                     </div>
+                    <div id="producto_asociado"></div>
                     <div class="form-group">
                         <label for="fecha_inicio_actividad">Fecha de inicio</label>
                         <input type="text" name="fecha_inicio_actividad" id="fecha_inicio_actividad" class="form-control" required>
@@ -61,6 +61,16 @@
                         <input type="text" name="presupuesto_actividad_vista" id="presupuesto_actividad_vista" placeholder="Presupuesto" class="form-control">
                         <input type="hidden" name="presupuesto_actividad" id="presupuesto_actividad">
                         <p><?= form_error('presupuesto_actividad') ?></p>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label for="contraparte">
+                                <input type="checkbox" name="contraparte" id="contraparte"><strong>Contraparte</strong>
+                            </label>
+                        </div>
+                        <p><?= form_error('contraparte') ?></p>
+                    </div>
+                    <div id="presupuesto_disponible">
                         <label>Disponible: Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_proyecto ?></span></label>
                     </div>
                     <input type="hidden" name="id_proyecto" value="<?= $id_proyecto ?>" id="id_proyecto">
@@ -97,12 +107,24 @@
                             required: true,
                             number: true,
                             min: 0,
-                            max: <?= $presupuesto_disponible->presupuesto_disponible_proyecto ?>
+                            max: function() {
+                                if($('#contraparte').is(':checked')) {
+                                    return 99999999.99;
+                                } else {
+                                    return <?= $presupuesto_disponible->presupuesto_disponible_proyecto ?>;
+                                }
+                            }
                         }
                     },
                     messages: {
                         presupuesto_actividad: {
-                            max: 'Por favor, escribe un valor menor o igual al disponible.'
+                            max: function() {
+                                if($('#contraparte').is(':checked')) {
+                                    return 'Por favor, escribe un valor menor o igual a 99,999,999.99.';
+                                } else {
+                                    return 'Por favor, escribe un valor menor o igual al disponible.';
+                                }
+                            }
                         }
                     }
                 });
@@ -114,11 +136,6 @@
                 inline: true,
             });
             $("#fecha_fin_actividad").datepicker({dateFormat: 'yy-mm-dd'});
-        </script>
-        <script type="text/javascript">
-            if ($(document).width() <= 768) {
-                $("#calendario_inicio_actividad").datepicker('hide');
-            }
         </script>
         <script type="text/javascript">
             $(function() {
@@ -139,6 +156,45 @@
             });
             $('#presupuesto_actividad_vista').keyup(function() {
                 $('#presupuesto_actividad').val($('#presupuesto_actividad_vista').val());
+            });
+        </script>
+        <script type="text/javascript">
+            $('#asociado').change(function(){
+                if($(this).is(':checked')) {
+                    $('#producto_asociado').append(
+                            "<div class='form-group' id='select_producto' style='display:none'>"+
+                                "<label for='id_producto'>Producto asociado</label>"+
+                                "<select name='id_producto' id='id_producto' class='form-control'>"+
+                                    <?php foreach ($productos as $producto): ?>
+                                        "<option value='<?= $producto->id_producto ?>' title='<?= $producto->descripcion_producto ?>'><?= $producto->nombre_producto ?></option>"+
+                                    <?php endforeach; ?>
+                                "</select>"+
+                                "<div id='descripcion_producto'></div>"+
+                                "<p><?= form_error('id_producto') ?></p>"+
+                            "</div>"
+                            );
+                    $('#descripcion_producto').append($('option:selected','#id_producto').attr('title'));
+                    $('#select_producto').show('swing');
+                } else {
+                    $('#select_producto').hide('swing');
+                    $('#select_producto').remove();
+                }
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).on('change', '#id_producto', function(){
+                var descripcion = $('option:selected','#id_producto').attr('title');
+                $('#descripcion_producto').empty();
+                $('#descripcion_producto').append(descripcion);
+            });
+        </script>
+        <script type="text/javascript">
+            $('#contraparte').change(function(){
+                if($(this).is(':checked')) {
+                    $('#presupuesto_disponible').hide('swing');
+                } else {
+                    $('#presupuesto_disponible').show('swing');
+                }
             });
         </script>
     </body>

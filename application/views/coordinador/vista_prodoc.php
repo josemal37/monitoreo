@@ -116,6 +116,7 @@
                         Todavía no se registro el PRODOC.
                     </div>
                 </div>
+                <a href="<?= base_url() . 'coordinador/registrar_prodoc' ?>" class="btn btn-primary">Registrar PRODOC</a>
             <?php endif; ?>
         </div>
         <script type="text/javascript">

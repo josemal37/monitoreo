@@ -21,9 +21,10 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h4><?= $datos_proyecto->nombre_proyecto ?></h4>
+                <h4 class="text-primary"><?= $datos_proyecto->nombre_proyecto ?></h4>
                 <p class="text-justify"><strong>Año:</strong> <span class="number_integer"><?= $datos_proyecto->valor_anio ?></span></p>
                 <p class="text-justify"><strong>Presupuesto:</strong> Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span></p>
+                <p class="text-justify"><strong>Presupuesto disponible:</strong> Bs. <span class="number_decimal"><?= $presupuesto_disponible->presupuesto_disponible_proyecto ?></span></p>
                 <p class="text-justify"><strong>Descripción:</strong> <?= $datos_proyecto->descripcion_proyecto ?></p>
                 <p class="text-left"><a href="<?= base_url() . 'socio/modificar_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-default">Modificar datos generales</a></p>
             </div>
@@ -35,7 +36,7 @@
                     </div>
                 <?php endif; ?>
                 <?php if (sizeof($datos_actividades) > 0): ?>
-                    <h4>Actividades</h4>
+                    <h4 class="text-primary">Actividades</h4>
                     <?php foreach ($datos_actividades as $actividad): ?>
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -63,13 +64,13 @@
                                     <?php if ((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <strong>Metas</strong>
+                                                <strong class="text-primary">Indicadores</strong>
                                             </div>
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th>Nombre de la meta</th>
+                                                            <th>Nombre del indicador</th>
                                                             <th>Descripción</th>
                                                             <th>Meta</th>
                                                             <th>Meta asociada</th>
@@ -91,8 +92,8 @@
                                                                         <?php endif; ?>
                                                                     </td>
                                                                     <td width="15%">
-                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-default btn-xs btn-block">Modificar meta</a>
-                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-danger btn-xs btn-block">Eliminar meta</a>
+                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-default btn-xs btn-block">Modificar indicador</a>
+                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-danger btn-xs btn-block">Eliminar indicador</a>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
@@ -105,8 +106,8 @@
                                                                     <td>-----</td>
                                                                     <td>-----</td>
                                                                     <td width="15%">
-                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-default btn-xs btn-block">Modificar meta</a>
-                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-danger btn-xs btn-block">Eliminar meta</a>
+                                                                        <a href="<?= base_url() . 'socio/modificar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-default btn-xs btn-block">Modificar indicador</a>
+                                                                        <a href="<?= base_url() . 'socio/eliminar_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-danger btn-xs btn-block">Eliminar indicador</a>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
@@ -121,11 +122,11 @@
                                                 Advertencia
                                             </div>
                                             <div class="panel-body">
-                                                Todavía no se registraron metas.
+                                                Todavía no se registraron indicadores.
                                             </div>
                                         </div>
                                     <?php endif; ?>    
-                                    <a href="<?= base_url() . 'socio/registrar_nuevo_hito/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar nueva meta</a>
+                                    <a href="<?= base_url() . 'socio/registrar_nuevo_hito/' . $datos_proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar nuevo indicador</a>
                                 </div>
                             </div>
                         </div>

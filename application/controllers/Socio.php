@@ -89,16 +89,23 @@ class Socio extends CI_Controller {
                 $this->session->set_flashdata('error_proyecto_global', 'El sistema no tiene registrado un proyecto para su institución, por favor contacte con el Coordinador del proyecto para solucionar el problema.');
                 redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
             } else {
-                $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion($this->session->userdata('id_institucion'));
                 $datos['anios'] = $this->modelo_socio->get_anios();
-                $this->load->view('socio/vista_registrar_nuevo_proyecto', $datos);
+                if(sizeof($datos['anios']) == 0) {
+                    $this->session->set_flashdata('error_proyecto_global', 'El sistema no tiene registrado años de trabajo, por favor contacte con el Coordinador del proyecto para solucionar el problema.');
+                    redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
+                } else {
+                    $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_institucion($this->session->userdata('id_institucion'));
+                    $this->load->view('socio/vista_registrar_nuevo_proyecto', $datos);
+                }
             }
         }
     }
 
     public function editar_proyecto($id_proyecto) {
         $this->verificar_sesion();
+        $datos = Array();
         $datos = $this->modelo_socio->get_proyecto_completo_en_edicion($id_proyecto);
+        $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto($id_proyecto);
         $this->load->view('socio/vista_editar_proyecto', $datos);
     }
 
@@ -116,15 +123,16 @@ class Socio extends CI_Controller {
     public function registrar_nueva_actividad($id_proyecto) {
         $this->verificar_sesion();
 
-        if (isset($_POST['id_proyecto']) && isset($_POST['nombre_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad']) && isset($_POST['id_producto'])) {
+        if (isset($_POST['id_proyecto']) && isset($_POST['nombre_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
             $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
             $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[2]|max_length[128]');
             $this->form_validation->set_rules('fecha_inicio_actividad', 'fecha_inicio_actividad', 'required');
             $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
             $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[2]|max_length[1024]');
             $this->form_validation->set_rules('presupuesto_actividad', 'presupuesto_actividad', 'required|numeric');
-            $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
-
+            if(isset($_POST['id_producto'])) {
+                $this->form_validation->set_rules('id_producto', 'id_producto', 'numeric|is_natural');
+            }
             if ($this->form_validation->run() == FALSE) {
                 unset($_POST['id_proyecto']);
                 $this->registrar_nueva_actividad($id_proyecto);
@@ -135,9 +143,18 @@ class Socio extends CI_Controller {
                     $fecha_inicio_actividad = $this->input->post('fecha_inicio_actividad');
                     $fecha_fin_actividad = $this->input->post('fecha_fin_actividad');
                     $presupuesto_actividad = $this->input->post('presupuesto_actividad');
-                    $id_producto = $this->input->post('id_producto');
+                    if(isset($_POST['id_producto'])) {
+                        $id_producto = $this->input->post('id_producto');
+                    } else {
+                        $id_producto = false;
+                    }
+                    if(isset($_POST['contraparte'])) {
+                        $contraparte_actividad = true;
+                    } else {
+                        $contraparte_actividad = false;
+                    }
                     if ($this->comparar_fechas($fecha_inicio_actividad, $fecha_fin_actividad) <= 0) {
-                        $this->modelo_socio->insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto);
+                        $this->modelo_socio->insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto, $contraparte_actividad);
                         redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
                     } else {
                         //fechas incoherentes
@@ -209,7 +226,7 @@ class Socio extends CI_Controller {
         if (!is_numeric($id_actividad)) {
             redirect(base_url() . 'socio');
         } else {
-            if (isset($_POST['id_proyecto']) && isset($_POST['id_actividad']) && isset($_POST['nombre_actividad']) && isset($_POST['descripcion_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad']) && isset($_POST['id_producto'])) {
+            if (isset($_POST['id_proyecto']) && isset($_POST['id_actividad']) && isset($_POST['nombre_actividad']) && isset($_POST['descripcion_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
                 $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
                 $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric|is_natural');
                 $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[5]|max_length[128]');
@@ -217,8 +234,9 @@ class Socio extends CI_Controller {
                 $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
                 $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('presupuesto_actividad', 'presupuesto_actividad', 'required|numeric');
-                $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
-
+                if(isset($_POST['id_producto'])) {
+                    $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
+                }
                 if ($this->form_validation->run() == FALSE) {
                     unset($_POST['id_actividad']);
                     $this->modificar_actividad($id_actividad);
@@ -230,9 +248,18 @@ class Socio extends CI_Controller {
                         $fecha_inicio_actividad = $this->input->post('fecha_inicio_actividad');
                         $fecha_fin_actividad = $this->input->post('fecha_fin_actividad');
                         $presupuesto_actividad = $this->input->post('presupuesto_actividad');
-                        $id_producto = $this->input->post('id_producto');
+                        if(isset($_POST['id_producto'])){
+                            $id_producto = $this->input->post('id_producto');
+                        } else {
+                            $id_producto = false;
+                        }
+                        if(isset($_POST['contraparte'])) {
+                            $contraparte_actividad = true;
+                        } else {
+                            $contraparte_actividad = false;
+                        }
                         if ($this->comparar_fechas($fecha_inicio_actividad, $fecha_fin_actividad) <= 0) {
-                            $this->modelo_socio->update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto);
+                            $this->modelo_socio->update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto, $contraparte_actividad);
                             redirect(base_url() . 'socio/editar_proyecto/' . $this->input->post('id_proyecto'));
                         } else {
                             //fechas incoherentes

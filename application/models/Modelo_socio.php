@@ -213,6 +213,8 @@ class Modelo_socio extends CI_Model {
                         ACTIVIDAD.fecha_inicio_actividad,
                         ACTIVIDAD.fecha_fin_actividad,
                         ACTIVIDAD.presupuesto_actividad,
+                        ACTIVIDAD.en_edicion_actividad,
+                        ACTIVIDAD.contraparte_actividad,
                         PRODUCTO.id_producto,
                         PRODUCTO.nombre_producto
                     FROM
@@ -651,6 +653,8 @@ class Modelo_socio extends CI_Model {
                             ACTIVIDAD.fecha_inicio_actividad,
                             ACTIVIDAD.fecha_fin_actividad,
                             ACTIVIDAD.presupuesto_actividad,
+                            ACTIVIDAD.en_edicion_actividad,
+                            ACTIVIDAD.contraparte_actividad,
                             PRODUCTO.id_producto,
                             PRODUCTO.nombre_producto
                         FROM
@@ -676,7 +680,7 @@ class Modelo_socio extends CI_Model {
         }
     }
 
-    public function insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto) {
+    public function insert_actividad($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto, $contraparte_actividad) {
         if (!is_numeric($id_proyecto)) {
             redirect(base_url() . 'socio/error');
         } else {
@@ -689,32 +693,38 @@ class Modelo_socio extends CI_Model {
                             descripcion_actividad,
                             fecha_inicio_actividad,
                             fecha_fin_actividad,
-                            presupuesto_actividad
-                        )
-                        VALUES
-                        (
-                            $id_proyecto,
-                            '$nombre_actividad',
-                            '$descripcion_actividad',
-                            '$fecha_inicio_actividad',
-                            '$fecha_fin_actividad',
-                            '$presupuesto_actividad'
-                        )
-                        ";
-                $query = $this->db->query($sql);
-                $id_actividad = $this->db->insert_id();
-                $sql = "INSERT INTO PRODUCTO_RECIBE_ACTIVIDAD
-                        (
-                            PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
-                            PRODUCTO_RECIBE_ACTIVIDAD.id_producto
+                            presupuesto_actividad,
+                            en_edicion_actividad,
+                            contraparte_actividad
                         )
                         VALUES
                         (
                             ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            true,
                             ?
                         )
                         ";
-                $query = $this->db->query($sql, Array($id_actividad, $id_producto));
+                $query = $this->db->query($sql, Array($id_proyecto, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $contraparte_actividad));
+                if($id_producto) {
+                    $id_actividad = $this->db->insert_id();
+                    $sql = "INSERT INTO PRODUCTO_RECIBE_ACTIVIDAD
+                            (
+                                PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
+                                PRODUCTO_RECIBE_ACTIVIDAD.id_producto
+                            )
+                            VALUES
+                            (
+                                ?,
+                                ?
+                            )
+                            ";
+                    $query = $this->db->query($sql, Array($id_actividad, $id_producto));
+                }
                 $this->db->trans_complete();
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
@@ -722,22 +732,23 @@ class Modelo_socio extends CI_Model {
         }
     }
 
-    public function update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto) {
+    public function update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto, $contraparte_actividad) {
         if (!is_numeric($id_actividad)) {
             redirect(base_url() . 'socio/error');
         } else {
             try {
                 $this->db->trans_start();
                 $sql = "UPDATE ACTIVIDAD SET
-                            ACTIVIDAD.nombre_actividad = '$nombre_actividad',
-                            ACTIVIDAD.descripcion_actividad = '$descripcion_actividad',
-                            ACTIVIDAD.fecha_inicio_actividad = '$fecha_inicio_actividad',
-                            ACTIVIDAD.fecha_fin_actividad = '$fecha_fin_actividad',
-                            ACTIVIDAD.presupuesto_actividad = $presupuesto_actividad
+                            ACTIVIDAD.nombre_actividad = ?,
+                            ACTIVIDAD.descripcion_actividad = ?,
+                            ACTIVIDAD.fecha_inicio_actividad = ?,
+                            ACTIVIDAD.fecha_fin_actividad = ?,
+                            ACTIVIDAD.presupuesto_actividad = ?,
+                            ACTIVIDAD.contraparte_actividad = ?
                         WHERE
-                            ACTIVIDAD.id_actividad = $id_actividad
+                            ACTIVIDAD.id_actividad = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $contraparte_actividad, $id_actividad));
                 $sql = "SELECT
                             PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
                             PRODUCTO_RECIBE_ACTIVIDAD.id_producto
@@ -747,15 +758,52 @@ class Modelo_socio extends CI_Model {
                             PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ?
                         ";
                 $query = $this->db->query($sql, Array($id_actividad));
-                if($query->num_rows() > 0) {
-                    $producto_recibe_actividad = $query->row();
-                    if($producto_recibe_actividad->id_producto != $id_producto) {
-                        $sql = "UPDATE PRODUCTO_RECIBE_ACTIVIDAD SET
-                                    PRODUCTO_RECIBE_ACTIVIDAD.id_producto = ?
+                if($id_producto) {
+                    if($query->num_rows() > 0) {
+                        $producto_recibe_actividad = $query->row();
+                        if($producto_recibe_actividad->id_producto != $id_producto) {
+                            $sql = "UPDATE PRODUCTO_RECIBE_ACTIVIDAD SET
+                                        PRODUCTO_RECIBE_ACTIVIDAD.id_producto = ?
+                                    WHERE
+                                        PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ?
+                                    ";
+                            $query = $this->db->query($sql, Array($id_producto, $id_actividad));
+                            $sql = "DELETE FROM META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
+                                    WHERE
+                                        META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn IN
+                                        (
+                                            SELECT
+                                                HITO_CUANTITATIVO.id_hito_cn
+                                            FROM
+                                                HITO_CUANTITATIVO,
+                                                ACTIVIDAD
+                                            WHERE
+                                                HITO_CUANTITATIVO.id_actividad = ?
+                                        )
+                                    ";
+                            $query = $this->db->query($sql, Array($id_actividad));
+                        }
+                    } else {
+                        $sql = "INSERT INTO PRODUCTO_RECIBE_ACTIVIDAD
+                                (
+                                    PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
+                                    PRODUCTO_RECIBE_ACTIVIDAD.id_producto
+                                )
+                                VALUES
+                                (
+                                    ?,
+                                    ?
+                                )
+                                ";
+                        $query = $this->db->query($sql, Array($id_actividad, $id_producto));
+                    }
+                } else {
+                    if($query->num_rows() > 0) {
+                        $sql = "DELETE FROM PRODUCTO_RECIBE_ACTIVIDAD
                                 WHERE
                                     PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ?
                                 ";
-                        $query = $this->db->query($sql, Array($id_producto, $id_actividad));
+                        $query = $this->db->query($sql, Array($id_actividad));
                         $sql = "DELETE FROM META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
                                 WHERE
                                     META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn IN
@@ -771,19 +819,6 @@ class Modelo_socio extends CI_Model {
                                 ";
                         $query = $this->db->query($sql, Array($id_actividad));
                     }
-                } else {
-                    $sql = "INSERT INTO PRODUCTO_RECIBE_ACTIVIDAD
-                            (
-                                PRODUCTO_RECIBE_ACTIVIDAD.id_actividad,
-                                PRODUCTO_RECIBE_ACTIVIDAD.id_producto
-                            )
-                            VALUES
-                            (
-                                ?,
-                                ?
-                            )
-                            ";
-                    $query = $this->db->query($sql, Array($id_actividad, $id_producto));
                 }
                 $this->db->trans_complete();
             } catch (Exception $ex) {
@@ -1462,7 +1497,8 @@ class Modelo_socio extends CI_Model {
             $sql = "SELECT
                         PRODUCTO.id_producto,
                         PRODUCTO.id_efecto,
-                        PRODUCTO.nombre_producto
+                        PRODUCTO.nombre_producto,
+                        PRODUCTO.descripcion_producto
                     FROM
                         PRODUCTO
                     ";
@@ -1653,6 +1689,7 @@ class Modelo_socio extends CI_Model {
                             ACTIVIDAD
                         WHERE
                             PROYECTO.id_proyecto = ACTIVIDAD.id_proyecto AND
+                            ACTIVIDAD.contraparte_actividad = false AND
                             PROYECTO.id_proyecto = ?
                         ";
                 $query = $this->db->query($sql, Array($id_proyecto));
@@ -1684,6 +1721,7 @@ class Modelo_socio extends CI_Model {
                         WHERE
                             PROYECTO.id_proyecto = ACTIVIDAD.id_proyecto AND
                             PROYECTO.id_proyecto = ? AND
+                            ACTIVIDAD.contraparte_actividad = false AND
                             ACTIVIDAD.id_actividad != ?
                         ";
                 $query = $this->db->query($sql, Array($id_proyecto, $id_actividad));
@@ -1711,6 +1749,7 @@ class Modelo_socio extends CI_Model {
                     FROM
                         ACTIVIDAD
                     WHERE
+                        ACTIVIDAD.contraparte_actividad = false AND
                         ACTIVIDAD.id_proyecto = ?
                     ";
             $query = $this->db->query($sql, Array($id_proyecto));
