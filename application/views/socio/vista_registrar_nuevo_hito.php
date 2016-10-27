@@ -14,7 +14,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
-        <title>Registrar meta</title>
+        <title>Registrar indicador</title>
     </head>
     <body>
         <div class="container">
@@ -28,16 +28,16 @@
                 <h4><?= $actividad->nombre_actividad . ' (' . $actividad->fecha_inicio_actividad . ' - ' . $actividad->fecha_fin_actividad . ')' ?></h4>
                 <form action="<?= base_url() . 'socio/registrar_nuevo_hito/' . $id_proyecto . '/' . $id_actividad ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
-                        <label for="tipo_hito">Tipo de meta</label>
+                        <label for="tipo_hito">Tipo de indicador</label>
                         <div class="radio">
-                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cuantitativo">Cuantitativa</label><br>
+                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cuantitativo">Cuantitativo</label><br>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cualitativo" checked>Cualitativa</label><br>
+                            <label><input type="radio" name="tipo_hito" id="tipo_hito" value="cualitativo" checked>Cualitativo</label><br>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="nombre_hito">Nombre de la meta</label>
+                        <label for="nombre_hito">Nombre del indicador</label>
                         <input type="text" name="nombre_hito" id="nombre_hito" placeholder="Nombre" class="form-control" required>
                         <p><?= form_error('nombre_hito') ?></p>
                     </div>
@@ -50,7 +50,7 @@
                         
                     </div>
                     <input type="hidden" name="id_actividad" value="<?= $id_actividad ?>" id="id_actividad">
-                    <input type="submit" name="submit" value="Registrar meta" title="Registrar meta" class="btn btn-primary">
+                    <input type="submit" name="submit" value="Registrar indicador" title="Registrar indicador" class="btn btn-primary">
                 </form>
             </div>
         </div>

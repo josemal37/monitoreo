@@ -19,6 +19,7 @@
             $datos = Array();
             $datos['activo'] = "Registrar proyecto";
             $this->load->view('socio/nav', $datos);
+            $se_puede_activar = true;
             ?>
             <div>
                 <h4 class="text-primary"><?= $datos_proyecto->nombre_proyecto ?></h4>
@@ -47,7 +48,7 @@
                                     <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
-                                    <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span></p>
+                                    <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span> <?php if($actividad->contraparte_actividad): ?>(contraparte)<?php endif; ?></p>
                                     <?php if (isset($actividad->nombre_producto)): ?>
                                         <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
                                     <?php endif; ?>
@@ -117,6 +118,7 @@
                                             </div>
                                         </div>
                                     <?php else: ?>
+                                        <?php $se_puede_activar = false; ?>
                                         <div class="panel panel-warning">
                                             <div class="panel-heading">
                                                 Advertencia
@@ -132,6 +134,7 @@
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
+                    <?php $se_puede_activar = false; ?>
                     <div class="panel panel-warning">
                         <div class="panel-heading">
                             Advertencia
@@ -147,7 +150,7 @@
             </p>
             <div>
                 <p class="text-right">
-                    <a href="<?= base_url() . 'socio/terminar_edicion_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-primary">Activar proyecto</a>
+                    <a href="<?= base_url() . 'socio/terminar_edicion_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-primary <?php if(!$se_puede_activar): ?>disabled<?php endif; ?>">Activar proyecto</a>
                     <a href="<?= base_url() . 'socio/eliminar_proyecto/' . $datos_proyecto->id_proyecto ?>" class="btn btn-danger">Eliminar proyecto</a>
                 </p>
             </div>

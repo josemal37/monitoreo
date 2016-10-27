@@ -25,14 +25,16 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
+                                <th width="10%">Año</th>
                                 <th width="20%">Nombre</th>
-                                <th width="65%">Descripción</th>
+                                <th width="55%">Descripción</th>
                                 <th width="15%">Ver proyecto</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($proyectos as $proyecto) : ?>
                                 <tr>
+                                    <td><?= $proyecto->valor_anio ?></td>
                                     <td><?= $proyecto->nombre_proyecto ?></td>
                                     <td><?= $proyecto->descripcion_proyecto ?></td>
                                     <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver proyecto</a></td>

@@ -19,7 +19,10 @@ create table ACTIVIDAD
    EN_EDICION_ACTIVIDAD bool,
    CONTRAPARTE_ACTIVIDAD bool,
    primary key (ID_ACTIVIDAD)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: ANIO                                                  */
@@ -30,7 +33,10 @@ create table ANIO
    VALOR_ANIO           int,
    ACTIVO_ANIO          bool,
    primary key (ID_ANIO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: AVANCE_HITO_CUALITATIVO                               */
@@ -48,7 +54,10 @@ create table AVANCE_HITO_CUALITATIVO
    COSTO_AVANCE_HITO_CL decimal(8,2),
    FECHA_REGISTRO_AVANCE_HITO_CL date,
    primary key (ID_AVANCE_HITO_CL)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: AVANCE_HITO_CUANTITATIVO                              */
@@ -65,7 +74,10 @@ create table AVANCE_HITO_CUANTITATIVO
    FECHA_REGISTRO_AVANCE_HITO_CN date,
    COSTO_AVANCE_HITO_CN decimal(9,2),
    primary key (ID_AVANCE_HITO_CN)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: DOCUMENTO_ACTIVIDAD                                   */
@@ -78,7 +90,10 @@ create table DOCUMENTO_ACTIVIDAD
    DESCRIPCION_DOCUMENTO_ACTIVIDAD text not null,
    ARCHIVO_DOCUMENTO_ACTIVIDAD varchar(128) not null,
    primary key (ID_DOCUMENTO_ACTIVIDAD)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: DOCUMENTO_AVANCE_HITO_CUANTITATIVO                    */
@@ -91,7 +106,10 @@ create table DOCUMENTO_AVANCE_HITO_CUANTITATIVO
    DESCRIPCION_DOCUMENTO_AVANCE_HITO_CN text not null,
    ARCHIVO_DOCUMENTO_AVANCE_HITO_CN varchar(128) not null,
    primary key (ID_DOCUMENTO_AVANCE_HITO_CN)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: EFECTO                                                */
@@ -103,7 +121,10 @@ create table EFECTO
    NOMBRE_EFECTO        varchar(1024) not null,
    DESCRIPCION_EFECTO   text,
    primary key (ID_EFECTO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: GASTO_ACTIVIDAD                                       */
@@ -117,7 +138,10 @@ create table GASTO_ACTIVIDAD
    IMPORTE_GASTO_ACTIVIDAD decimal(12,2),
    RESPALDO_GASTO_ACTIVIDAD varchar(128),
    primary key (ID_GASTO_ACTIVIDAD)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: GASTO_PROYECTO                                        */
@@ -131,7 +155,10 @@ create table GASTO_PROYECTO
    IMPORTE_GASTO_PROYECTO decimal(9,2) not null,
    RESPALDO_GASTO_PROYECTO varchar(128) not null,
    primary key (ID_GASTO_PROYECTO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: HITO_CUALITATIVO                                      */
@@ -143,7 +170,10 @@ create table HITO_CUALITATIVO
    NOMBRE_HITO_CL       varchar(1024),
    DESCRIPCION_HITO_CL  text,
    primary key (ID_HITO_CL)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: HITO_CUANTITATIVO                                     */
@@ -157,7 +187,10 @@ create table HITO_CUANTITATIVO
    META_HITO_CN         numeric(8,0),
    UNIDAD_HITO_CN       varchar(32),
    primary key (ID_HITO_CN)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: INDICADOR_CUANTITATIVO                                */
@@ -172,7 +205,10 @@ create table INDICADOR_CUANTITATIVO
    LIMITADO_CN          decimal(9,2) not null,
    NO_ACEPTABLE_CN      decimal(9,2) not null,
    primary key (ID_INDICADOR_CN)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: INSTITUCION                                           */
@@ -185,7 +221,10 @@ create table INSTITUCION
    CARPETA_INSTITUCION  varchar(32),
    ACTIVA_INSTITUCION   bool not null,
    primary key (ID_INSTITUCION)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: META_ACTIVIDAD_APORTA_META_PRODUCTO_CL                */
@@ -195,7 +234,10 @@ create table META_ACTIVIDAD_APORTA_META_PRODUCTO_CL
    ID_HITO_CL           int not null,
    ID_META_PRODUCTO_CUALITATIVA int not null,
    primary key (ID_HITO_CL, ID_META_PRODUCTO_CUALITATIVA)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: META_ACTIVIDAD_APORTA_META_PRODUCTO_CN                */
@@ -205,7 +247,10 @@ create table META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
    ID_HITO_CN           int not null,
    ID_META_PRODUCTO_CUANTITATIVA int not null,
    primary key (ID_HITO_CN, ID_META_PRODUCTO_CUANTITATIVA)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: META_PRODUCTO_CUALITATIVA                             */
@@ -217,7 +262,10 @@ create table META_PRODUCTO_CUALITATIVA
    NOMBRE_META_PRODUCTO_CUALITATIVA varchar(1024) not null,
    DESCRIPCION_META_PRODUCTO_CUALITATIVA text,
    primary key (ID_META_PRODUCTO_CUALITATIVA)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: META_PRODUCTO_CUANTITATIVA                            */
@@ -231,7 +279,10 @@ create table META_PRODUCTO_CUANTITATIVA
    NOMBRE_META_PRODUCTO_CUANTITATIVA varchar(1024) not null,
    DESCRIPCION_META_PRODUCTO_CUANTITATIVA text not null,
    primary key (ID_META_PRODUCTO_CUANTITATIVA)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: PRODOC                                                */
@@ -244,7 +295,10 @@ create table PRODOC
    OBJETIVO_GLOBAL_PRODOC text,
    OBJETIVO_PROYECTO_PRODOC text,
    primary key (ID_PRODOC)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: PRODUCTO                                              */
@@ -256,7 +310,10 @@ create table PRODUCTO
    NOMBRE_PRODUCTO      varchar(1024) not null,
    DESCRIPCION_PRODUCTO text,
    primary key (ID_PRODUCTO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: PRODUCTO_RECIBE_ACTIVIDAD                             */
@@ -266,7 +323,10 @@ create table PRODUCTO_RECIBE_ACTIVIDAD
    ID_ACTIVIDAD         int not null,
    ID_PRODUCTO          int not null,
    primary key (ID_ACTIVIDAD, ID_PRODUCTO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: PROYECTO                                              */
@@ -281,7 +341,10 @@ create table PROYECTO
    EN_EDICION           bool,
    CONCLUIDO            bool,
    primary key (ID_PROYECTO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: PROYECTO_GLOBAL                                       */
@@ -294,7 +357,10 @@ create table PROYECTO_GLOBAL
    DESCRIPCION_PROYECTO_GLOBAL text,
    PRESUPUESTO_PROYECTO_GLOBAL decimal(12,2),
    primary key (ID_PROYECTO_GLOBAL)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: PROYECTO_TIENE_ANIO                                   */
@@ -304,7 +370,10 @@ create table PROYECTO_TIENE_ANIO
    ID_PROYECTO          int not null,
    ID_ANIO              int not null,
    primary key (ID_PROYECTO, ID_ANIO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: ROL                                                   */
@@ -314,7 +383,10 @@ create table ROL
    ID_ROL               int not null auto_increment,
    NOMBRE_ROL           varchar(32) not null,
    primary key (ID_ROL)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: TIPO_INDICADOR_CUANTITATIVO                           */
@@ -325,7 +397,10 @@ create table TIPO_INDICADOR_CUANTITATIVO
    NOMBRE_TIPO_INDICADOR_CN varchar(128) not null,
    DESCRIPCION_TIPO_INDICADOR_CN text,
    primary key (ID_TIPO_INDICADOR_CN)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 /*==============================================================*/
 /* Table: USUARIO                                               */
@@ -344,7 +419,10 @@ create table USUARIO
    CORREO_USUARIO       varchar(64),
    ACTIVO_USUARIO       bool not null,
    primary key (ID_USUARIO)
-);
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 alter table ACTIVIDAD add constraint FK_PROYECTO_TIENE_ACTIVIDAD foreign key (ID_PROYECTO)
       references PROYECTO (ID_PROYECTO) on delete cascade on update cascade;

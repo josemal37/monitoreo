@@ -13,7 +13,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
-        <title>Modificar meta</title>
+        <title>Modificar indicador</title>
     </head>
     <body>
         <div class="container">
@@ -27,7 +27,7 @@
                 <h4><?= $actividad->nombre_actividad . ' (' . $actividad->fecha_inicio_actividad . ' - ' . $actividad->fecha_fin_actividad . ')' ?></h4>
                 <form action="<?= base_url() . 'socio/modificar_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
-                        <label for="nombre_hito">Nombre de la meta</label>
+                        <label for="nombre_hito">Nombre del indicador</label>
                         <input type="text" name="nombre_hito" id="nombre_hito" value="<?= $hito->nombre_hito_cn ?>" placeholder="Nombre del hito" class="form-control" required>
                         <p><?= form_error('nombre_hito') ?></p>
                     </div>
@@ -52,15 +52,29 @@
                     <div class='form-group' <?php if(!isset($actividad->nombre_producto)):?>style='display: none;'<?php endif; ?>>
                         <label for='tipo_hito'>Aporta al producto (<?= $actividad->nombre_producto ?>)</label>
                         <div class='radio'>
-                            <label><input type='radio' name='aporta_producto' id='tipo_hito' value='directo'>Aporta directamente</label><br>
+                            <label><input type='radio' name='aporta_producto' id='tipo_hito' value='directo' <?php if(isset($hito->id_meta_producto_cuantitativa)): ?>checked<?php endif; ?>>Aporta directamente</label><br>
                         </div>
                         <div class='radio'>
-                            <label><input type='radio' name='aporta_producto' id='tipo_hito' value='indirecto' checked>Aporta indirectamente</label><br>
+                            <label><input type='radio' name='aporta_producto' id='tipo_hito' value='indirecto' <?php if(!isset($hito->id_meta_producto_cuantitativa)): ?>checked<?php endif; ?>>Aporta indirectamente</label><br>
                         </div>
                     </div>
+                    <?php if(isset($hito->id_meta_producto_cuantitativa)): ?>
+                    <div id='div_aporta_producto'>
+                        <div class='form-group'>
+                            <label for='id_meta_producto'>Meta del producto a la que aporta directamente</label>
+                            <select name='id_meta_producto' id='id_meta_producto' class='form-control'>
+                                <?php foreach ($metas_cuantitativas as $meta_cuantitativa): ?>
+                                    <option value='<?= $meta_cuantitativa->id_meta_producto_cuantitativa ?>'  <?php if($hito->id_meta_producto_cuantitativa == $meta_cuantitativa->id_meta_producto_cuantitativa): ?>selected<?php endif; ?>><?= $meta_cuantitativa->nombre_meta_producto_cuantitativa ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <p><?= form_error('id_meta_producto') ?></p>
+                        </div>
+                    </div>
+                    <?php else: ?>
                     <div id='div_aporta_producto' style='display: none;'>
 
                     </div>
+                    <?php endif; ?>
                     <input type="hidden" name="id_hito" value="<?= $hito->id_hito_cn ?>" id="id_hito">
                     <input type="submit" name="submit" value="Modificar meta" title="Modificar meta" class="btn btn-primary">
                 </form>
@@ -117,7 +131,7 @@
                             "<label for='id_meta_producto'>Meta del producto a la que aporta directamente</label>"+
                             "<select name='id_meta_producto' id='id_meta_producto' class='form-control'>"+
                                 <?php foreach ($metas_cuantitativas as $meta_cuantitativa): ?>
-                                    "<option value='<?= $meta_cuantitativa->id_meta_producto_cuantitativa ?>'><?= $meta_cuantitativa->nombre_meta_producto_cuantitativa ?></option>"+
+                                    "<option value='<?= $meta_cuantitativa->id_meta_producto_cuantitativa ?>'  <?php if($hito->id_meta_producto_cuantitativa == $meta_cuantitativa->id_meta_producto_cuantitativa): ?>selected<?php endif; ?>><?= $meta_cuantitativa->nombre_meta_producto_cuantitativa ?></option>"+
                                 <?php endforeach; ?>
                             "</select>"+
                             "<p><?= form_error('id_meta_producto') ?></p>"+

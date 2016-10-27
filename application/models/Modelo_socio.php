@@ -29,14 +29,19 @@ class Modelo_socio extends CI_Model {
                         PROYECTO.id_proyecto, 
                         PROYECTO.nombre_proyecto, 
                         PROYECTO.descripcion_proyecto,
-                        PROYECTO.presupuesto_proyecto
+                        PROYECTO.presupuesto_proyecto,
+                        ANIO.valor_anio
                     FROM 
                         PROYECTO, 
                         PROYECTO_GLOBAL,
-                        INSTITUCION
+                        INSTITUCION,
+                        ANIO,
+                        PROYECTO_TIENE_ANIO
                     WHERE 
                         PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
                         PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                        PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
                         PROYECTO_GLOBAL.id_institucion = ? AND
                         PROYECTO.en_edicion = false
                         ";
@@ -101,13 +106,21 @@ class Modelo_socio extends CI_Model {
                         PROYECTO.id_proyecto, 
                         PROYECTO.nombre_proyecto, 
                         PROYECTO.descripcion_proyecto,
-                        PROYECTO.presupuesto_proyecto
+                        PROYECTO.presupuesto_proyecto,
+                        ANIO.id_anio,
+                        ANIO.valor_anio
                     FROM 
                         PROYECTO, 
-                        INSTITUCION
+                        PROYECTO_GLOBAL,
+                        INSTITUCION,
+                        PROYECTO_TIENE_ANIO,
+                        ANIO
                     WHERE 
-                        PROYECTO.id_institucion = INSTITUCION.id_institucion AND
-                        PROYECTO.id_institucion = ? AND
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                        PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
+                        PROYECTO_GLOBAL.id_institucion = ? AND
                         PROYECTO.id_proyecto = ?
                     ";
             $query_proyecto = $this->db->query($sql, Array($id_institucion, $id_proyecto));
@@ -120,7 +133,7 @@ class Modelo_socio extends CI_Model {
 
                 if (sizeof($datos_actividades) > 0) {
                     foreach ($datos_actividades as $datos_actividad) {
-                        $datos_hitos_cuantitativos = $this->get_hitos_cuantitativos_actividad($datos_actividad->id_actividad);
+                        $datos_hitos_cuantitativos = $this->get_hitos_cuantitativos_actividad_con_avance($datos_actividad->id_actividad);
                         $datos['datos_hitos_cuantitativos'][$datos_actividad->nombre_actividad] = $datos_hitos_cuantitativos;
                         $datos_hitos_cualitativos = $this->get_hitos_cualitativos_actividad($datos_actividad->id_actividad);
                         $datos['datos_hitos_cualitativos'][$datos_actividad->nombre_actividad] = $datos_hitos_cualitativos;
@@ -259,6 +272,44 @@ class Modelo_socio extends CI_Model {
                         HITO_CUANTITATIVO.nombre_hito_cn ASC
                     ";
             $query_indicadores = $this->db->query($sql);
+            return $query_indicadores->result();
+        } catch (Exception $ex) {
+            redirect(base_url() . 'socio/error');
+        }
+    }
+
+    private function get_hitos_cuantitativos_actividad_con_avance($id_actividad) {
+        if (!is_numeric($id_actividad)) {
+            redirect(base_url() . 'socio/error');
+        }
+        try {
+            $sql = "SELECT
+                        HITO_CUANTITATIVO.id_hito_cn,
+                        HITO_CUANTITATIVO.id_actividad,
+                        HITO_CUANTITATIVO.nombre_hito_cn,
+                        HITO_CUANTITATIVO.descripcion_hito_cn,
+                        HITO_CUANTITATIVO.meta_hito_cn,
+                        HITO_CUANTITATIVO.unidad_hito_cn,
+                        META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa,
+                        COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as cantidad_avance_cn
+                    FROM
+                        HITO_CUANTITATIVO
+                    LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
+                    LEFT JOIN META_PRODUCTO_CUANTITATIVA ON META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
+                    LEFT JOIN 
+                        AVANCE_HITO_CUANTITATIVO ON AVANCE_HITO_CUANTITATIVO.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn AND
+                        AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true
+                    WHERE
+                        HITO_CUANTITATIVO.id_actividad = ?
+                    GROUP BY
+                        HITO_CUANTITATIVO.id_hito_cn
+                    ORDER BY
+                        HITO_CUANTITATIVO.nombre_hito_cn ASC
+                    ";
+            $query_indicadores = $this->db->query($sql, Array($id_actividad));
             return $query_indicadores->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'socio/error');
@@ -838,13 +889,15 @@ class Modelo_socio extends CI_Model {
                             HITO_CUANTITATIVO.nombre_hito_cn,
                             HITO_CUANTITATIVO.descripcion_hito_cn,
                             HITO_CUANTITATIVO.meta_hito_cn,
-                            HITO_CUANTITATIVO.unidad_hito_cn
+                            HITO_CUANTITATIVO.unidad_hito_cn,
+                            META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
                         FROM
                             HITO_CUANTITATIVO
+                        LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.ID_HITO_CN = hito_cuantitativo.ID_HITO_CN
                         WHERE
-                            HITO_CUANTITATIVO.id_hito_cn = $id_hito
+                            HITO_CUANTITATIVO.id_hito_cn = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 if (!$query) {
                     return false;
                 } else {
@@ -1377,12 +1430,20 @@ class Modelo_socio extends CI_Model {
             redirect(base_url() . 'socio/error');
         } else {
             try {
+                $this->db->trans_start();
                 $sql = "UPDATE PROYECTO SET
                             PROYECTO.en_edicion = false
                         WHERE
-                            PROYECTO.id_proyecto = $id_proyecto
+                            PROYECTO.id_proyecto = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_proyecto));
+                $sql = "UPDATE ACTIVIDAD SET
+                            ACTIVIDAD.en_edicion_actividad = false
+                        WHERE
+                            ACTIVIDAD.id_proyecto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto));
+                $this->db->trans_complete();
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }

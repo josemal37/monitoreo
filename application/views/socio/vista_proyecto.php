@@ -21,12 +21,14 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h4><?= $datos_proyecto->nombre_proyecto ?> (Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span>)</h4>
-                <p class="text-justify"><?= $datos_proyecto->descripcion_proyecto ?></p>
+                <h4 class="text-primary"><?= $datos_proyecto->nombre_proyecto ?></h4>
+                <p class="text-justify"><strong>Año:</strong> <?= $datos_proyecto->valor_anio ?></p>
+                <p class="text-justify"><strong>Presupuesto:</strong> Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span></p>
+                <p class="text-justify"><strong>Descripción:</strong> <?= $datos_proyecto->descripcion_proyecto ?></p>
             </div>
             <div>
                 <?php if (sizeof($datos_actividades) > 0): ?>
-                    <h4>Actividades</h4>
+                    <h4 class="text-primary">Actividades</h4>
                     <?php foreach ($datos_actividades as $actividad): ?>
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -37,7 +39,13 @@
                                     <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
-                                    <p><strong>Presupuesto: </strong>Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span></p>
+                                    <p>
+                                        <strong>Presupuesto: </strong>
+                                        Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span>
+                                        <?php if($actividad->contraparte_actividad): ?>
+                                            (contraparte)
+                                        <?php endif; ?>
+                                    </p>
                                     <?php if(isset($actividad->nombre_producto)): ?>
                                         <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
                                     <?php endif; ?>
@@ -52,15 +60,15 @@
                                     <?php if ((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <strong>Metas</strong>
+                                                <strong>Indicadores</strong>
                                             </div>
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th>Nombre de la meta</th>
+                                                            <th>Nombre del indicador</th>
                                                             <th>Descripción</th>
-                                                            <th>Meta</th>
+                                                            <th>Avance / Meta</th>
                                                             <th>Meta asociada</th>
                                                             <th>Acciones</th>
                                                         </tr>
@@ -71,7 +79,7 @@
                                                                 <tr>
                                                                     <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
-                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
+                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->cantidad_avance_cn ?></span> / <span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
                                                                     <td>
                                                                         <?php if(isset($hito_cuantitativo->id_meta_producto_cuantitativa)): ?>
                                                                             <span class="number_integer"><?= $hito_cuantitativo->cantidad_meta_producto_cuantitativa?></span> <?= $hito_cuantitativo->unidad_meta_producto_cuantitativa ?>

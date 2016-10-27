@@ -12,7 +12,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         
-        <title>Modificar meta</title>
+        <title>Modificar indicador</title>
     </head>
     <body>
         <div class="container">
@@ -26,7 +26,7 @@
                 <h4><?= $actividad->nombre_actividad . ' (' . $actividad->fecha_inicio_actividad . ' - ' . $actividad->fecha_fin_actividad . ')' ?></h4>
                 <form action="<?= base_url() . 'socio/modificar_hito_cualitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
-                        <label for="nombre_hito">Nombre de la meta</label>
+                        <label for="nombre_hito">Nombre del indicador</label>
                         <input type="text" name="nombre_hito" id="nombre_hito" value="<?= $hito->nombre_hito_cl ?>" placeholder="Nombre" class="form-control" required>
                         <p><?= form_error('nombre_hito') ?></p>
                     </div>
@@ -36,7 +36,7 @@
                         <p><?= form_error('descripcion_hito') ?></p>
                     </div>
                     <input type="hidden" name="id_hito" value="<?= $hito->id_hito_cl ?>" id="id_hito">
-                    <input type="submit" name="submit" value="Modificar meta" title="Modificar meta" class="btn btn-primary">
+                    <input type="submit" name="submit" value="Modificar indicador" title="Modificar indicador" class="btn btn-primary">
                 </form>
             </div>
         </div>
