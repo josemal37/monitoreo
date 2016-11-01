@@ -22,7 +22,7 @@
             ?>
             <div>
                 <h4 class="text-primary"><?= $datos_proyecto->nombre_proyecto ?></h4>
-                <p class="text-justify"><strong>Año:</strong> <?= $datos_proyecto->valor_anio ?></p>
+                <p class="text-justify"><strong>Año:</strong> <span class="number_integer"><?= $datos_proyecto->valor_anio ?></span></p>
                 <p class="text-justify"><strong>Presupuesto:</strong> Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span></p>
                 <p class="text-justify"><strong>Descripción:</strong> <?= $datos_proyecto->descripcion_proyecto ?></p>
             </div>

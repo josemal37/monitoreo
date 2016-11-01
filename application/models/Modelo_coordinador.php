@@ -534,12 +534,14 @@ class Modelo_coordinador extends CI_Model {
                         PROYECTO_GLOBAL.descripcion_proyecto_global,
                         PROYECTO_GLOBAL.presupuesto_proyecto_global,
                         INSTITUCION.nombre_institucion,
-                        INSTITUCION.sigla_institucion
+                        INSTITUCION.sigla_institucion,
+                        PROYECTO_GLOBAL.presupuesto_proyecto_global - COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) as presupuesto_disponible
                     FROM
-                        PROYECTO_GLOBAL,
-                        INSTITUCION
-                    WHERE
-                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion
+                        PROYECTO_GLOBAL
+                    LEFT JOIN INSTITUCION ON PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion
+                    LEFT JOIN PROYECTO ON PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global
+                    GROUP BY
+                        PROYECTO_GLOBAL.id_proyecto_global
                     ";
             $query = $this->db->query($sql);
             if (!$query) {
@@ -562,9 +564,11 @@ class Modelo_coordinador extends CI_Model {
                             PROYECTO_GLOBAL.id_institucion,
                             PROYECTO_GLOBAL.nombre_proyecto_global,
                             PROYECTO_GLOBAL.descripcion_proyecto_global,
-                            PROYECTO_GLOBAL.presupuesto_proyecto_global
+                            PROYECTO_GLOBAL.presupuesto_proyecto_global,
+                            COALESCE(SUM(PROYECTO.presupuesto_proyecto), 0) as presupuesto_asignado
                         FROM
                             PROYECTO_GLOBAL
+                        LEFT JOIN PROYECTO ON PROYECTO.id_proyecto_global = PROYECTO_GLOBAL.id_proyecto_global
                         WHERE
                             PROYECTO_GLOBAL.id_proyecto_global = ?
                         ";
@@ -636,11 +640,80 @@ class Modelo_coordinador extends CI_Model {
             redirect(base_url() . 'coordinador/error');
         } else {
             try {
+                $this->db->trans_start();
                 $sql = "DELETE FROM PROYECTO_GLOBAL
                         WHERE
                             PROYECTO_GLOBAL.id_proyecto_global = ?
                         ";
                 $query = $this->db->query($sql, Array($id_proyecto));
+                $this->db->trans_complete();
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function get_proyecto_global_completo($id_proyecto_global) {
+        if(!is_numeric($id_proyecto_global)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $proyecto_global = false;
+                $this->db->trans_start();
+                $sql = "SELECT
+                            PROYECTO_GLOBAL.id_proyecto_global,
+                            PROYECTO_GLOBAL.nombre_proyecto_global,
+                            PROYECTO_GLOBAL.descripcion_proyecto_global,
+                            PROYECTO_GLOBAL.presupuesto_proyecto_global,
+                            INSTITUCION.id_institucion,
+                            INSTITUCION.nombre_institucion,
+                            INSTITUCION.sigla_institucion
+                        FROM
+                            PROYECTO_GLOBAL
+                        INNER JOIN INSTITUCION ON INSTITUCION.id_institucion = PROYECTO_GLOBAL.id_institucion
+                        WHERE
+                            PROYECTO_GLOBAL.id_proyecto_global = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto_global));
+                if(!$query) {
+                    $proyecto_global = false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        $proyecto_global = false;
+                    } else {
+                        $proyecto_global = $query->row();
+                        $sql = "SELECT
+                                    PROYECTO.id_proyecto,
+                                    PROYECTO.id_proyecto_global,
+                                    PROYECTO.nombre_proyecto,
+                                    PROYECTO.descripcion_proyecto,
+                                    PROYECTO.presupuesto_proyecto,
+                                    PROYECTO.en_edicion,
+                                    PROYECTO.concluido,
+                                    ANIO.id_anio,
+                                    ANIO.valor_anio
+                                FROM
+                                    PROYECTO
+                                INNER JOIN PROYECTO_TIENE_ANIO ON PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto
+                                INNER JOIN ANIO ON PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio
+                                WHERE
+                                    PROYECTO.en_edicion = false AND
+                                    PROYECTO.id_proyecto_global = ?
+                                ";
+                        $query = $this->db->query($sql, Array($id_proyecto_global));
+                        if(!$query) {
+                            $proyecto_global->proyectos = false;
+                        } else {
+                            if($query->num_rows() == 0) {
+                                $proyecto_global->proyectos = false;
+                            } else {
+                                $proyecto_global->proyectos = $query->result();
+                            }
+                        }
+                    }
+                }
+                $this->db->trans_complete();
+                return $proyecto_global;
             } catch (Exception $ex) {
                 redirect(base_url() . 'coordinador/error');
             }
@@ -780,6 +853,32 @@ class Modelo_coordinador extends CI_Model {
             redirect(base_url() . 'coordinador/error');
         }
     }
+    
+    public function get_gestion_actual() {
+        try {
+            $sql = "SELECT
+                        ANIO.id_anio,
+                        ANIO.valor_anio,
+                        ANIO.activo_anio
+                    FROM
+                        ANIO
+                    WHERE
+                        ANIO.activo_anio = true
+                    ";
+            $query = $this->db->query($sql);
+            if(!$query) {
+                return false;
+            } else {
+                if($query->num_rows() == 0) {
+                    return false;
+                } else {
+                    return $query->row();
+                }
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
 
     public function get_proyectos_activos_gestion_actual() {
         try {
@@ -799,9 +898,10 @@ class Modelo_coordinador extends CI_Model {
                         ANIO
                     WHERE
                         PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
-                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto AND
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
                         PROYECTO.id_proyecto = PROYECTO_TIENE_ANIO.id_proyecto AND
                         ANIO.id_anio = PROYECTO_TIENE_ANIO.id_anio AND
+                        ANIO.activo_anio = true AND
                         PROYECTO.en_edicion = false
                     ";
             $query = $this->db->query($sql);
@@ -870,15 +970,22 @@ class Modelo_coordinador extends CI_Model {
                         INSTITUCION.id_institucion,
                         INSTITUCION.nombre_institucion,
                         INSTITUCION.sigla_institucion,
-                        INSTITUCION.carpeta_institucion
+                        INSTITUCION.carpeta_institucion,
+                        ANIO.valor_anio
                     FROM 
-                        PROYECTO,
-                        INSTITUCION
+                        PROYECTO
+                    INNER JOIN PROYECTO_GLOBAL ON 
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global
+                    INNER JOIN PROYECTO_TIENE_ANIO ON 
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto
+                    INNER JOIN ANIO ON 
+                        ANIO.id_anio = PROYECTO_TIENE_ANIO.id_anio
+                    INNER JOIN INSTITUCION ON 
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion
                     WHERE
-                        PROYECTO.id_institucion = INSTITUCION.id_institucion AND
-                        PROYECTO.id_proyecto = $id_proyecto
+                        PROYECTO.id_proyecto = ?
                     ";
-            $query_proyecto = $this->db->query($sql);
+            $query_proyecto = $this->db->query($sql, Array($id_proyecto));
             if ($query_proyecto->num_rows() == 1) {
                 $datos_proyecto = $query_proyecto->row();
                 $datos['datos_proyecto'] = $datos_proyecto;
@@ -888,7 +995,7 @@ class Modelo_coordinador extends CI_Model {
 
                 if (sizeof($datos_actividades) > 0) {
                     foreach ($datos_actividades as $datos_actividad) {
-                        $datos_hitos_cuantitativos = $this->get_hitos_cuantitativos_actividad($datos_actividad->id_actividad);
+                        $datos_hitos_cuantitativos = $this->get_hitos_cuantitativos_actividad_con_avance($datos_actividad->id_actividad);
                         $datos['datos_hitos_cuantitativos'][$datos_actividad->nombre_actividad] = $datos_hitos_cuantitativos;
                         $datos_hitos_cualitativos = $this->get_hitos_cualitativos_actividad($datos_actividad->id_actividad);
                         $datos['datos_hitos_cualitativos'][$datos_actividad->nombre_actividad] = $datos_hitos_cualitativos;
@@ -925,6 +1032,7 @@ class Modelo_coordinador extends CI_Model {
                         ACTIVIDAD.fecha_inicio_actividad,
                         ACTIVIDAD.fecha_fin_actividad,
                         ACTIVIDAD.presupuesto_actividad,
+                        ACTIVIDAD.contraparte_actividad,
                         PRODUCTO.id_producto,
                         PRODUCTO.nombre_producto
                     FROM
@@ -932,11 +1040,11 @@ class Modelo_coordinador extends CI_Model {
                     LEFT JOIN PRODUCTO_RECIBE_ACTIVIDAD ON PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
                     LEFT JOIN PRODUCTO ON PRODUCTO_RECIBE_ACTIVIDAD.id_producto = PRODUCTO.id_producto
                     WHERE
-                        ACTIVIDAD.id_proyecto = $id_proyecto
+                        ACTIVIDAD.id_proyecto = ?
                     ORDER BY
-                        ACTIVIDAD.fecha_inicio_actividad ASC
+                        ACTIVIDAD.nombre_actividad ASC
                     ";
-            $query_actividades = $this->db->query($sql);
+            $query_actividades = $this->db->query($sql, Array($id_proyecto));
             return $query_actividades->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'coordinador/error');
@@ -974,6 +1082,44 @@ class Modelo_coordinador extends CI_Model {
             return $query_indicadores->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'coordinador/error');
+        }
+    }
+    
+    private function get_hitos_cuantitativos_actividad_con_avance($id_actividad) {
+        if (!is_numeric($id_actividad)) {
+            redirect(base_url() . 'socio/error');
+        }
+        try {
+            $sql = "SELECT
+                        HITO_CUANTITATIVO.id_hito_cn,
+                        HITO_CUANTITATIVO.id_actividad,
+                        HITO_CUANTITATIVO.nombre_hito_cn,
+                        HITO_CUANTITATIVO.descripcion_hito_cn,
+                        HITO_CUANTITATIVO.meta_hito_cn,
+                        HITO_CUANTITATIVO.unidad_hito_cn,
+                        META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                        META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa,
+                        COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as cantidad_avance_cn
+                    FROM
+                        HITO_CUANTITATIVO
+                    LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
+                    LEFT JOIN META_PRODUCTO_CUANTITATIVA ON META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
+                    LEFT JOIN 
+                        AVANCE_HITO_CUANTITATIVO ON AVANCE_HITO_CUANTITATIVO.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn AND
+                        AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true
+                    WHERE
+                        HITO_CUANTITATIVO.id_actividad = ?
+                    GROUP BY
+                        HITO_CUANTITATIVO.id_hito_cn
+                    ORDER BY
+                        HITO_CUANTITATIVO.nombre_hito_cn ASC
+                    ";
+            $query_indicadores = $this->db->query($sql, Array($id_actividad));
+            return $query_indicadores->result();
+        } catch (Exception $ex) {
+            redirect(base_url() . 'socio/error');
         }
     }
 
@@ -1126,13 +1272,18 @@ class Modelo_coordinador extends CI_Model {
                             HITO_CUANTITATIVO.nombre_hito_cn,
                             HITO_CUANTITATIVO.descripcion_hito_cn,
                             HITO_CUANTITATIVO.meta_hito_cn,
-                            HITO_CUANTITATIVO.unidad_hito_cn
+                            HITO_CUANTITATIVO.unidad_hito_cn,
+                            COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as avance_hito_cn
                         FROM
                             HITO_CUANTITATIVO
+                        LEFT JOIN AVANCE_HITO_CUANTITATIVO ON HITO_CUANTITATIVO.id_hito_cn = AVANCE_HITO_CUANTITATIVO.id_hito_cn
                         WHERE
-                            HITO_CUANTITATIVO.id_hito_cn = $id_hito
+                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true AND
+                            HITO_CUANTITATIVO.id_hito_cn = ?
+                        GROUP BY
+                            HITO_CUANTITATIVO.id_hito_cn
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 if (!$query) {
                     return false;
                 } else {
@@ -1398,7 +1549,6 @@ class Modelo_coordinador extends CI_Model {
                             INSTITUCION.id_institucion,
                             INSTITUCION.nombre_institucion,
                             INSTITUCION.sigla_institucion,
-                            INSTITUCION.presupuesto_institucion,
                             INSTITUCION.carpeta_institucion,
                             INSTITUCION.activa_institucion
                         FROM

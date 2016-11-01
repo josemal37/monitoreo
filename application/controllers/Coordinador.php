@@ -131,10 +131,10 @@ class Coordinador extends CI_Controller {
             $this->load->view('coordinador/vista_registrar_efecto', $datos);
         }
     }
-    
+
     public function modificar_efecto($id_prodoc, $id_efecto) {
         $this->verificar_sesion();
-        
+
         if (isset($_POST['id_efecto']) && isset($_POST['nombre_efecto']) && isset($_POST['descripcion_efecto'])) {
             $this->form_validation->set_rules('id_efecto', 'id_efecto', 'required|numeric');
             $this->form_validation->set_rules('nombre_efecto', 'nombre_efecto', 'required|trim|min_length[5]|max_length[1024]');
@@ -344,6 +344,7 @@ class Coordinador extends CI_Controller {
         $this->verificar_sesion();
 
         $datos = Array();
+        $datos['gestion_actual'] = $this->modelo_coordinador->get_gestion_actual();
         $datos['proyectos'] = $this->modelo_coordinador->get_proyectos_activos_gestion_actual();
         $this->load->view('coordinador/vista_gestion_actual', $datos);
     }
@@ -396,6 +397,17 @@ class Coordinador extends CI_Controller {
         } else {
             $datos = $this->modelo_coordinador->get_proyecto_completo($id_proyecto);
             $this->load->view('coordinador/vista_proyecto', $datos);
+        }
+    }
+
+    public function ver_proyecto_global($id_proyecto_global) {
+        $this->verificar_sesion();
+        $datos = Array();
+        $datos['proyecto_global'] = $this->modelo_coordinador->get_proyecto_global_completo($id_proyecto_global);
+        if ($datos['proyecto_global']) {
+            $this->load->view('coordinador/vista_proyecto_global', $datos);
+        } else {
+            redirect(base_url() . 'coordinador/error');
         }
     }
 
@@ -473,6 +485,23 @@ class Coordinador extends CI_Controller {
         }
     }
 
+    public function revisar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['estado'])) {
+            $estado = $this->input->post('estado');
+            if ($estado == 'aprobado') {
+                $this->aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance);
+            } else {
+                if ($estado = 'no_aprobado') {
+                    $this->no_aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance);
+                }
+            }
+        } else {
+            redirect(base_url() . 'coordinador/error');
+        }
+    }
+
     public function aprobar_avance_hito_cuantitativo($id_proyecto, $id_hito, $id_estado_avance) {
         $this->verificar_sesion();
 
@@ -492,6 +521,23 @@ class Coordinador extends CI_Controller {
         } else {
             $this->modelo_coordinador->modificar_estado_avance_hito_cuantitativo($id_estado_avance, false);
             redirect(base_url() . 'coordinador/ver_avances_hito_cuantitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
+        }
+    }
+
+    public function revisar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance) {
+        $this->verificar_sesion();
+
+        if (isset($_POST['estado'])) {
+            $estado = $this->input->post('estado');
+            if ($estado == 'aprobado') {
+                $this->aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance);
+            } else {
+                if ($estado = 'no_aprobado') {
+                    $this->no_aprobar_avance_hito_cualitativo($id_proyecto, $id_hito, $id_estado_avance);
+                }
+            }
+        } else {
+            redirect(base_url() . 'coordinador/error');
         }
     }
 

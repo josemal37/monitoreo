@@ -13,7 +13,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
 
-        <title>Registrar proyecto</title>
+        <title>Modificar proyecto</title>
     </head>
     <body>
         <div class="container">
@@ -23,6 +23,7 @@
             $datos['activo'] = "Proyectos activos";
             $this->load->view('coordinador/nav', $datos);
             ?>
+            <h4 class="text-primary">Modificar proyecto</h4>
             <div>
                 <form action="<?= base_url() . 'coordinador/modificar_proyecto/' . $proyecto->id_proyecto_global ?>" id="proyecto" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">
@@ -51,6 +52,7 @@
                         <label for="presupuesto_proyecto_vista">Presupuesto (Bs.)</label>
                         <input type="text" name="presupuesto_proyecto_vista" id="presupuesto_proyecto_vista" value="<?= $proyecto->presupuesto_proyecto_global ?>" placeholder="Presupuesto" class="form-control">
                         <input type="hidden" name="presupuesto_proyecto" id="presupuesto_proyecto" value="<?= $proyecto->presupuesto_proyecto_global ?>">
+                        <p><Strong>Presupuesto asignado:</strong> Bs. <span class="number_decimal"><?= $proyecto->presupuesto_asignado ?></span></p>
                         <p><?= form_error('presupuesto_proyecto') ?></p>
                     </div>
                     <input type="hidden" name="id_proyecto" id="id_proyecto" value="<?= $proyecto->id_proyecto_global ?>">
@@ -78,8 +80,13 @@
                         presupuesto_proyecto: {
                             required: true,
                             number: true,
-                            min: 0,
+                            min: <?= $proyecto->presupuesto_asignado ?>,
                             max: 9999999999.99
+                        }
+                    },
+                    messages: {
+                        presupuesto_proyecto: {
+                            min: "Debe asignar un presupuesto mayor al presupuesto ya asignado."
                         }
                     }
                 });

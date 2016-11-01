@@ -12,7 +12,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
 
-        <title>Proyectos activos</title>
+        <title>Gestiones registradas</title>
     </head>
     <body>
         <div class="container">
@@ -22,17 +22,18 @@
             $datos['activo'] = "Gestion actual";
             $this->load->view('coordinador/nav', $datos);
             ?>
+            <h4 class="text-primary">Gestiones registradas</h4>
             <?php if ($anios): ?>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <strong>Años registrados</strong>
+                        <strong>Gestiones registradas</strong>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Año</th>
-                                    <th>Activo</th>
+                                    <th>Gestión</th>
+                                    <th>Activa</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>

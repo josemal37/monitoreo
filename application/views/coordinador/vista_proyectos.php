@@ -10,7 +10,7 @@
         <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
-        <title>Proyectos activos</title>
+        <title>Proyectos registrados</title>
     </head>
     <body>
         <div class="container">
@@ -20,19 +20,21 @@
             $datos['activo'] = "Proyectos activos";
             $this->load->view('coordinador/nav', $datos);
             ?>
+            <h4 class="text-primary">Proyectos registrados</h4>
             <?php if ($proyectos): ?>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong>Proyectos registrados</strong>
+                    <strong>Proyectos</strong>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th width="20%">Nombre</th>
+                                <th width="15%">Nombre</th>
                                 <th width="30%">Descripción</th>
                                 <th width="10%">Institución</th>
-                                <th width="25%">Presupuesto (Bs.)</th>
+                                <th width="15%">Presupuesto (Bs.)</th>
+                                <th width="15%">Presupuesto disponible (Bs.)</th>
                                 <th width="15%">Acciones</th>
                             </tr>
                         </thead>
@@ -43,8 +45,9 @@
                                     <td><?= $proyecto->descripcion_proyecto_global ?></td>
                                     <td><?= $proyecto->nombre_institucion ?></td>
                                     <td><span class="number_decimal"><?= $proyecto->presupuesto_proyecto_global ?></span></td>
+                                    <td><span class="number_decimal"><?= $proyecto->presupuesto_disponible ?></span></td>
                                     <td>
-                                        <a href="<?= base_url() . 'coordinador/ver_proyecto/' . $proyecto->id_proyecto_global ?>" class="btn btn-success btn-xs btn-block">Ver proyecto</a>
+                                        <a href="<?= base_url() . 'coordinador/ver_proyecto_global/' . $proyecto->id_proyecto_global ?>" class="btn btn-success btn-xs btn-block">Ver proyecto</a>
                                         <a href="<?= base_url() . 'coordinador/modificar_proyecto/' . $proyecto->id_proyecto_global ?>" class="btn btn-primary btn-xs btn-block">Modificar proyecto</a>
                                         <a href="<?= base_url() . 'coordinador/eliminar_proyecto/' . $proyecto->id_proyecto_global ?>" class="btn btn-danger btn-xs btn-block">Eliminar proyecto</a>
                                     </td>
