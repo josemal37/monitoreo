@@ -287,9 +287,16 @@ class Coordinador extends CI_Controller {
                 $nombre_proyecto = $this->input->post('nombre_proyecto');
                 $descripcion_proyecto = $this->input->post('descripcion_proyecto');
                 $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
-                $id_insititucion = $this->input->post('id_institucion');
-                $this->modelo_coordinador->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_insititucion);
-                redirect(base_url() . 'coordinador/ver_proyectos');
+                $id_institucion = $this->input->post('id_institucion');
+                $proyecto = $this->modelo_coordinador->get_proyecto_global_institucion($id_institucion, 0);
+                if(!$proyecto) {
+                    $this->modelo_coordinador->insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion);
+                    redirect(base_url() . 'coordinador/ver_proyectos');
+                } else {
+                    $this->session->set_flashdata('error_proyecto_global', 'La institución que seleccionó anteriormente ya tiene registrado un proyecto.');
+                    redirect(base_url() . 'coordinador/registrar_proyecto', 'refresh');
+                }
+                
             }
         } else {
             $datos = Array();
@@ -317,9 +324,16 @@ class Coordinador extends CI_Controller {
                 $nombre_proyecto = $this->input->post('nombre_proyecto');
                 $descripcion_proyecto = $this->input->post('descripcion_proyecto');
                 $presupuesto_proyecto = $this->input->post('presupuesto_proyecto');
-                $id_insititucion = $this->input->post('id_institucion');
-                $this->modelo_coordinador->update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_insititucion);
-                redirect(base_url() . 'coordinador/ver_proyectos');
+                $id_institucion = $this->input->post('id_institucion');
+                $id_institucion_antiguo = $this->input->post('id_institucion_antiguo');
+                $proyecto = $this->modelo_coordinador->get_proyecto_global_institucion($id_institucion, $id_institucion_antiguo);
+                if(!$proyecto) {
+                    $this->modelo_coordinador->update_proyecto($id_proyecto, $nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion);
+                    redirect(base_url() . 'coordinador/ver_proyectos');
+                } else {
+                    $this->session->set_flashdata('error_proyecto_global', 'La institución que seleccionó anteriormente ya tiene registrado un proyecto.');
+                    redirect(base_url() . 'coordinador/modificar_proyecto/' . $id_proyecto, 'refresh');
+                }
             }
         } else {
             $datos = Array();
@@ -561,6 +575,27 @@ class Coordinador extends CI_Controller {
             $this->modelo_coordinador->modificar_estado_avance_hito_cualitativo($id_estado_avance, false);
             redirect(base_url() . 'coordinador/ver_avances_hito_cualitativo/' . $this->session->userdata('id_institucion') . '/' . $id_proyecto . '/' . $id_hito);
         }
+    }
+    
+    public function registrar_nueva_actividad($id_proyecto) {
+        $this->verificar_sesion();
+        
+        $this->modelo_coordinador->insert_actividad_en_reformulacion($id_proyecto);
+        redirect(base_url() . 'coordinador/ver_proyecto/' . $id_proyecto);
+    }
+    
+    public function activar_reformulacion_actividad($id_proyecto, $id_actividad) {
+        $this->verificar_sesion();
+        
+        $this->modelo_coordinador->modificar_estado_reformulacion_actividad($id_actividad, true);
+        redirect(base_url() . 'coordinador/ver_proyecto/' . $id_proyecto);
+    }
+    
+    public function desactivar_reformulacion_actividad($id_proyecto, $id_actividad) {
+        $this->verificar_sesion();
+        
+        $this->modelo_coordinador->modificar_estado_reformulacion_actividad($id_actividad, false);
+        redirect(base_url() . 'coordinador/ver_proyecto/' . $id_proyecto);
     }
 
     public function reportes() {

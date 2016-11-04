@@ -25,6 +25,12 @@
                     <strong>¡Error de registro!</strong> <?= $this->session->flashdata('error_proyecto_global') ?>
                 </div>
             <?php endif; ?>
+            <?php if ($this->session->flashdata('error_proyecto')): ?>
+                <div class="alert alert-warning alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>¡Advertencia!</strong> <?= $this->session->flashdata('error_proyecto') ?>
+                </div>
+            <?php endif; ?>
             <div class="row hidden-sm hidden-xs">
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
                     <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>">
@@ -32,28 +38,19 @@
                             <div class="div-center">
                                 <img src="<?= base_url() . 'assets/images/registro.png' ?>" style="width: 100%" class="img-responsive">
                             </div>
-                            <h3 class="text-center hidden-xs hidden-sm">Registrar proyecto</h3>
+                            <h3 class="text-center hidden-xs hidden-sm">Registrar POA</h3>
                         </div>
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                    <a href="#" id="avance" onclick="return false;">
+                    <a href="<?= base_url() . 'socio/ver_proyecto_gestion_actual'?>" id="avance">
                         <div class="btn-div">
                             <div class="div-center">
                                 <img src="<?= base_url() . 'assets/images/avance.png' ?>" style="width: 100%" class="img-responsive">
                             </div>
-                            <h3 class="text-center hidden-xs hidden-sm">Registrar avances</h3>
+                            <h3 class="text-center hidden-xs hidden-sm">Registrar avance POA</h3>
                         </div>
                     </a>
-                    <div id="contenedor_formulario" class="hide">
-                        <?php if ($proyectos): ?>
-                            <?php foreach ($proyectos as $proyecto): ?>
-                                <p><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block white-space-normal"><?= $proyecto->nombre_proyecto ?></a></p>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            No existen proyectos activos.
-                        <?php endif; ?>
-                    </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
                     <a href="<?= base_url() . 'socio/ver_reportes' ?>">
@@ -68,26 +65,11 @@
             </div>
             <div class="hidden-lg hidden-md">
                 <div class="">
-                    <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" class="btn btn-success btn-lg btn-block">Registrar proyecto</a>
+                    <a href="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" class="btn btn-success btn-lg btn-block">Registrar POA</a>
                 </div>
                 <br>
                 <div>
-                    <a href="#collapse" data-toggle="collapse" id="avance_mobile" class="btn btn-success btn-lg btn-block">Registrar avances</a>
-                    <div class="collapse on" id="collapse">
-                        <?php if ($proyectos): ?>
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <?php foreach ($proyectos as $proyecto): ?>
-                                        <tr>
-                                            <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-default btn-xs btn-block white-space-normal"><?= $proyecto->nombre_proyecto ?></a></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        <?php else: ?>
-                            No existen proyectos activos.
-                        <?php endif; ?>
-                    </div>
+                    <a href="<?= base_url() . 'socio/ver_proyecto_gestion_actual'?>" data-toggle="collapse" id="avance_mobile" class="btn btn-success btn-lg btn-block">Registrar avance POA</a>
                 </div>
                 <br>
                 <div>

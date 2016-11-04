@@ -16,7 +16,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery-ui.js' ?>"></script>
 
-        <title>Registrar avance hito</title>
+        <title>Registrar avance</title>
     </head>
     <body>
         <div class="container">
@@ -26,8 +26,11 @@
             $datos['activo'] = "Proyectos activos";
             $this->load->view('socio/nav', $datos);
             ?>
+            <h4 class="text-primary">Registrar avance</h4>
+            <p class="text-justify"><strong>Actividad:</strong> <?= $actividad->nombre_actividad ?></p>
+            <p class="text-justify"><strong>Indicador:</strong> <?= $hito->nombre_hito_cl ?></p>
+            <p class="text-justify"><strong>Descripción del indicador:</strong>  <?= $hito->descripcion_hito_cl ?></p>
             <div>
-                <h4><?= $actividad->nombre_actividad . ': ' . $hito->nombre_hito_cl ?></h4>
                 <form action="<?= base_url() . 'socio/registrar_avance_hito_cualitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_avance_hito" role="form" method="post" accept-charset="utf-8" enctype="multipart/form-data" autocomplete="off">
                     <div class="form-group">
                         <label for="titulo_avance_hito">Título del documento</label>

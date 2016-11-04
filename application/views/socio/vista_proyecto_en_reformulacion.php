@@ -10,7 +10,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
-        <title>Ver proyecto</title>
+        <title>Reformular proyecto</title>
     </head>
     <body>
         <div class="container">
@@ -21,15 +21,15 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h4 class="text-primary"><?= $datos_proyecto->nombre_proyecto ?></h4>
-                <p class="text-justify"><strong>Año:</strong> <span class="number_integer"><?= $datos_proyecto->valor_anio ?></span></p>
-                <p class="text-justify"><strong>Presupuesto:</strong> Bs. <span class="number_decimal"><?= $datos_proyecto->presupuesto_proyecto ?></span></p>
-                <p class="text-justify"><strong>Descripción:</strong> <?= $datos_proyecto->descripcion_proyecto ?></p>
+                <h4 class="text-primary"><?= $proyecto->nombre_proyecto ?></h4>
+                <p class="text-justify"><strong>Año:</strong> <span class="number_integer"><?= $proyecto->valor_anio ?></span></p>
+                <p class="text-justify"><strong>Presupuesto:</strong> Bs. <span class="number_decimal"><?= $proyecto->presupuesto_proyecto ?></span></p>
+                <p class="text-justify"><strong>Descripción:</strong> <?= $proyecto->descripcion_proyecto ?></p>
             </div>
             <div>
-                <?php if (sizeof($datos_actividades) > 0): ?>
-                    <h4 class="text-primary">Actividades</h4>
-                    <?php foreach ($datos_actividades as $actividad): ?>
+                <?php if (sizeof($proyecto->actividades) > 0): ?>
+                    <h4 class="text-primary">Actividades en reformulación</h4>
+                    <?php foreach ($proyecto->actividades as $actividad): ?>
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <a data-toggle="collapse" href="#collapse_<?= $actividad->id_actividad ?>"><strong><?= $actividad->nombre_actividad ?></strong></a>
@@ -49,13 +49,18 @@
                                     <?php if(isset($actividad->nombre_producto)): ?>
                                         <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
                                     <?php endif; ?>
+                                    <p>
+                                        <a href="<?= base_url() . 'socio/reformular_actividad/' . $actividad->id_actividad ?>" class="btn btn-default">Modificar actividad</a>
+                                    </p>
                                     <?php
                                     $id_actividad = $actividad->id_actividad;
-                                    $hitos_cuantitativos = $datos_hitos_cuantitativos[$actividad->nombre_actividad];
-                                    $hitos_cualitativos = $datos_hitos_cualitativos[$actividad->nombre_actividad];
-                                    $indicadores_cuantitativos = $datos_indicadores_cuantitativos[$actividad->nombre_actividad];
-                                    $indicadores_cualitativos = $datos_indicadores_cualitativos[$actividad->nombre_actividad];
-                                    $gastos_actividad = $datos_gastos_actividad[$actividad->nombre_actividad];
+                                    $hitos_cuantitativos = $actividad->hitos_cuantitativos;
+                                    $hitos_cualitativos = $actividad->hitos_cualitativos;
+                                    //$gastos_actividad = $datos_gastos_actividad[$actividad->nombre_actividad];
+                                    $indicadores_cuantitativos = Array();
+                                    $indicadores_cualitativos = Array();
+                                    $gastos_actividad = false;
+                                    $finalizado = true;
                                     ?>
                                     <?php if ((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
                                         <div class="panel panel-default">
@@ -68,7 +73,7 @@
                                                         <tr>
                                                             <th>Nombre del indicador</th>
                                                             <th>Descripción</th>
-                                                            <th>Avance / Meta</th>
+                                                            <th>Meta</th>
                                                             <th>Meta asociada</th>
                                                             <th>Acciones</th>
                                                         </tr>
@@ -79,17 +84,19 @@
                                                                 <tr>
                                                                     <td><?= $hito_cuantitativo->nombre_hito_cn ?></td>
                                                                     <td><?= $hito_cuantitativo->descripcion_hito_cn ?></td>
-                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->cantidad_avance_cn ?></span> / <span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
+                                                                    <td><span class="number_integer"><?= $hito_cuantitativo->meta_hito_cn ?></span> <?= $hito_cuantitativo->unidad_hito_cn ?></td>
                                                                     <td>
-                                                                        <?php if(isset($hito_cuantitativo->id_meta_producto_cuantitativa)): ?>
-                                                                            <span class="number_integer"><?= $hito_cuantitativo->cantidad_meta_producto_cuantitativa?></span> <?= $hito_cuantitativo->unidad_meta_producto_cuantitativa ?>
+                                                                        <?php if (isset($hito_cuantitativo->id_meta_producto_cuantitativa)): ?>
+                                                                            <span class="number_integer"><?= $hito_cuantitativo->cantidad_meta_producto_cuantitativa ?></span> <?= $hito_cuantitativo->unidad_meta_producto_cuantitativa ?>
                                                                         <?php else: ?>
                                                                             -----
                                                                         <?php endif; ?>
                                                                     </td>
                                                                     <td width="15%">
-                                                                        <a href="<?= base_url() . 'socio/registrar_avance_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-primary btn-xs btn-block">Registrar avance</a>
-                                                                        <a href="<?= base_url() . 'socio/ver_avances_hito_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>
+                                                                        <a href="<?= base_url() . 'socio/reformular_hito_cuantitativo/' . $proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-default btn-xs btn-block">Modificar indicador</a>
+                                                                        <?php if($hito_cuantitativo->numero_avances_cn == 0): ?>
+                                                                            <a href="<?= base_url() . 'socio/eliminar_hito_cuantitativo_reformulado/' . $proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-danger btn-xs btn-block">Eliminar indicador</a>
+                                                                        <?php endif; ?>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
@@ -102,8 +109,10 @@
                                                                     <td>-----</td>
                                                                     <td>-----</td>
                                                                     <td width="15%">
-                                                                        <a href="<?= base_url() . 'socio/registrar_avance_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-primary btn-xs btn-block">Registrar avance</a>
-                                                                        <a href="<?= base_url() . 'socio/ver_avances_hito_cualitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>
+                                                                        <a href="<?= base_url() . 'socio/reformular_hito_cualitativo/' . $proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-default btn-xs btn-block">Modificar indicador</a>
+                                                                        <?php if($hito_cualitativo->numero_avances_cl == 0): ?>
+                                                                            <a href="<?= base_url() . 'socio/eliminar_hito_cualitativo_reformulado/' . $proyecto->id_proyecto . '/' . $hito_cualitativo->id_hito_cl ?>" class="btn btn-danger btn-xs btn-block">Eliminar indicador</a>
+                                                                        <?php endif; ?>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>
@@ -112,81 +121,8 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <?php if (sizeof($indicadores_cualitativos) + sizeof($indicadores_cuantitativos) > 0): ?>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong>Estado de los indicadores</strong>
-                                                </div>
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Nombre del indicador</th>
-                                                                <th>Nombre del comparador</th>
-                                                                <th>Tipo de comparador</th>
-                                                                <th>Estado</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php foreach ($indicadores_cuantitativos as $indicador_cuantitativo): ?>
-                                                                <?php
-                                                                $color = 'FFFFFF';
-                                                                if ($indicador_cuantitativo->estado_indicador_cn == $this->modelo_indicador->get_no_aceptable()) {
-                                                                    $color = 'FDBFBF';
-                                                                } else {
-                                                                    if ($indicador_cuantitativo->estado_indicador_cn == $this->modelo_indicador->get_limitado()) {
-                                                                        $color = 'FDFCBF';
-                                                                    } else {
-                                                                        if ($indicador_cuantitativo->estado_indicador_cn == $this->modelo_indicador->get_aceptable()) {
-                                                                            $color = 'CDFDC3';
-                                                                        }
-                                                                    }
-                                                                }
-                                                                ?>
-                                                                <tr bgcolor="#<?= $color ?>">
-                                                                    <td><?= $indicador_cuantitativo->nombre_hito_cn ?></td>
-                                                                    <td><?= $indicador_cuantitativo->nombre_indicador_cn ?></td>
-                                                                    <td><?= $indicador_cuantitativo->nombre_tipo_indicador_cn ?></td>
-                                                                    <td><?= $indicador_cuantitativo->estado_indicador_cn ?></td>
-                                                                </tr>
-                                                            <?php endforeach; ?>
-                                                            <?php foreach ($indicadores_cualitativos as $indicador_cualitativo): ?>
-                                                                <?php
-                                                                $color = 'FFFFFF';
-                                                                if ($indicador_cualitativo['estado_indicador_cualitativo'] == $this->modelo_indicador->get_no_aceptable()) {
-                                                                    $color = 'FDBFBF';
-                                                                } else {
-                                                                    if ($indicador_cualitativo['estado_indicador_cualitativo'] == $this->modelo_indicador->get_limitado()) {
-                                                                        $color = 'FDFCBF';
-                                                                    } else {
-                                                                        if ($indicador_cualitativo['estado_indicador_cualitativo'] == $this->modelo_indicador->get_aceptable()) {
-                                                                            $color = 'CDFDC3';
-                                                                        }
-                                                                    }
-                                                                }
-                                                                ?>
-                                                                <tr bgcolor="#<?= $color ?>">
-                                                                    <td><?= $indicador_cualitativo['nombre_indicador_cualitativo'] ?></td>
-                                                                    <td>Documento aceptado</td>
-                                                                    <td>Booleano</td>
-                                                                    <td><?= $indicador_cualitativo['estado_indicador_cualitativo'] ?></td>
-                                                                </tr>
-                                                            <?php endforeach; ?>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        <?php else : ?>
-                                            <div class="panel panel-warning hidden">
-                                                <div class="panel-heading">
-                                                    Advertencia
-                                                </div>
-                                                <div class="panel-body">
-                                                    Todavía no se registraron indicadores.
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
                                     <?php else: ?>
+                                        <?php $finalizado = false; ?>
                                         <div class="panel panel-warning">
                                             <div class="panel-heading">
                                                 Advertencia
@@ -196,6 +132,9 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
+                                    <p>
+                                        <a href="<?= base_url() . 'socio/registrar_nuevo_hito_reformulado/' . $proyecto->id_proyecto . '/' . $id_actividad ?>" class="btn btn-default">Registrar nuevo indicador</a>
+                                    </p>
                                     <?php if ($gastos_actividad): ?>
                                         <div class="panel panel-default hidden">
                                             <div class="panel-heading">
@@ -232,7 +171,7 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
-                                    <a href="<?= base_url() . 'socio/registrar_gastos_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default hidden">Registrar gastos actividad</a>
+                                    <a href="<?= base_url() . 'socio/registrar_gastos_actividad/' . $proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default hidden">Registrar gastos actividad</a>
                                 </div>
                             </div>
                         </div>
@@ -247,6 +186,15 @@
                     </div>
                 </div>
                 <?php endif; ?>
+                <?php if(!$finalizado): ?>
+                    <div class="alert alert-warning alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>¡Advertencia!</strong> Cada actividad debe tener al menos un indicador para terminar la reformulación del POA.
+                    </div>
+                <?php endif; ?>
+                <p>
+                    <a href="<?= base_url() . 'socio/terminar_reformulacion_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-primary <?php if (!$finalizado): ?>disabled<?php endif; ?>">Terminar reformulación</a>
+                </p>
             </div>
         </div>
         <script type="text/javascript">

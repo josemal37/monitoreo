@@ -15,7 +15,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery-ui-1.12.0/jquery.ui.touch-punch.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
-        <title>Registrar detector</title>
+        <title>Registrar comparador</title>
     </head>
     <body>
         <div class="container">
@@ -26,19 +26,19 @@
             $this->load->view('coordinador/nav', $datos);
             ?>
             <div>
-                <h4 class="text-primary">Registro de detector</h4>
+                <h4 class="text-primary">Registro de comparador</h4>
                 <p class="text-justify"><strong>Actividad:</strong> <?= $actividad->nombre_actividad ?></p>
                 <p class="text-justify"><strong>Indicador:</strong> <?= $hito->nombre_hito_cn ?></p>
                 <p class="text-justify"><strong>Meta del indicador:</strong> <span class="number_integer"><?= $hito->meta_hito_cn ?></span> <?= $hito->unidad_hito_cn ?></p>
                 <p class="text-justify"><strong>Descripción del indicador:</strong> <?= $hito->descripcion_hito_cn ?></p>
                 <form action="<?= base_url() . 'coordinador/registrar_indicador_cuantitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_indicador_cuantitativo" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
-                        <label for="nombre_indicador">Nombre del detector</label>
+                        <label for="nombre_indicador">Nombre del comparador</label>
                         <input type="text" name="nombre_indicador" id="nombre_indicador" placeholder="Nombre" class="form-control" required>
                         <p><?= form_error('nombre_indicador') ?></p>
                     </div>
                     <div class="form-group">
-                        <label for="tipo_indicador">Tipo de detector</label>
+                        <label for="tipo_indicador">Tipo de comparador</label>
                         <select name="tipo_indicador" id="tipo_indicador" class="form-control">
                             <?php foreach ($tipos_indicador_cuantitativo as $tipo_indicador): ?>
                                 <option value="<?= $tipo_indicador->id_tipo_indicador_cn ?>"><?= $tipo_indicador->nombre_tipo_indicador_cn ?></option>

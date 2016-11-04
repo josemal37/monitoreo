@@ -18,46 +18,96 @@
             $datos = Array();
             $datos['activo'] = "Proyectos activos";
             $this->load->view('socio/nav', $datos);
+            $estado = 'No aprobado';
+            if ($avances_hito_cualitativo) {
+                foreach ($avances_hito_cualitativo as $avance) {
+                    if ($avance->aprobado_avance_hito_cl) {
+                        $estado = 'Aprobado';
+                    }
+                }
+            }
             ?>
             <div>
-                <h4><?= $hito_cualitativo->nombre_hito_cl ?></h4>
-                <p class="text-justify"><?= $hito_cualitativo->descripcion_hito_cl ?></p>
+                <h4 class="text-primary">Avances del indicador</h4>
+                <p class="text-justify"><strong>Indicador:</strong> <?= $hito_cualitativo->nombre_hito_cl ?></p>
+                <p class="text-justify"><strong>Estado:</strong> <?= $estado ?></p>
+                <p class="text-justify"><strong>Descripción:</strong> <?= $hito_cualitativo->descripcion_hito_cl ?></p>
             </div>
             <div>
                 <?php if ($avances_hito_cualitativo): ?>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Título</th>
-                                    <th>Descripción</th>
-                                    <th>Estado</th>
-                                    <th width="15%">Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($avances_hito_cualitativo as $avance): ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <strong>Avances</strong>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
                                     <tr>
-                                        <td><?= $avance->fecha_avance_hito_cl ?></td>
-                                        <td><?= $avance->titulo_avance_hito_cl ?></td>
-                                        <td><?= $avance->descripcion_avance_hito_cl ?></td>
-                                        <td>
-                                            <?php if ($avance->en_revision_avance_hito_cl): ?>
-                                                <label class="text-primary">En revisión</label>
-                                            <?php else: ?>
-                                                <?php if ($avance->aprobado_avance_hito_cl): ?>
-                                                    <label class="text-success">Aprobado</label>
-                                                <?php else: ?>
-                                                    <label class="text-danger">No aprobado</label>
-                                                <?php endif; ?>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><a href="<?= base_url() . 'socio/descarga/' . $avance->documento_avance_hito_cl ?>" title="<?= $avance->documento_avance_hito_cl ?>" class="btn btn-success btn-xs btn-block">Ver documento</a></td>
+                                        <th>Fecha</th>
+                                        <th>Título</th>
+                                        <th>Descripción</th>
+                                        <th>Estado</th>
+                                        <th width="15%">Acciones</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php $i = 0; ?>
+                                    <?php foreach ($avances_hito_cualitativo as $avance): ?>
+                                        <tr>
+                                            <td><?= $avance->fecha_avance_hito_cl ?></td>
+                                            <td><?= $avance->titulo_avance_hito_cl ?></td>
+                                            <td><?= $avance->descripcion_avance_hito_cl ?></td>
+                                            <td>
+                                                <?php if ($avance->en_revision_avance_hito_cl): ?>
+                                                    <label class="text-primary">En revisión</label>
+                                                <?php else: ?>
+                                                    <?php if ($avance->aprobado_avance_hito_cl): ?>
+                                                        <label class="text-success">Aprobado</label>
+                                                    <?php else: ?>
+                                                        <label class="text-danger">No aprobado</label>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-success btn-xs btn-block" data-toggle="modal" data-target="#modal_revision_<?= $i ?>">Ver detalle</button>
+                                                <div id="modal_revision_<?= $i ?>" class="modal fade" role="dialog">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                <h4 class="modal-title text-center text-primary">Detalle</h4>
+                                                            </div>
+                                                            <div class="modal-body text-justify">
+                                                                <p><strong>Fecha del avance:</strong> <?= $avance->fecha_avance_hito_cl ?></p>
+                                                                <p><strong>Título:</strong> <?= $avance->titulo_avance_hito_cl ?></p>
+                                                                <p><strong>Descripción:</strong> <?= $avance->descripcion_avance_hito_cl ?></p>
+                                                                <p><strong>Documento:</strong> <a href="<?= base_url() . 'socio/descarga/' . $avance->documento_avance_hito_cl ?>" title="<?= $avance->documento_avance_hito_cl ?>" class="btn btn-success btn-xs">Descargar</a></p>
+                                                                <p>
+                                                                    <strong>Estado:</strong> 
+                                                                    <?php if ($avance->en_revision_avance_hito_cl): ?>
+                                                                        <label class="text-primary">En revisión</label>
+                                                                    <?php else: ?>
+                                                                        <?php if ($avance->aprobado_avance_hito_cl): ?>
+                                                                            <label class="text-success">Aprobado</label>
+                                                                        <?php else: ?>
+                                                                            <label class="text-danger">No aprobado</label>
+                                                                        <?php endif; ?>
+                                                                    <?php endif; ?>
+                                                                </p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php $i = $i + 1; ?>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 <?php else: ?>
                     <div class="panel panel-warning">

@@ -389,7 +389,7 @@ class Modelo_administrador extends CI_Model {
         }
     }
 
-    public function insert_institucion($nombre_institucion, $sigla_institucion, $presupuesto_institucion, $carpeta_institucion) {
+    public function insert_institucion($nombre_institucion, $sigla_institucion, $carpeta_institucion) {
         try {
             $this->db->trans_start();
             $sql = "SELECT
@@ -427,13 +427,13 @@ class Modelo_administrador extends CI_Model {
                         )
                         VALUES
                         (
-                            '$nombre_institucion',
-                            '$sigla_institucion',
-                            '$carpeta_institucion',
+                            ?,
+                            ?,
+                            ?,
                             true
                         )
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($nombre_institucion, $sigla_institucion, $carpeta_institucion));
             } else {
                 $this->session->set_flashdata('existe_institucion', true);
                 redirect(base_url() . 'administrador/nueva_institucion', 'refresh');

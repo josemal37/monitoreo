@@ -23,7 +23,14 @@
             $datos['activo'] = "Proyectos activos";
             $this->load->view('coordinador/nav', $datos);
             ?>
+            <h4 class="text-primary">Registro de proyecto</h4>
             <div>
+                <?php if ($this->session->flashdata('error_proyecto_global')): ?>
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>¡Error de registro!</strong> <?= $this->session->flashdata('error_proyecto_global') ?>
+                    </div>
+                <?php endif; ?>
                 <form action="<?= base_url() . 'coordinador/registrar_proyecto' ?>" id="proyecto" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">
                         <label for="nombre_proyecto">Nombre del proyecto</label>

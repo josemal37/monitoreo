@@ -98,7 +98,7 @@
                                                         </div>
                                                     </div>
                                                 <?php else: ?>
-                                                    <button type="button" class="btn btn-success btn-xs btn-block" data-toggle="modal" data-target="#modal_revision_<?= $i ?>">Ver detalle</button>
+                                                    <button type="button" class="btn btn-default btn-xs btn-block" data-toggle="modal" data-target="#modal_revision_<?= $i ?>">Ver detalle</button>
                                                     <div id="modal_revision_<?= $i ?>" class="modal fade" role="dialog">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
@@ -111,6 +111,18 @@
                                                                     <p><strong>Título:</strong> <?= $avance->titulo_avance_hito_cl ?></p>
                                                                     <p><strong>Descripción:</strong> <?= $avance->descripcion_avance_hito_cl ?></p>
                                                                     <p><strong>Documento:</strong> <a href="<?= base_url() . 'coordinador/descarga/' . $id_institucion . '/' . $avance->documento_avance_hito_cl ?>" title="<?= $avance->documento_avance_hito_cl ?>" class="btn btn-success btn-xs">Descargar</a></p>
+                                                                    <p>
+                                                                        <strong>Estado:</strong> 
+                                                                        <?php if ($avance->en_revision_avance_hito_cl): ?>
+                                                                            <label class="text-primary">En revisión</label>
+                                                                        <?php else: ?>
+                                                                            <?php if ($avance->aprobado_avance_hito_cl): ?>
+                                                                                <label class="text-success">Aprobado</label>
+                                                                            <?php else: ?>
+                                                                                <label class="text-danger">No aprobado</label>
+                                                                            <?php endif; ?>
+                                                                        <?php endif; ?>
+                                                                    </p>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>

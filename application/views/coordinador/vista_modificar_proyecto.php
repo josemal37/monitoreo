@@ -25,6 +25,12 @@
             ?>
             <h4 class="text-primary">Modificar proyecto</h4>
             <div>
+                <?php if ($this->session->flashdata('error_proyecto_global')): ?>
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>¡Error de registro!</strong> <?= $this->session->flashdata('error_proyecto_global') ?>
+                    </div>
+                <?php endif; ?>
                 <form action="<?= base_url() . 'coordinador/modificar_proyecto/' . $proyecto->id_proyecto_global ?>" id="proyecto" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">
                         <label for="nombre_proyecto">Nombre del proyecto</label>
@@ -46,6 +52,7 @@
                             <option value="<?= $institucion->id_institucion ?>" <?php if($institucion->id_institucion == $proyecto->id_institucion):?>selected<?php endif; ?>><?= $institucion->nombre_institucion ?></option>
                             <?php endforeach; ?>
                         </select>
+                        <input type="hidden" name="id_institucion_antiguo" id="id_institucion_antiguo" value="<?= $proyecto->id_institucion ?>">
                         <p><?= form_error('id_institucion') ?></p>
                     </div>
                     <div class="form-group">

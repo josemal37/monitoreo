@@ -14,11 +14,6 @@
     <body>
         <div class="container">
             <?php $this->load->view('cabecera') ?>
-            <?php
-            $datos = Array();
-            $datos['activo'] = "Reportes";
-            $this->load->view('socio/nav', $datos);
-            ?>
             <div class="panel panel-danger">
                 <div class="panel-heading">
                     Error en el sistema

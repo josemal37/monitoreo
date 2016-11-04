@@ -26,7 +26,7 @@
             ?>
             <div>
                 <h4><?= $actividad->nombre_actividad . ' (' . $actividad->fecha_inicio_actividad . ' - ' . $actividad->fecha_fin_actividad . ')' ?></h4>
-                <form action="<?= base_url() . 'socio/registrar_nuevo_hito/' . $id_proyecto . '/' . $id_actividad ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
+                <form action="<?= base_url() . 'socio/registrar_nuevo_hito_reformulado/' . $id_proyecto . '/' . $id_actividad ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
                         <label for="tipo_hito">Tipo de indicador</label>
                         <div class="radio">

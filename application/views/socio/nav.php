@@ -20,8 +20,9 @@ $nombre_institucion = $this->session->userdata('nombre_institucion');
                 <li class="dropdown <?php if($activo == "Proyectos activos" || $activo == "Registrar proyecto"): ?>active<?php endif; ?>">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">POA<span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li <?php if ($activo == "Proyectos activos"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_activos', 'POA\'s activos') ?></li>
-                        <li <?php if ($activo == "Registrar proyecto"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/proyectos_en_edicion', 'POA\'s en edición') ?></li>
+                        <li><?= anchor(base_url() . 'socio/proyectos_activos', 'POA\'s activos') ?></li>
+                        <li><?= anchor(base_url() . 'socio/proyectos_en_edicion', 'POA\'s en edición') ?></li>
+                        <li><?= anchor(base_url() . 'socio/proyectos_en_reformulacion', 'POA\'s en reformulación') ?></li>
                     </ul>
                 </li>
                 <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/ver_reportes', 'Ver reportes') ?></li>

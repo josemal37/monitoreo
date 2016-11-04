@@ -588,6 +588,39 @@ class Modelo_coordinador extends CI_Model {
         }
     }
 
+    public function get_proyecto_global_institucion($id_institucion, $id_institucion_antiguo) {
+        if (!is_numeric($id_institucion)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PROYECTO_GLOBAL.id_proyecto_global,
+                            PROYECTO_GLOBAL.id_institucion,
+                            PROYECTO_GLOBAL.nombre_proyecto_global,
+                            PROYECTO_GLOBAL.descripcion_proyecto_global,
+                            PROYECTO_GLOBAL.presupuesto_proyecto_global
+                        FROM
+                            PROYECTO_GLOBAL
+                        WHERE
+                            PROYECTO_GLOBAL.id_institucion = ? AND
+                            PROYECTO_GLOBAL.id_institucion != ?
+                        ";
+                $query = $this->db->query($sql, Array($id_institucion, $id_institucion_antiguo));
+                if (!$query) {
+                    return false;
+                } else {
+                    if ($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+
     public function insert_proyecto($nombre_proyecto, $descripcion_proyecto, $presupuesto_proyecto, $id_institucion) {
         if (!is_numeric($id_institucion)) {
             redirect(base_url() . 'coordinador/error');
@@ -1003,8 +1036,9 @@ class Modelo_coordinador extends CI_Model {
                         $datos['datos_indicadores_cuantitativos'][$datos_actividad->nombre_actividad] = $datos_indicadores_cuantitativos;
                         $datos_indicadores_cualitativos = $this->get_indicadores_cualitativos($datos_hitos_cualitativos);
                         $datos['datos_indicadores_cualitativos'][$datos_actividad->nombre_actividad] = $datos_indicadores_cualitativos;
-                        $datos_gastos_actividad = $this->get_gastos_actividad($datos_actividad->id_actividad);
-                        $datos['datos_gastos_actividad'][$datos_actividad->nombre_actividad] = $datos_gastos_actividad;
+                        //$datos_gastos_actividad = $this->get_gastos_actividad($datos_actividad->id_actividad);
+                        //$datos['datos_gastos_actividad'][$datos_actividad->nombre_actividad] = $datos_gastos_actividad;
+                        $datos['datos_gastos_actividad'][$datos_actividad->nombre_actividad] = false;
                     }
                 }
             } else {
@@ -1033,6 +1067,7 @@ class Modelo_coordinador extends CI_Model {
                         ACTIVIDAD.fecha_fin_actividad,
                         ACTIVIDAD.presupuesto_actividad,
                         ACTIVIDAD.contraparte_actividad,
+                        ACTIVIDAD.en_reformulacion_actividad,
                         PRODUCTO.id_producto,
                         PRODUCTO.nombre_producto
                     FROM
@@ -1172,11 +1207,11 @@ class Modelo_coordinador extends CI_Model {
                         WHERE
                             INDICADOR_CUANTITATIVO.id_tipo_indicador_cn = TIPO_INDICADOR_CUANTITATIVO.id_tipo_indicador_cn AND
                             INDICADOR_CUANTITATIVO.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn AND
-                            HITO_CUANTITATIVO.id_actividad = $id_actividad
+                            HITO_CUANTITATIVO.id_actividad = ?
                         GROUP BY
                             INDICADOR_CUANTITATIVO.id_indicador_cn
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad));
                 if (!$query) {
                     $datos = Array();
                     return $datos;
@@ -1276,9 +1311,10 @@ class Modelo_coordinador extends CI_Model {
                             COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as avance_hito_cn
                         FROM
                             HITO_CUANTITATIVO
-                        LEFT JOIN AVANCE_HITO_CUANTITATIVO ON HITO_CUANTITATIVO.id_hito_cn = AVANCE_HITO_CUANTITATIVO.id_hito_cn
+                        LEFT JOIN AVANCE_HITO_CUANTITATIVO ON 
+                            HITO_CUANTITATIVO.id_hito_cn = AVANCE_HITO_CUANTITATIVO.id_hito_cn AND
+                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true
                         WHERE
-                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true AND
                             HITO_CUANTITATIVO.id_hito_cn = ?
                         GROUP BY
                             HITO_CUANTITATIVO.id_hito_cn
@@ -1534,6 +1570,60 @@ class Modelo_coordinador extends CI_Model {
                             AVANCE_HITO_CUALITATIVO.id_avance_hito_cl = $id_avance_hito
                         ";
                 $query = $this->db->query($sql);
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function insert_actividad_en_reformulacion($id_proyecto) {
+        if(!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "INSERT INTO ACTIVIDAD
+                        (
+                            ACTIVIDAD.id_proyecto,
+                            ACTIVIDAD.nombre_actividad,
+                            ACTIVIDAD.descripcion_actividad,
+                            ACTIVIDAD.fecha_inicio_actividad,
+                            ACTIVIDAD.fecha_fin_actividad,
+                            ACTIVIDAD.presupuesto_actividad,
+                            ACTIVIDAD.en_edicion_actividad,
+                            ACTIVIDAD.contraparte_actividad,
+                            ACTIVIDAD.en_reformulacion_actividad
+                        )
+                        VALUES
+                        (
+                            ?,
+                            'Nueva actividad',
+                            'Descripción de la nueva actividad',
+                            now(),
+                            now(),
+                            0,
+                            false,
+                            false,
+                            true
+                        )
+                        ";
+                $query = $this->db->query($sql, Array($id_proyecto));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function modificar_estado_reformulacion_actividad($id_actividad, $estado) {
+        if(!is_numeric($id_actividad)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE ACTIVIDAD SET
+                            ACTIVIDAD.en_reformulacion_actividad = ?
+                        WHERE
+                            ACTIVIDAD.id_actividad = ?
+                        ";
+                $query = $this->db->query($sql, Array($estado, $id_actividad));
             } catch (Exception $ex) {
                 redirect(base_url() . 'coordinador/error');
             }

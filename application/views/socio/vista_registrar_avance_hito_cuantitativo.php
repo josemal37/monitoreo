@@ -18,7 +18,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.file-input.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
         
-        <title>Registrar avance hito</title>
+        <title>Registrar avance</title>
     </head>
     <body>
         <div class="container">
@@ -29,7 +29,11 @@
             $this->load->view('socio/nav', $datos);
             ?>
             <div>
-                <h4><?= $actividad->nombre_actividad . ': ' . $hito->nombre_hito_cn ?></h4>
+                <h4 class="text-primary">Registrar avance</h4>
+                <p class="text-justify"><strong>Actividad:</strong> <?= $actividad->nombre_actividad ?></p>
+                <p class="text-justify"><strong>Indicador:</strong> <?= $hito->nombre_hito_cn ?></p>
+                <p class="text-justify"><strong>Meta del indicador:</strong> <span class="number_integer"><?= $hito->meta_hito_cn ?></span> <?= $hito->unidad_hito_cn ?></p>
+                <p class="text-justify"><strong>Descripción del indicador:</strong> <?= $hito->descripcion_hito_cn ?></p>
                 <form action="<?= base_url() . 'socio/registrar_avance_hito_cuantitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_avance_hito" role="form" method="post" accept-charset="utf-8" enctype="multipart/form-data" autocomplete="off">
                     <div class="form-group">
                         <label for="cantidad_avance_hito_vista">Cantidad de avance</label>
@@ -179,6 +183,7 @@
         <script type="text/javascript">
             $(document).ready(function(){
                 $('#cantidad_avance_hito_vista').number(true, 0);
+                $('.number_integer').number(true, 0);
             });
             $('#cantidad_avance_hito_vista').keyup(function(){
                 $('#cantidad_avance_hito').val($('#cantidad_avance_hito_vista').val());

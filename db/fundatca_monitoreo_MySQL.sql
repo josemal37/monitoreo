@@ -3,7 +3,6 @@
 /* Created on:     17/10/2016 09:35:56                          */
 /*==============================================================*/
 
-
 /*==============================================================*/
 /* Table: ACTIVIDAD                                             */
 /*==============================================================*/
@@ -18,6 +17,8 @@ create table ACTIVIDAD
    PRESUPUESTO_ACTIVIDAD decimal(12,2),
    EN_EDICION_ACTIVIDAD bool,
    CONTRAPARTE_ACTIVIDAD bool,
+   EN_REFORMULACION_ACTIVIDAD bool,
+   GASTO_ACTIVIDAD      decimal(12,2),
    primary key (ID_ACTIVIDAD)
 )
 ENGINE = InnoDB
@@ -80,22 +81,6 @@ DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
 /*==============================================================*/
-/* Table: DOCUMENTO_ACTIVIDAD                                   */
-/*==============================================================*/
-create table DOCUMENTO_ACTIVIDAD
-(
-   ID_DOCUMENTO_ACTIVIDAD int not null auto_increment,
-   ID_ACTIVIDAD         int not null,
-   TITULO_DOCUMENTO_ACTIVIDAD varchar(64) not null,
-   DESCRIPCION_DOCUMENTO_ACTIVIDAD text not null,
-   ARCHIVO_DOCUMENTO_ACTIVIDAD varchar(128) not null,
-   primary key (ID_DOCUMENTO_ACTIVIDAD)
-)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8
-COLLATE = utf8_general_ci;
-
-/*==============================================================*/
 /* Table: DOCUMENTO_AVANCE_HITO_CUANTITATIVO                    */
 /*==============================================================*/
 create table DOCUMENTO_AVANCE_HITO_CUANTITATIVO
@@ -121,40 +106,6 @@ create table EFECTO
    NOMBRE_EFECTO        varchar(1024) not null,
    DESCRIPCION_EFECTO   text,
    primary key (ID_EFECTO)
-)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8
-COLLATE = utf8_general_ci;
-
-/*==============================================================*/
-/* Table: GASTO_ACTIVIDAD                                       */
-/*==============================================================*/
-create table GASTO_ACTIVIDAD
-(
-   ID_GASTO_ACTIVIDAD   int not null auto_increment,
-   ID_ACTIVIDAD         int not null,
-   FECHA_GASTO_ACTIVIDAD date,
-   CONCEPTO_GASTO_ACTIVIDAD text,
-   IMPORTE_GASTO_ACTIVIDAD decimal(12,2),
-   RESPALDO_GASTO_ACTIVIDAD varchar(128),
-   primary key (ID_GASTO_ACTIVIDAD)
-)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8
-COLLATE = utf8_general_ci;
-
-/*==============================================================*/
-/* Table: GASTO_PROYECTO                                        */
-/*==============================================================*/
-create table GASTO_PROYECTO
-(
-   ID_GASTO_PROYECTO    int not null auto_increment,
-   ID_PROYECTO          int not null,
-   FECHA_GASTO_PROYECTO date not null,
-   CONCEPTO_GASTO_PROYECTO varchar(512) not null,
-   IMPORTE_GASTO_PROYECTO decimal(9,2) not null,
-   RESPALDO_GASTO_PROYECTO varchar(128) not null,
-   primary key (ID_GASTO_PROYECTO)
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
@@ -433,20 +384,11 @@ alter table AVANCE_HITO_CUALITATIVO add constraint FK_HITO_CL_TIENE_AVANCE forei
 alter table AVANCE_HITO_CUANTITATIVO add constraint FK_HITO_CN_TIENE_AVANCE foreign key (ID_HITO_CN)
       references HITO_CUANTITATIVO (ID_HITO_CN) on delete cascade on update cascade;
 
-alter table DOCUMENTO_ACTIVIDAD add constraint FK_ACTIVIDAD_TIENE_DOCUMENTO foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
-
 alter table DOCUMENTO_AVANCE_HITO_CUANTITATIVO add constraint FK_AVANCE_CN_TIENE_RESPALDO foreign key (ID_AVANCE_HITO_CN)
       references AVANCE_HITO_CUANTITATIVO (ID_AVANCE_HITO_CN) on delete cascade on update cascade;
 
 alter table EFECTO add constraint FK_PRODOC_TIENE_EFECTO foreign key (ID_PRODOC)
       references PRODOC (ID_PRODOC) on delete cascade on update cascade;
-
-alter table GASTO_ACTIVIDAD add constraint FK_ACTIVIDAD_TIENE_GASTO foreign key (ID_ACTIVIDAD)
-      references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
-
-alter table GASTO_PROYECTO add constraint FK_PROYECTO_TIENE_GASTO foreign key (ID_PROYECTO)
-      references PROYECTO (ID_PROYECTO) on delete cascade on update cascade;
 
 alter table HITO_CUALITATIVO add constraint FK_ACTIVIDAD_TIENE_HITO_CL foreign key (ID_ACTIVIDAD)
       references ACTIVIDAD (ID_ACTIVIDAD) on delete cascade on update cascade;
@@ -504,7 +446,7 @@ alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
       references ROL (ID_ROL) on delete cascade on update cascade;
-
+	  
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');
 INSERT INTO ROL (nombre_rol) VALUES ('coordinador');

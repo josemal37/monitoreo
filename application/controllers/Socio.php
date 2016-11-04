@@ -36,14 +36,19 @@ class Socio extends CI_Controller {
     }
 
     public function inicio_sistema_socio() {
+        $datos = Array();
         $datos['proyectos'] = $this->modelo_socio->get_proyectos_socio();
+        $datos['proyecto_global'] = $this->modelo_socio->get_proyecto_global($this->session->userdata('id_institucion'));
+        $datos['gestion_actual'] = $this->modelo_socio->get_gestion_actual();
         $this->load->view('socio/vista_inicio_sistema_socio', $datos);
     }
 
     public function proyectos_activos() {
         $this->verificar_sesion();
 
+        $datos = Array();
         $datos['proyectos'] = $this->modelo_socio->get_proyectos_socio();
+        $datos['proyecto_global'] = $this->modelo_socio->get_proyecto_global($this->session->userdata('id_institucion'));
         $this->load->view('socio/vista_proyectos_activos', $datos);
     }
 
@@ -51,7 +56,26 @@ class Socio extends CI_Controller {
         $this->verificar_sesion();
 
         $datos = $this->modelo_socio->get_proyecto_completo_activo($id_proyecto);
-        $this->load->view('socio/vista_proyecto', $datos);
+        if(!isset($datos['error'])) {
+            $this->load->view('socio/vista_proyecto', $datos);
+        } else {
+            if($datos['error'] == 'error_proyecto') {
+                $this->session->set_flashdata('error_proyecto', 'No tiene registrado un POA activo para la gestión actual.');
+                redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
+            } else {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function ver_proyecto_gestion_actual() {
+        $id_proyecto = $this->modelo_socio->get_id_proyecto_completo_gestion_actual();
+        if(!$id_proyecto) {
+            $this->session->set_flashdata('error_proyecto', 'No tiene registrado un POA activo para la gestión actual.');
+            redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
+        } else {
+            redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
+        }
     }
 
     public function proyectos_en_edicion() {
@@ -59,6 +83,33 @@ class Socio extends CI_Controller {
 
         $datos['proyectos'] = $this->modelo_socio->get_proyectos_en_edicion();
         $this->load->view('socio/vista_proyectos_en_edicion', $datos);
+    }
+    
+    public function proyectos_en_reformulacion() {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['proyectos'] = $this->modelo_socio->get_proyectos_en_reformulacion();
+        $this->load->view('socio/vista_proyectos_en_reformulacion', $datos);
+    }
+    
+    public function reformular_proyecto($id_proyecto) {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['proyecto'] = $this->modelo_socio->get_proyecto_completo_en_reformulacion($id_proyecto);
+        $this->load->view('socio/vista_proyecto_en_reformulacion', $datos);
+    }
+
+    public function terminar_reformulacion_proyecto($id_proyecto) {
+        $this->verificar_sesion();
+
+        if (!is_numeric($id_proyecto)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $this->modelo_socio->terminar_reformulacion_proyecto($id_proyecto);
+            redirect(base_url() . 'socio');
+        }
     }
 
     public function registrar_nuevo_proyecto() {
@@ -279,6 +330,65 @@ class Socio extends CI_Controller {
         }
     }
 
+    public function reformular_actividad($id_actividad) {
+        $this->verificar_sesion();
+
+        if (!is_numeric($id_actividad)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_proyecto']) && isset($_POST['id_actividad']) && isset($_POST['nombre_actividad']) && isset($_POST['descripcion_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
+                $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
+                $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric|is_natural');
+                $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[5]|max_length[128]');
+                $this->form_validation->set_rules('fecha_inicio_actividad', 'fecha_inicio_actividad', 'required');
+                $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
+                $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[5]|max_length[1024]');
+                $this->form_validation->set_rules('presupuesto_actividad', 'presupuesto_actividad', 'required|numeric');
+                if(isset($_POST['id_producto'])) {
+                    $this->form_validation->set_rules('id_producto', 'id_producto', 'required|numeric|is_natural');
+                }
+                if ($this->form_validation->run() == FALSE) {
+                    unset($_POST['id_actividad']);
+                    $this->reformular_actividad($id_actividad);
+                } else {
+                    if ($id_actividad == $this->input->post('id_actividad')) {
+                        $id_actividad = $this->input->post('id_actividad');
+                        $nombre_actividad = $this->input->post('nombre_actividad');
+                        $descripcion_actividad = $this->input->post('descripcion_actividad');
+                        $fecha_inicio_actividad = $this->input->post('fecha_inicio_actividad');
+                        $fecha_fin_actividad = $this->input->post('fecha_fin_actividad');
+                        $presupuesto_actividad = $this->input->post('presupuesto_actividad');
+                        if(isset($_POST['id_producto'])){
+                            $id_producto = $this->input->post('id_producto');
+                        } else {
+                            $id_producto = false;
+                        }
+                        if(isset($_POST['contraparte'])) {
+                            $contraparte_actividad = true;
+                        } else {
+                            $contraparte_actividad = false;
+                        }
+                        if ($this->comparar_fechas($fecha_inicio_actividad, $fecha_fin_actividad) <= 0) {
+                            $this->modelo_socio->update_actividad($id_actividad, $nombre_actividad, $descripcion_actividad, $fecha_inicio_actividad, $fecha_fin_actividad, $presupuesto_actividad, $id_producto, $contraparte_actividad);
+                            redirect(base_url() . 'socio/reformular_proyecto/' . $this->input->post('id_proyecto'));
+                        } else {
+                            //fechas incoherentes
+                            $this->reformular_actividad($id_actividad);
+                        }
+                    } else {
+                        redirect(base_url() . 'socio');
+                    }
+                }
+            } else {
+                $datos = Array();
+                $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
+                $datos['productos'] = $this->modelo_socio->get_productos();
+                $datos['presupuesto_disponible'] = $this->modelo_socio->get_presupuesto_disponible_proyecto_con_id($datos['actividad']->id_proyecto, $id_actividad);
+                $this->load->view('socio/vista_reformular_actividad', $datos);
+            }
+        }
+    }
+
     public function eliminar_proyecto($id_proyecto) {
         $this->verificar_sesion();
 
@@ -465,6 +575,173 @@ class Socio extends CI_Controller {
         } else {
             $this->modelo_socio->delete_hito_cualitativo($id_hito);
             redirect(base_url() . 'socio/editar_proyecto/' . $id_proyecto);
+        }
+    }
+
+    public function registrar_nuevo_hito_reformulado($id_proyecto, $id_actividad) {
+        $this->verificar_sesion();
+
+        if (!is_numeric($id_proyecto) || !is_numeric($id_actividad)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_actividad']) && isset($_POST['tipo_hito'])) {
+                if ($this->input->post('id_actividad') == $id_actividad) {
+                    $nombre_hito = $this->input->post('nombre_hito');
+                    $descripcion_hito = $this->input->post('descripcion_hito');
+                    $meta_hito = $this->input->post('meta_hito');
+                    $unidad_hito = $this->input->post('unidad_hito');
+                    $id_meta_producto = $this->input->post('id_meta_producto');
+                    $aporta_producto = $this->input->post('aporta_producto');
+                    switch ($this->input->post('tipo_hito')) {
+                        case 'cuantitativo':
+                            $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                            $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
+                            $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
+                            if (isset($_POST['id_meta_producto'])) {
+                                $this->form_validation->set_rules('id_meta_producto', 'id_meta_producto', 'required|numeric');
+                            }
+                            if ($this->form_validation->run() == FALSE) {
+                                unset($_POST['id_actividad']);
+                                $this->registrar_nuevo_hito_reformulado($id_proyecto, $id_actividad);
+                            } else {
+                                $this->registrar_hito_cuantitativo_reformulado($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_meta_producto, $aporta_producto);
+                            }
+                            break;
+                        case 'cualitativo':
+                            $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                            if ($this->form_validation->run() == FALSE) {
+                                unset($_POST['id_actividad']);
+                                $this->registrar_nuevo_hito_reformulado($id_proyecto, $id_actividad);
+                            } else {
+                                $this->registrar_hito_cualitativo_reformulado($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito);
+                            }
+                            break;
+                        default :
+                            redirect(base_url() . 'socio');
+                            break;
+                    }
+                }
+            } else {
+                $datos = Array();
+                $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['id_actividad'] = $id_actividad;
+                if (isset($datos['actividad']->id_producto)) {
+                    $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
+                    $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
+                }
+                $this->load->view('socio/vista_registrar_nuevo_hito_reformulado', $datos);
+            }
+        }
+    }
+
+    private function registrar_hito_cuantitativo_reformulado($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_meta_producto, $aporta_producto) {
+        $this->modelo_socio->insert_hito_cuantitativo($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_meta_producto, $aporta_producto);
+        redirect(base_url() . 'socio/reformular_proyecto/' . $id_proyecto);
+    }
+
+    private function registrar_hito_cualitativo_reformulado($id_proyecto, $id_actividad, $nombre_hito, $descripcion_hito) {
+        $this->modelo_socio->insert_hito_cualitativo($id_actividad, $nombre_hito, $descripcion_hito);
+        redirect(base_url() . 'socio/reformular_proyecto/' . $id_proyecto);
+    }
+
+    public function reformular_hito_cuantitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito']) && isset($_POST['meta_hito']) && isset($_POST['unidad_hito'])) {
+                if ($id_hito == $this->input->post('id_hito')) {
+                    $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                    $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
+                    $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
+                    if ($this->form_validation->run() == FALSE) {
+                        unset($_POST['id_hito']);
+                        $this->reformular_hito_cuantitativo($id_actividad, $id_hito);
+                    } else {
+                        $nombre_hito = $this->input->post('nombre_hito');
+                        $descripcion_hito = $this->input->post('descripcion_hito');
+                        $meta_hito = $this->input->post('meta_hito');
+                        $unidad_hito = $this->input->post('unidad_hito');
+                        $aporta_producto = "indirecto";
+                        $id_meta_producto = -1;
+                        if (isset($_POST['aporta_producto'])) {
+                            $aporta_producto = $this->input->post('aporta_producto');
+                            $id_meta_producto = $this->input->post('id_meta_producto');
+                        }
+                        $this->modelo_socio->update_hito_cuantitativo($id_hito, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $aporta_producto, $id_meta_producto);
+                        redirect(base_url() . 'socio/reformular_proyecto/' . $id_proyecto);
+                    }
+                } else {
+                    redirect(base_url() . 'socio');
+                }
+            } else {
+                $datos = Array();
+                $datos['id_hito'] = $id_hito;
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['hito'] = $this->modelo_socio->get_hito_cuantitativo($id_hito);
+                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
+                if (isset($datos['actividad']->id_producto)) {
+                    $datos['metas_cuantitativas'] = $this->modelo_socio->get_metas_cuantitativas_producto($datos['actividad']->id_producto);
+                    $datos['metas_cualitativas'] = $this->modelo_socio->get_metas_cualitativas_producto($datos['actividad']->id_producto);
+                }
+                $this->load->view('socio/vista_reformular_hito_cuantitativo', $datos);
+            }
+        }
+    }
+
+    public function reformular_hito_cualitativo($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito'])) {
+                if ($id_hito == $this->input->post('id_hito')) {
+                    $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
+                    if ($this->form_validation->run() == FALSE) {
+                        unset($_POST['id_hito']);
+                        $this->reformular_hito_cuantitativo($id_actividad, $id_hito);
+                    } else {
+                        $nombre_hito = $this->input->post('nombre_hito');
+                        $descripcion_hito = $this->input->post('descripcion_hito');
+                        $this->modelo_socio->update_hito_cualitativo($id_hito, $nombre_hito, $descripcion_hito);
+                        redirect(base_url() . 'socio/reformular_proyecto/' . $id_proyecto);
+                    }
+                } else {
+                    redirect(base_url() . 'socio');
+                }
+            } else {
+                $datos = Array();
+                $datos['id_hito'] = $id_hito;
+                $datos['id_proyecto'] = $id_proyecto;
+                $datos['hito'] = $this->modelo_socio->get_hito_cualitativo($id_hito);
+                $datos['actividad'] = $this->modelo_socio->get_actividad($datos['hito']->id_actividad);
+                $this->load->view('socio/vista_reformular_hito_cualitativo', $datos);
+            }
+        }
+    }
+
+    public function eliminar_hito_cuantitativo_reformulado($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $this->modelo_socio->delete_hito_cuantitativo($id_hito);
+            redirect(base_url() . 'socio/reformular_proyecto/' . $id_proyecto);
+        }
+    }
+
+    public function eliminar_hito_cualitativo_reformulado($id_proyecto, $id_hito) {
+        if (!is_numeric($id_proyecto) || !is_numeric($id_hito)) {
+            redirect(base_url() . 'socio');
+        } else {
+            $this->modelo_socio->delete_hito_cualitativo($id_hito);
+            redirect(base_url() . 'socio/reformular_proyecto/' . $id_proyecto);
         }
     }
 

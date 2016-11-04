@@ -9,7 +9,7 @@
         <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
         
-        <title>Proyectos activos</title>
+        <title>POA's activos</title>
     </head>
     <body>
         <div class="container">
@@ -19,16 +19,20 @@
             $datos['activo'] = "Proyectos activos";
             $this->load->view('socio/nav', $datos);
             ?>
+            <h4 class="text-primary">POA's activos</h4>
             <?php if ($proyectos): ?>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>POA's activos</strong>
+                </div>
                 <div class="table-responsive">
-                    <h4>Lista de proyectos activos</h4>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th width="10%">Año</th>
                                 <th width="20%">Nombre</th>
                                 <th width="55%">Descripción</th>
-                                <th width="15%">Ver proyecto</th>
+                                <th width="15%">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,12 +41,13 @@
                                     <td><?= $proyecto->valor_anio ?></td>
                                     <td><?= $proyecto->nombre_proyecto ?></td>
                                     <td><?= $proyecto->descripcion_proyecto ?></td>
-                                    <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver proyecto</a></td>
+                                    <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver POA</a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+            </div>
             <?php else: ?>
                 <div class="panel panel-warning">
                     <div class="panel-heading">

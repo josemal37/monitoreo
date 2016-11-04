@@ -89,7 +89,7 @@
                                                                         <?php endif; ?>
                                                                     </td>
                                                                     <td>
-                                                                        <a href="<?= base_url() . 'coordinador/registrar_indicador_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-primary btn-xs btn-block">Registrar detector</a>
+                                                                        <a href="<?= base_url() . 'coordinador/registrar_indicador_cuantitativo/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-primary btn-xs btn-block">Registrar comparador</a>
                                                                         <a href="<?= base_url() . 'coordinador/ver_avances_hito_cuantitativo/' . $datos_proyecto->id_institucion . '/' . $datos_proyecto->id_proyecto . '/' . $hito_cuantitativo->id_hito_cn ?>" class="btn btn-success btn-xs btn-block">Ver avances</a>
                                                                     </td>
                                                                 </tr>
@@ -122,8 +122,8 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Nombre del indicador</th>
-                                                                <th>Nombre del detector</th>
-                                                                <th>Tipo de detector</th>
+                                                                <th>Nombre del comparador</th>
+                                                                <th>Tipo de comparador</th>
                                                                 <th width="15%">Estado</th>
                                                             </tr>
                                                         </thead>
@@ -182,7 +182,7 @@
                                                     Advertencia
                                                 </div>
                                                 <div class="panel-body">
-                                                    Todavía no se registró detectores para ningún indicador.
+                                                    Todavía no se registró comparadores para ningún indicador.
                                                 </div>
                                             </div>
                                         <?php endif; ?>
@@ -232,11 +232,16 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
+                                    <?php if(!$actividad->en_reformulacion_actividad): ?>
                                         <p><a href="<?= base_url() . 'coordinador/activar_reformulacion_actividad/' . $datos_proyecto->id_proyecto . '/' . $id_actividad?>" class="btn btn-default">Activar reformulación</a></p>
+                                    <?php else: ?>
+                                        <p><a href="<?= base_url() . 'coordinador/desactivar_reformulacion_actividad/' . $datos_proyecto->id_proyecto . '/' . $id_actividad?>" class="btn btn-default">Desactivar reformulación</a></p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
+                    <p><a href="<?= base_url() . 'coordinador/registrar_nueva_actividad/' . $datos_proyecto->id_proyecto?>" class="btn btn-default">Registrar nueva actividad</a></p>
                 <?php else: ?>
                     <div class="panel panel-warning">
                         <div class="panel-heading">
