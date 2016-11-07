@@ -858,6 +858,28 @@ class Socio extends CI_Controller {
             }
         }
     }
+    
+    public function registrar_gasto_estimado_actividad($id_proyecto, $id_actividad) {
+        $this->verificar_sesion();
+        if(isset($_POST['gasto_actividad']) && isset($_POST['id_actividad'])) {
+            $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
+            $this->form_validation->set_rules('gasto_actividad', 'gasto_actividad', 'required|numeric');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['id_actividad']);
+                $this->registrar_gasto_estimado_actividad($id_proyecto, $id_actividad);
+            } else {
+                $gasto_actividad = $this->input->post('gasto_actividad');
+                $this->modelo_socio->update_gasto_actividad($id_actividad, $gasto_actividad);
+                redirect(base_url() . 'socio/ver_proyecto/' . $id_proyecto);
+            }
+        } else {
+            $datos = Array();
+            $datos['id_proyecto'] = $id_proyecto;
+            $datos['id_actividad'] = $id_actividad;
+            $datos['actividad'] = $this->modelo_socio->get_actividad($id_actividad);
+            $this->load->view('socio/vista_registrar_gasto_actividad', $datos);
+        }
+    }
 
     public function registrar_gastos_actividad($id_proyecto, $id_actividad) {
         if (!is_numeric($id_actividad) || !is_numeric($id_proyecto)) {

@@ -25,6 +25,7 @@
             $datos['activo'] = "Registrar proyecto";
             $this->load->view('socio/nav', $datos);
             ?>
+            <h4 class="text-primary">Reformular actividad</h4>
             <div>
                 <form action="<?= base_url() . 'socio/reformular_actividad/' . $actividad->id_actividad ?>" id="modificar_actividad" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">

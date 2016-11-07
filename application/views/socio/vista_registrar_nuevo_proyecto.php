@@ -23,6 +23,7 @@
             $datos['activo'] = "Registrar proyecto";
             $this->load->view('socio/nav', $datos);
             ?>
+            <h4 class="text-primary">Registro POA</h4>
             <div>
                 <form action="<?= base_url() . 'socio/registrar_nuevo_proyecto' ?>" id="proyecto" role="form" method="post" accept-charset="utf-8">
                     <?php if ($this->session->flashdata('poa_gestion_registrado')): ?>

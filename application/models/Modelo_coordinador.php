@@ -1068,6 +1068,7 @@ class Modelo_coordinador extends CI_Model {
                         ACTIVIDAD.presupuesto_actividad,
                         ACTIVIDAD.contraparte_actividad,
                         ACTIVIDAD.en_reformulacion_actividad,
+                        ACTIVIDAD.gasto_actividad,
                         PRODUCTO.id_producto,
                         PRODUCTO.nombre_producto
                     FROM

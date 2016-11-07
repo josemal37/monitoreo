@@ -19,10 +19,11 @@
             $datos['activo'] = "Registrar proyecto";
             $this->load->view('socio/nav', $datos);
             ?>
+            <h4 class="text-primary">POA's en edición</h4>
             <?php if ($proyectos): ?>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <strong>Lista de POA's en edición</strong>
+                        <strong>POA's en edición</strong>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">

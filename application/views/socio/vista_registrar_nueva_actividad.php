@@ -25,6 +25,7 @@
             $datos['activo'] = "Registrar proyecto";
             $this->load->view('socio/nav', $datos);
             ?>
+            <h4 class="text-primary">Registro de actividad</h4>
             <div>
                 <form action="<?= base_url() . 'socio/registrar_nueva_actividad/' . $id_proyecto ?>" id="actividad" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">

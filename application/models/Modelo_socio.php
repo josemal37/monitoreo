@@ -329,6 +329,7 @@ class Modelo_socio extends CI_Model {
                         ACTIVIDAD.presupuesto_actividad,
                         ACTIVIDAD.en_edicion_actividad,
                         ACTIVIDAD.contraparte_actividad,
+                        ACTIVIDAD.gasto_actividad,
                         PRODUCTO.id_producto,
                         PRODUCTO.nombre_producto
                     FROM
@@ -1000,6 +1001,7 @@ class Modelo_socio extends CI_Model {
                             ACTIVIDAD.presupuesto_actividad,
                             ACTIVIDAD.en_edicion_actividad,
                             ACTIVIDAD.contraparte_actividad,
+                            ACTIVIDAD.gasto_actividad,
                             PRODUCTO.id_producto,
                             PRODUCTO.nombre_producto
                         FROM
@@ -1953,6 +1955,23 @@ class Modelo_socio extends CI_Model {
             }
         } catch (Exception $ex) {
             redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function update_gasto_actividad($id_actividad, $gasto_actividad) {
+        if(!is_numeric($id_actividad)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "UPDATE ACTIVIDAD SET
+                            ACTIVIDAD.gasto_actividad = ?
+                        WHERE
+                            ACTIVIDAD.id_actividad = ?
+                        ";
+                $this->db->query($sql, Array($gasto_actividad, $id_actividad));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
         }
     }
 

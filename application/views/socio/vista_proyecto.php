@@ -46,6 +46,18 @@
                                             (contraparte)
                                         <?php endif; ?>
                                     </p>
+                                    <?php if(isset($actividad->gasto_actividad)): ?>
+                                    <p>
+                                        <strong>Gasto estimado:</strong> 
+                                        Bs. <span class="number_descimal"><?= $actividad->gasto_actividad ?></span>
+                                        <a href="<?= base_url() . 'socio/registrar_gasto_estimado_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default btn-xs">Modificar gasto estimado</a>
+                                    </p>
+                                    <?php else: ?>
+                                    <p>
+                                        <strong>Gasto estimado:</strong> 
+                                        <a href="<?= base_url() . 'socio/registrar_gasto_estimado_actividad/' . $datos_proyecto->id_proyecto . '/' . $actividad->id_actividad ?>" class="btn btn-default btn-xs">Registrar gasto estimado</a>
+                                    </p>
+                                    <?php endif; ?>
                                     <?php if(isset($actividad->nombre_producto)): ?>
                                         <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
                                     <?php endif; ?>

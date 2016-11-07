@@ -10,7 +10,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/bootstrap.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
 
-        <title>Ver proyecto</title>
+        <title>Ver POA</title>
     </head>
     <body>
         <div class="container">
@@ -45,6 +45,14 @@
                                         Bs. <span class="number_decimal"><?= $actividad->presupuesto_actividad ?></span>
                                         <?php if ($actividad->contraparte_actividad): ?>
                                             (contraparte)
+                                        <?php endif; ?>
+                                    </p>
+                                    <p>
+                                        <strong>Gasto estimado:</strong> 
+                                        <?php if(isset($actividad->gasto_actividad)): ?>
+                                            Bs. <span class="number_decimal"><?= $actividad->gasto_actividad ?></span>
+                                        <?php else: ?>
+                                            Sin registrar
                                         <?php endif; ?>
                                     </p>
                                     <?php if (isset($actividad->nombre_producto)): ?>

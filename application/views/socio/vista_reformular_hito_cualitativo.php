@@ -12,7 +12,7 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.validate.min.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/localization/messages_es.min.js' ?>"></script>
         
-        <title>Modificar indicador</title>
+        <title>Reformular indicador</title>
     </head>
     <body>
         <div class="container">
@@ -22,8 +22,12 @@
             $datos['activo'] = "Registrar proyecto";
             $this->load->view('socio/nav', $datos);
             ?>
+            <h4 class="text-primary">Reformular indicador</h4>
             <div>
-                <h4><?= $actividad->nombre_actividad . ' (' . $actividad->fecha_inicio_actividad . ' - ' . $actividad->fecha_fin_actividad . ')' ?></h4>
+                <p><strong>Actividad:</strong> <?= $actividad->nombre_actividad ?></p>
+                <p><strong>Fecha de inicio:</strong> <?= $actividad->fecha_inicio_actividad ?></p>
+                <p><strong>Fecha de fin:</strong> <?= $actividad->fecha_fin_actividad ?></p>
+                <p><strong>Descripción:</strong> <?= $actividad->descripcion_actividad ?></p>
                 <form action="<?= base_url() . 'socio/reformular_hito_cualitativo/' . $id_proyecto . '/' . $id_hito ?>" id="formulario_hito" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
                         <label for="nombre_hito">Nombre del indicador</label>

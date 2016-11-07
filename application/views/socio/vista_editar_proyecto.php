@@ -65,7 +65,7 @@
                                     <?php if ((sizeof($hitos_cuantitativos) + sizeof($hitos_cualitativos)) > 0): ?>
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
-                                                <strong class="text-primary">Indicadores</strong>
+                                                <strong>Indicadores</strong>
                                             </div>
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
