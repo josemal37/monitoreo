@@ -140,11 +140,20 @@ class Modelo_coordinador extends CI_Model {
                             META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
                             META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa,
                             META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
-                            META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa
+                            META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa,
+                            COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as avance_meta_producto_cuantitativa
                         FROM
                             META_PRODUCTO_CUANTITATIVA
+                        LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON
+                            META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa = META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa
+                        LEFT JOIN HITO_CUANTITATIVO ON
+                            META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
+                        LEFT JOIN AVANCE_HITO_CUANTITATIVO ON
+                            HITO_CUANTITATIVO.id_hito_cn = AVANCE_HITO_CUANTITATIVO.id_hito_cn AND
+                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true
                         WHERE
                             META_PRODUCTO_CUANTITATIVA.id_producto = ?
+                        GROUP BY META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa
                         ";
                 $query = $this->db->query($sql, Array($id_producto));
                 if(!$query) {
@@ -1750,6 +1759,95 @@ class Modelo_coordinador extends CI_Model {
             return $datos;
         } catch (Exception $ex) {
             redirect(base_url() . 'coordinador/error');
+        }
+    }
+
+    public function get_usuario($id_usuario) {
+        if (!is_numeric($id_usuario)) {
+            redirect(base_url() . 'coordinador');
+        } else {
+            try {
+                $sql = "SELECT
+                            USUARIO.id_usuario,
+                            USUARIO.id_institucion,
+                            USUARIO.id_rol,
+                            USUARIO.nombre_usuario,
+                            USUARIO.apellido_paterno_usuario,
+                            USUARIO.apellido_materno_usuario,
+                            USUARIO.login_usuario,
+                            USUARIO.password_usuario,
+                            USUARIO.telefono_usuario,
+                            USUARIO.correo_usuario,
+                            USUARIO.activo_usuario,
+                            INSTITUCION.id_institucion,
+                            INSTITUCION.nombre_institucion,
+                            INSTITUCION.sigla_institucion,
+                            ROL.id_rol,
+                            ROL.nombre_rol
+                        FROM
+                            USUARIO,
+                            INSTITUCION,
+                            ROL
+                        WHERE
+                            USUARIO.id_institucion = INSTITUCION.id_institucion AND
+                            USUARIO.id_rol = ROL.id_rol AND
+                            USUARIO.id_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_usuario));
+                if (!$query) {
+                    return false;
+                } else {
+                    if ($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function verificar_password($id_usuario, $password) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            USUARIO.id_usuario
+                        FROM
+                            USUARIO
+                        WHERE
+                            USUARIO.id_usuario = ? AND
+                            USUARIO.password_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_usuario, $password));
+                if($query->num_rows() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function update_password_usuario($id_usuario, $password_usuario) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE USUARIO SET
+                            USUARIO.password_usuario = ?
+                        WHERE
+                            USUARIO.id_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($password_usuario, $id_usuario));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
         }
     }
 

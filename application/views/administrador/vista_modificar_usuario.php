@@ -76,16 +76,6 @@
                     <input type="text" name="login_usuario" id="login_usuario" value="<?= $usuario->login_usuario?>" placeholder="Login" class="form-control" autocomplete="off">
                     <p><?= form_error('login_usuario') ?></p>
                 </div>
-                <div class="form-group">
-                    <label for="password_usuario">Password nuevo</label>
-                    <input type="text" name="password_usuario" id="password_usuario" placeholder="Password" class="form-control" autocomplete="off">
-                    <p><?= form_error('password_usuario') ?></p>
-                </div>
-                <div class="form-group">
-                    <label for="password_usuario_confirmacion">Confirmación del nuevo password</label>
-                    <input type="text" name="password_usuario_confirmacion" id="password_usuario_confirmacion" placeholder="Confirmación del password" class="form-control" autocomplete="off">
-                    <p><?= form_error('password_usuario_confirmacion') ?></p>
-                </div>
                 <input type="hidden" name="id_usuario" id="id_usuario" value="<?= $usuario->id_usuario ?>">
                 <input type="submit" name="submit" value="Modificar usuario" title="Modificar usuario" class="btn btn-primary">
             </form>
@@ -149,17 +139,6 @@
                                     id_usuario: function() {return $('#id_usuario').val();}
                                 }
                             }
-                        },
-                        password_usuario: {
-                            required: true,
-                            minlength: 5,
-                            maxlength: 32
-                        },
-                        password_usuario_confirmacion: {
-                            required: true,
-                            minlength: 5,
-                            maxlength: 32,
-                            equalTo: '#password_usuario'
                         }
                     },
                     messages: {
@@ -171,13 +150,6 @@
                         }
                     }
                 });
-            });
-        </script>
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $('#password_usuario').attr('type', "password");
-                $('#password_usuario_confirmacion').attr('type', "password");
-                $('#password_usuario_antiguo').attr('type', "password");
             });
         </script>
     </body>

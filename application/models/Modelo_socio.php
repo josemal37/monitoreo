@@ -2197,6 +2197,95 @@ class Modelo_socio extends CI_Model {
         }
     }
 
+    public function get_usuario($id_usuario) {
+        if (!is_numeric($id_usuario)) {
+            redirect(base_url() . 'socio');
+        } else {
+            try {
+                $sql = "SELECT
+                            USUARIO.id_usuario,
+                            USUARIO.id_institucion,
+                            USUARIO.id_rol,
+                            USUARIO.nombre_usuario,
+                            USUARIO.apellido_paterno_usuario,
+                            USUARIO.apellido_materno_usuario,
+                            USUARIO.login_usuario,
+                            USUARIO.password_usuario,
+                            USUARIO.telefono_usuario,
+                            USUARIO.correo_usuario,
+                            USUARIO.activo_usuario,
+                            INSTITUCION.id_institucion,
+                            INSTITUCION.nombre_institucion,
+                            INSTITUCION.sigla_institucion,
+                            ROL.id_rol,
+                            ROL.nombre_rol
+                        FROM
+                            USUARIO,
+                            INSTITUCION,
+                            ROL
+                        WHERE
+                            USUARIO.id_institucion = INSTITUCION.id_institucion AND
+                            USUARIO.id_rol = ROL.id_rol AND
+                            USUARIO.id_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_usuario));
+                if (!$query) {
+                    return false;
+                } else {
+                    if ($query->num_rows() != 1) {
+                        return false;
+                    } else {
+                        return $query->row();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function verificar_password($id_usuario, $password) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            USUARIO.id_usuario
+                        FROM
+                            USUARIO
+                        WHERE
+                            USUARIO.id_usuario = ? AND
+                            USUARIO.password_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_usuario, $password));
+                if($query->num_rows() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function update_password_usuario($id_usuario, $password_usuario) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "UPDATE USUARIO SET
+                            USUARIO.password_usuario = ?
+                        WHERE
+                            USUARIO.id_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($password_usuario, $id_usuario));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+
     public function sanitizar_cadena($cadena) {
         $cadena = str_replace(array('á', 'à', 'â', 'ã', 'ª', 'ä'), "a", $cadena);
         $cadena = str_replace(array('Á', 'À', 'Â', 'Ã', 'Ä'), "A", $cadena);

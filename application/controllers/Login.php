@@ -66,7 +66,7 @@ class Login extends CI_Controller {
                 $this->index();
             } else {
                 $login_usuario = $this->input->post('login_usuario');
-                $password_usuario = $this->input->post('password_usuario');
+                $password_usuario = sha1($this->input->post('password_usuario'));
                 $datos_usuario = $this->modelo_login->get_usuario($login_usuario, $password_usuario);
                 if ($datos_usuario == TRUE) {
                     $datos = array(

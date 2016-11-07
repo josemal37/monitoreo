@@ -55,7 +55,7 @@
                                                                 <tr>
                                                                     <th>Indicador</th>
                                                                     <th>Descripción</th>
-                                                                    <th>Meta</th>
+                                                                    <th width="17%">Avance / Meta</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -63,7 +63,11 @@
                                                                     <tr>
                                                                         <td><?= $meta_cuantitativa->nombre_meta_producto_cuantitativa ?></td>
                                                                         <td><?= $meta_cuantitativa->descripcion_meta_producto_cuantitativa ?></td>
-                                                                        <td><span class="number_integer"><?= $meta_cuantitativa->cantidad_meta_producto_cuantitativa ?></span> <?= $meta_cuantitativa->unidad_meta_producto_cuantitativa ?></td>
+                                                                        <td>
+                                                                            <span class="number_integer"><?= $meta_cuantitativa->avance_meta_producto_cuantitativa ?></span> / 
+                                                                            <span class="number_integer"><?= $meta_cuantitativa->cantidad_meta_producto_cuantitativa ?></span> 
+                                                                            <?= $meta_cuantitativa->unidad_meta_producto_cuantitativa ?>
+                                                                        </td>
                                                                     </tr>
                                                                 <?php endforeach; ?>
                                                             </tbody>

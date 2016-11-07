@@ -201,7 +201,7 @@ class Modelo_administrador extends CI_Model {
         }
     }
 
-    public function update_usuario($id_usuario, $id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario) {
+    public function update_usuario($id_usuario, $id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $telefono_usuario, $correo_usuario) {
         if (!is_numeric($id_usuario) || !is_numeric($id_institucion) || !is_numeric($id_rol)) {
             redirect(base_url() . 'administrador');
         } else {
@@ -213,13 +213,12 @@ class Modelo_administrador extends CI_Model {
                             USUARIO.apellido_paterno_usuario = ?,
                             USUARIO.apellido_materno_usuario = ?,
                             USUARIO.login_usuario = ?,
-                            USUARIO.password_usuario = ?,
                             USUARIO.telefono_usuario = ?,
                             USUARIO.correo_usuario = ?
                         WHERE
                             USUARIO.id_usuario = ?
                         ";
-                $query = $this->db->query($sql, Array($id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $password_usuario, $telefono_usuario, $correo_usuario, $id_usuario));
+                $query = $this->db->query($sql, Array($id_institucion, $id_rol, $nombre_usuario, $apellido_paterno_usuario, $apellido_materno_usuario, $login_usuario, $telefono_usuario, $correo_usuario, $id_usuario));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }
@@ -354,6 +353,48 @@ class Modelo_administrador extends CI_Model {
             }
         } catch (Exception $ex) {
             redirect(base_url() . 'administrador/error');
+        }
+    }
+    
+    public function verificar_password($id_usuario, $password) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'administrador/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            USUARIO.id_usuario
+                        FROM
+                            USUARIO
+                        WHERE
+                            USUARIO.id_usuario = ? AND
+                            USUARIO.password_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_usuario, $password));
+                if($query->num_rows() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'administrador/error');
+            }
+        }
+    }
+    
+    public function update_password_usuario($id_usuario, $password_usuario) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'administrador/error');
+        } else {
+            try {
+                $sql = "UPDATE USUARIO SET
+                            USUARIO.password_usuario = ?
+                        WHERE
+                            USUARIO.id_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($password_usuario, $id_usuario));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'administrador/error');
+            }
         }
     }
 

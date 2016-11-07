@@ -34,6 +34,42 @@ class Coordinador extends CI_Controller {
             redirect(base_url() . 'login');
         }
     }
+    
+    public function modificar_password($id_usuario) {
+        $this->verificar_sesion();
+        
+        if(isset($_POST['password_antiguo']) && isset($_POST['password_nuevo']) && isset($_POST['password_confirmacion'])) {
+            $this->form_validation->set_rules('password_antiguo', 'password_antiguo', 'required|trim|min_length[5]|max_length[32]');
+            $this->form_validation->set_rules('password_nuevo', 'password_nuevo', 'required|trim|min_length[5]|max_length[32]');
+            $this->form_validation->set_rules('password_confirmacion', 'password_confirmacion', 'required|trim|min_length[5]|max_length[32]');
+            if ($this->form_validation->run() == FALSE) {
+                unset($_POST['password_antiguo']);
+                $this->modificar_password($id_usuario);
+            } else {
+                $password_antiguo = sha1($this->input->post('password_antiguo'));
+                $password_nuevo = $this->input->post('password_nuevo');
+                $password_confirmacion = $this->input->post('password_confirmacion');
+                $password_antiguo_verificado = $this->modelo_coordinador->verificar_password($id_usuario, $password_antiguo);
+                if($password_nuevo == $password_confirmacion && $password_antiguo_verificado) {
+                    $password_nuevo = sha1($password_nuevo);
+                    $this->modelo_coordinador->update_password_usuario($id_usuario, $password_nuevo);
+                    redirect(base_url() . 'coordinador');
+                } else {
+                    if(!$password_antiguo_verificado) {
+                        $this->session->set_flashdata('error_password_antiguo', 'El password introducido no coincide con su password actual.');
+                    } else {
+                        $this->session->set_flashdata('error_password_confirmacion', 'El password introducido no coincide con el nuevo password.');
+                    }
+                    redirect(base_url() . 'coordinador/modificar_password/' . $id_usuario, 'refresh');
+                }
+            }
+        } else {
+            $datos = Array();
+            $datos['id_usuario'] = $id_usuario;
+            $datos['usuario'] = $this->modelo_coordinador->get_usuario($id_usuario);
+            $this->load->view('coordinador/vista_modificar_password', $datos);
+        }
+    }
 
     public function ver_prodoc($id_prodoc) {
         $this->verificar_sesion();

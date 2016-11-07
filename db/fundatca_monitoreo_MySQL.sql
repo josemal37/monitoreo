@@ -455,7 +455,8 @@ INSERT INTO ROL (nombre_rol) VALUES ('socio observador');
 
 INSERT INTO INSTITUCION (nombre_institucion, sigla_institucion, carpeta_institucion, activa_institucion) VALUES ('Fundación Atica', 'ATICA', 'atica', '1');
 
-INSERT INTO USUARIO (id_institucion, id_rol, nombre_usuario, apellido_paterno_usuario, apellido_materno_usuario, login_usuario, password_usuario, telefono_usuario, correo_usuario, activo_usuario) VALUES ('1', '1', 'Jose Manuel', 'Arandia', 'Luna', 'admin1', 'admin1123', '70349697', 'jose.arandia.luna@gmail.com', '1');
+/*password: admin1123*/
+INSERT INTO USUARIO (id_institucion, id_rol, nombre_usuario, apellido_paterno_usuario, apellido_materno_usuario, login_usuario, password_usuario, telefono_usuario, correo_usuario, activo_usuario) VALUES ('1', '1', 'Jose Manuel', 'Arandia', 'Luna', 'admin1', 'e0acd636a76bb225f80d1df357f9d646a9c9dabc', '70349697', 'jose.arandia.luna@gmail.com', '1');
 
 INSERT INTO TIPO_INDICADOR_CUANTITATIVO (nombre_tipo_indicador_cn, descripcion_tipo_indicador_cn) VALUES ('Acumulativo', 'Acumulativo');
 INSERT INTO TIPO_INDICADOR_CUANTITATIVO (nombre_tipo_indicador_cn, descripcion_tipo_indicador_cn) VALUES ('Porcentaje', 'Porcentaje');
