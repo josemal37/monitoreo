@@ -260,6 +260,35 @@ class Administrador extends CI_Controller {
             $this->load->view('administrador/vista_modificar_password_usuario', $datos);
         }
     }
+    
+    public function modificar_datos_contacto($id_usuario) {
+        $this->verificar_sesion();
+        
+        if(isset($_POST['id_usuario']) && isset($_POST['telefono_usuario']) && isset($_POST['correo_usuario'])) {
+            $this->form_validation->set_rules('telefono_usuario', 'telefono_usuario', 'numeric');
+            $this->form_validation->set_rules('correo_usuario', 'correo_usuario', 'trim|valid_email|min_length[5]|max_length[64]');
+            if($this->form_validation->run() == false) {
+                unset($_POST['id_usuario']);
+                $this->modificar_datos_contacto($id_usuario);
+            } else {
+                $telefono_usuario = 0;
+                if($this->input->post('telefono_usuario') != "") {
+                    $telefono_usuario = $this->input->post('telefono_usuario');
+                }
+                $correo_usuario = $this->input->post('correo_usuario');
+                $this->modelo_administrador->update_datos_contacto_usuario($id_usuario, $telefono_usuario, $correo_usuario);
+                $this->session->set_userdata('telefono_usuario', $telefono_usuario);
+                $this->session->set_userdata('correo_usuario', $correo_usuario);
+                redirect(base_url() . 'administrador');
+                
+            }
+        } else {
+            $datos = Array();
+            $datos['id_usuario'] = $id_usuario;
+            $datos['usuario'] = $this->modelo_administrador->get_usuario($id_usuario);
+            $this->load->view('administrador/vista_modificar_datos_contacto', $datos);
+        }
+    }
 
     public function instituciones() {
         $this->verificar_sesion();

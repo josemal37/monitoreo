@@ -69,7 +69,7 @@
                         titulo_avance_hito: {
                             required: true,
                             minlength: 5,
-                            maxlength: 128
+                            maxlength: 1024
                         },
                         fecha_documento_avance_hito: {
                             required: true,

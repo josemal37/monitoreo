@@ -88,12 +88,12 @@
                         'titulo_documento_avance[]': {
                             required: true,
                             minlength: 5,
-                            maxlength: 64
+                            maxlength: 1024
                         },
                         'descripcion_documento_avance[]': {
                             required: true,
                             minlength: 5,
-                            maxlength: 512
+                            maxlength: 1024
                         }
                     }
                 });

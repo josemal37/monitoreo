@@ -81,7 +81,7 @@
                         nombre_indicador: {
                             required: true,
                             minlength: 5,
-                            maxlength: 128
+                            maxlength: 1024
                         },
                         tipo_indicador: {
                             required: true

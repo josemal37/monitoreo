@@ -397,6 +397,24 @@ class Modelo_administrador extends CI_Model {
             }
         }
     }
+    
+    public function update_datos_contacto_usuario($id_usuario, $telefono_usuario, $correo_usuario) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'administrador/error');
+        } else {
+            try {
+                $sql = "UPDATE USUARIO SET
+                            USUARIO.telefono_usuario = ?,
+                            USUARIO.correo_usuario = ?
+                        WHERE
+                            USUARIO.id_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($telefono_usuario, $correo_usuario, $id_usuario));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'administrador/error');
+            }
+        }
+    }
 
     public function get_institucion($id_institucion) {
         if (!is_numeric($id_institucion)) {

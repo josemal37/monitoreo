@@ -28,6 +28,8 @@ class Modelo_login extends CI_Model {
                     USUARIO.nombre_usuario,
                     USUARIO.apellido_paterno_usuario,
                     USUARIO.apellido_materno_usuario,
+                    USUARIO.telefono_usuario,
+                    USUARIO.correo_usuario,
                     ROL.nombre_rol,
                     INSTITUCION.id_institucion,
                     INSTITUCION.nombre_institucion,

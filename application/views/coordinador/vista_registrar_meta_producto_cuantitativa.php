@@ -63,12 +63,12 @@
                         nombre_meta_producto_cuantitativa: {
                             required: true,
                             minlength: 5,
-                            maxlength: 2014
+                            maxlength: 1024
                         },
                         descripcion_meta_producto_cuantitativa: {
                             required: true,
                             minlength: 5,
-                            maxlength: 2014
+                            maxlength: 1024
                         },
                         cantidad_meta_producto_cuantitativa: {
                             required: true,

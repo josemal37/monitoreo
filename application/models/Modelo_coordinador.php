@@ -1132,7 +1132,7 @@ class Modelo_coordinador extends CI_Model {
     
     private function get_hitos_cuantitativos_actividad_con_avance($id_actividad) {
         if (!is_numeric($id_actividad)) {
-            redirect(base_url() . 'socio/error');
+            redirect(base_url() . 'coordinador/error');
         }
         try {
             $sql = "SELECT
@@ -1164,7 +1164,7 @@ class Modelo_coordinador extends CI_Model {
             $query_indicadores = $this->db->query($sql, Array($id_actividad));
             return $query_indicadores->result();
         } catch (Exception $ex) {
-            redirect(base_url() . 'socio/error');
+            redirect(base_url() . 'coordinador/error');
         }
     }
 
@@ -1845,6 +1845,24 @@ class Modelo_coordinador extends CI_Model {
                             USUARIO.id_usuario = ?
                         ";
                 $query = $this->db->query($sql, Array($password_usuario, $id_usuario));
+            } catch (Exception $ex) {
+                redirect(base_url() . 'coordinador/error');
+            }
+        }
+    }
+    
+    public function update_datos_contacto_usuario($id_usuario, $telefono_usuario, $correo_usuario) {
+        if(!is_numeric($id_usuario)) {
+            redirect(base_url() . 'coordinador/error');
+        } else {
+            try {
+                $sql = "UPDATE USUARIO SET
+                            USUARIO.telefono_usuario = ?,
+                            USUARIO.correo_usuario = ?
+                        WHERE
+                            USUARIO.id_usuario = ?
+                        ";
+                $query = $this->db->query($sql, Array($telefono_usuario, $correo_usuario, $id_usuario));
             } catch (Exception $ex) {
                 redirect(base_url() . 'coordinador/error');
             }

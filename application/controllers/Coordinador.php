@@ -70,6 +70,35 @@ class Coordinador extends CI_Controller {
             $this->load->view('coordinador/vista_modificar_password', $datos);
         }
     }
+    
+    public function modificar_datos_contacto($id_usuario) {
+        $this->verificar_sesion();
+        
+        if(isset($_POST['id_usuario']) && isset($_POST['telefono_usuario']) && isset($_POST['correo_usuario'])) {
+            $this->form_validation->set_rules('telefono_usuario', 'telefono_usuario', 'numeric');
+            $this->form_validation->set_rules('correo_usuario', 'correo_usuario', 'trim|valid_email|min_length[5]|max_length[64]');
+            if($this->form_validation->run() == false) {
+                unset($_POST['id_usuario']);
+                $this->modificar_datos_contacto($id_usuario);
+            } else {
+                $telefono_usuario = 0;
+                if($this->input->post('telefono_usuario') != "") {
+                    $telefono_usuario = $this->input->post('telefono_usuario');
+                }
+                $correo_usuario = $this->input->post('correo_usuario');
+                $this->modelo_coordinador->update_datos_contacto_usuario($id_usuario, $telefono_usuario, $correo_usuario);
+                $this->session->set_userdata('telefono_usuario', $telefono_usuario);
+                $this->session->set_userdata('correo_usuario', $correo_usuario);
+                redirect(base_url() . 'coordinador');
+                
+            }
+        } else {
+            $datos = Array();
+            $datos['id_usuario'] = $id_usuario;
+            $datos['usuario'] = $this->modelo_coordinador->get_usuario($id_usuario);
+            $this->load->view('coordinador/vista_modificar_datos_contacto', $datos);
+        }
+    }
 
     public function ver_prodoc($id_prodoc) {
         $this->verificar_sesion();
@@ -312,7 +341,7 @@ class Coordinador extends CI_Controller {
         $this->verificar_sesion();
 
         if (isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
-            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
+            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[1024]');
             $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
             $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
             $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
@@ -349,7 +378,7 @@ class Coordinador extends CI_Controller {
         }
         if (isset($_POST['id_proyecto']) && isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_institucion'])) {
             $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric');
-            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
+            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[1024]');
             $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
             $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
             $this->form_validation->set_rules('id_institucion', 'id_institucion', 'required|numeric');
@@ -506,7 +535,7 @@ class Coordinador extends CI_Controller {
         } else {
             if (isset($_POST['id_hito']) && isset($_POST['nombre_indicador']) && isset($_POST['tipo_indicador']) && isset($_POST['aceptable_indicador']) && isset($_POST['limitado_indicador']) && isset($_POST['no_aceptable_indicador'])) {
                 $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
-                $this->form_validation->set_rules('nombre_indicador', 'nombre_indicador', 'required|trim|min_length[5]|max_length[128]');
+                $this->form_validation->set_rules('nombre_indicador', 'nombre_indicador', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('tipo_indicador', 'tipo_indicador', 'required|numeric');
                 $this->form_validation->set_rules('aceptable_indicador', 'aceptable_indicador', 'required|numeric');
                 $this->form_validation->set_rules('limitado_indicador', 'limitado_indicador', 'required|numeric');

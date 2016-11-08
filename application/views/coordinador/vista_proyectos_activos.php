@@ -21,7 +21,7 @@
             ?>
             <?php if ($proyectos): ?>
                 <div class="table-responsive">
-                    <h4>Lista de proyectos activos</h4>
+                    <h4  class="text-primary">Lista de proyectos activos</h4>
                     <table class="table table-bordered">
                         <thead>
                             <tr>

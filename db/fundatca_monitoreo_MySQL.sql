@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     17/10/2016 09:35:56                          */
+/* Created on:     08/11/2016 09:06:45                          */
 /*==============================================================*/
 
 /*==============================================================*/
@@ -49,7 +49,7 @@ create table AVANCE_HITO_CUALITATIVO
    FECHA_AVANCE_HITO_CL date,
    TITULO_AVANCE_HITO_CL varchar(1024),
    DESCRIPCION_AVANCE_HITO_CL text,
-   DOCUMENTO_AVANCE_HITO_CL varchar(128),
+   DOCUMENTO_AVANCE_HITO_CL varchar(512),
    APROBADO_AVANCE_HITO_CL bool,
    EN_REVISION_AVANCE_HITO_CL bool,
    COSTO_AVANCE_HITO_CL decimal(8,2),
@@ -345,7 +345,7 @@ COLLATE = utf8_general_ci;
 create table TIPO_INDICADOR_CUANTITATIVO
 (
    ID_TIPO_INDICADOR_CN int not null auto_increment,
-   NOMBRE_TIPO_INDICADOR_CN varchar(128) not null,
+   NOMBRE_TIPO_INDICADOR_CN varchar(1024) not null,
    DESCRIPCION_TIPO_INDICADOR_CN text,
    primary key (ID_TIPO_INDICADOR_CN)
 )
@@ -366,7 +366,7 @@ create table USUARIO
    APELLIDO_MATERNO_USUARIO varchar(32) not null,
    LOGIN_USUARIO        varchar(32) not null,
    PASSWORD_USUARIO     varchar(1024) not null,
-   TELEFONO_USUARIO     int,
+   TELEFONO_USUARIO     bigint,
    CORREO_USUARIO       varchar(64),
    ACTIVO_USUARIO       bool not null,
    primary key (ID_USUARIO)
@@ -446,7 +446,7 @@ alter table USUARIO add constraint FK_INSTITUCION_TIENE_USUARIO foreign key (ID_
 
 alter table USUARIO add constraint FK_USUARIO_TIENE_ROL foreign key (ID_ROL)
       references ROL (ID_ROL) on delete cascade on update cascade;
-	  
+
 INSERT INTO ROL (nombre_rol) VALUES ('administrador');
 INSERT INTO ROL (nombre_rol) VALUES ('financiador');
 INSERT INTO ROL (nombre_rol) VALUES ('coordinador');

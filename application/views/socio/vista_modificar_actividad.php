@@ -99,33 +99,33 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#modificar_actividad').validate({
-                ignore: [],
-                errorClass: 'has-error',
-                validClass: 'has-success',
-                rules: {
-                nombre_actividad: {
-                required: true,
-                        minlength: 5,
-                        maxlength: 128
-                },
+                    ignore: [],
+                    errorClass: 'has-error',
+                    validClass: 'has-success',
+                    rules: {
+                        nombre_actividad: {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 1024
+                        },
                         descripcion_actividad: {
-                        required: true,
-                                minlength: 5,
-                                maxlength: 1024
+                            required: true,
+                            minlength: 5,
+                            maxlength: 1024
                         },
                         fecha_inicio_actividad: {
-                        required: true,
-                                date: true
+                            required: true,
+                            date: true
                         },
                         fecha_fin_actividad: {
-                        required: true,
-                                date: true
+                            required: true,
+                            date: true
                         },
                         presupuesto_actividad: {
-                        required: true,
-                                number: true,
-                                min: 0,
-                                max: function() {
+                            required: true,
+                            number: true,
+                            min: 0,
+                            max: function() {
                                 if($('#contraparte').is(':checked')) {
                                     return 99999999.99;
                                 } else {
@@ -133,14 +133,15 @@
                                 }
                             }
                         }
-                },
-                messages: {
-                presupuesto_actividad: {
-                    max: 'Por favor, escribe un valor menor o igual al disponible.'
-                }
-                }
+                    },
+                    messages: {
+                        presupuesto_actividad: {
+                            max: 'Por favor, escribe un valor menor o igual al disponible.'
+                        }
+                    }
+                });
             });
-            });        </script>
+        </script>
         <script type="text/javascript">
                     var fecha_inicio_ini = new Date($.datepicker.parseDate('yy-mm-dd', '<?= $actividad->fecha_inicio_actividad ?>'));
                     var fecha_fin_ini = new Date($.datepicker.parseDate('yy-mm-dd', '<?= $actividad->fecha_fin_actividad ?>'));

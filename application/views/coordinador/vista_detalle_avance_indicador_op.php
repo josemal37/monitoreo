@@ -21,7 +21,7 @@
             ?>
             <div>
                 <div>
-                    <h4><?= $indicador->nombre_indicador_op ?></h4>
+                    <h4  class="text-primary"><?= $indicador->nombre_indicador_op ?></h4>
                     <div>
                         <?php if (!$avances_indicador): ?>
                             <div class="panel panel-warning">

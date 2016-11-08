@@ -89,7 +89,7 @@
                         nombre_actividad: {
                             required: true,
                             minlength: 5,
-                            maxlength: 128
+                            maxlength: 1024
                         },
                         descripcion_actividad: {
                             required: true,

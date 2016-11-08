@@ -22,7 +22,7 @@
             $datos['activo'] = "Usuarios";
             $this->load->view('administrador/nav', $datos);
             ?>
-            <h4>Nuevo usuario</h4>
+            <h4  class="text-primary">Nuevo usuario</h4>
             <form action="<?= base_url() . 'administrador/modificar_usuario/' . $usuario->id_usuario ?>" id="formulario_usuario" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                 <div style="display: none">
                     <input type="text">

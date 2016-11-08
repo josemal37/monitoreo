@@ -70,6 +70,35 @@ class Socio extends CI_Controller {
             $this->load->view('socio/vista_modificar_password', $datos);
         }
     }
+    
+    public function modificar_datos_contacto($id_usuario) {
+        $this->verificar_sesion();
+        
+        if(isset($_POST['id_usuario']) && isset($_POST['telefono_usuario']) && isset($_POST['correo_usuario'])) {
+            $this->form_validation->set_rules('telefono_usuario', 'telefono_usuario', 'numeric');
+            $this->form_validation->set_rules('correo_usuario', 'correo_usuario', 'trim|valid_email|min_length[5]|max_length[64]');
+            if($this->form_validation->run() == false) {
+                unset($_POST['id_usuario']);
+                $this->modificar_datos_contacto($id_usuario);
+            } else {
+                $telefono_usuario = 0;
+                if($this->input->post('telefono_usuario') != "") {
+                    $telefono_usuario = $this->input->post('telefono_usuario');
+                }
+                $correo_usuario = $this->input->post('correo_usuario');
+                $this->modelo_socio->update_datos_contacto_usuario($id_usuario, $telefono_usuario, $correo_usuario);
+                $this->session->set_userdata('telefono_usuario', $telefono_usuario);
+                $this->session->set_userdata('correo_usuario', $correo_usuario);
+                redirect(base_url() . 'socio');
+                
+            }
+        } else {
+            $datos = Array();
+            $datos['id_usuario'] = $id_usuario;
+            $datos['usuario'] = $this->modelo_socio->get_usuario($id_usuario);
+            $this->load->view('socio/vista_modificar_datos_contacto', $datos);
+        }
+    }
 
     public function inicio_sistema_socio() {
         $datos = Array();
@@ -152,7 +181,7 @@ class Socio extends CI_Controller {
         $this->verificar_sesion();
 
         if (isset($_POST['nombre_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['descripcion_proyecto'])) {
-            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
+            $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[1024]');
             $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
             $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
 
@@ -212,7 +241,7 @@ class Socio extends CI_Controller {
 
         if (isset($_POST['id_proyecto']) && isset($_POST['nombre_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
             $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
-            $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[2]|max_length[128]');
+            $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[2]|max_length[1024]');
             $this->form_validation->set_rules('fecha_inicio_actividad', 'fecha_inicio_actividad', 'required');
             $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
             $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[2]|max_length[1024]');
@@ -274,7 +303,7 @@ class Socio extends CI_Controller {
         } else {
             if (isset($_POST['nombre_proyecto']) && isset($_POST['descripcion_proyecto']) && isset($_POST['presupuesto_proyecto']) && isset($_POST['id_proyecto'])) {
                 $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric');
-                $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[128]');
+                $this->form_validation->set_rules('nombre_proyecto', 'nombre_proyecto', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('presupuesto_proyecto', 'presupuesto_proyecto', 'required|numeric');
                 $this->form_validation->set_rules('descripcion_proyecto', 'descripcion_proyecto', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('id_anio', 'id_anio', 'required|numeric');
@@ -316,7 +345,7 @@ class Socio extends CI_Controller {
             if (isset($_POST['id_proyecto']) && isset($_POST['id_actividad']) && isset($_POST['nombre_actividad']) && isset($_POST['descripcion_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
                 $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
                 $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric|is_natural');
-                $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[5]|max_length[128]');
+                $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('fecha_inicio_actividad', 'fecha_inicio_actividad', 'required');
                 $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
                 $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[5]|max_length[1024]');
@@ -375,7 +404,7 @@ class Socio extends CI_Controller {
             if (isset($_POST['id_proyecto']) && isset($_POST['id_actividad']) && isset($_POST['nombre_actividad']) && isset($_POST['descripcion_actividad']) && isset($_POST['fecha_inicio_actividad']) && isset($_POST['fecha_fin_actividad']) && isset($_POST['presupuesto_actividad'])) {
                 $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required|numeric|is_natural');
                 $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric|is_natural');
-                $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[5]|max_length[128]');
+                $this->form_validation->set_rules('nombre_actividad', 'nombre_actividad', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('fecha_inicio_actividad', 'fecha_inicio_actividad', 'required');
                 $this->form_validation->set_rules('fecha_fin_actividad', 'fecha_fin_actividad', 'required');
                 $this->form_validation->set_rules('descripcion_actividad', 'descripcion_actividad', 'required|trim|min_length[5]|max_length[1024]');
@@ -464,7 +493,7 @@ class Socio extends CI_Controller {
                     switch ($this->input->post('tipo_hito')) {
                         case 'cuantitativo':
                             $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
-                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                             $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                             $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
                             $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
@@ -480,7 +509,7 @@ class Socio extends CI_Controller {
                             break;
                         case 'cualitativo':
                             $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
-                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                             $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                             if ($this->form_validation->run() == FALSE) {
                                 unset($_POST['id_actividad']);
@@ -525,7 +554,7 @@ class Socio extends CI_Controller {
             if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito']) && isset($_POST['meta_hito']) && isset($_POST['unidad_hito'])) {
                 if ($id_hito == $this->input->post('id_hito')) {
                     $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
-                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                     $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                     $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
                     $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
@@ -571,7 +600,7 @@ class Socio extends CI_Controller {
             if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito'])) {
                 if ($id_hito == $this->input->post('id_hito')) {
                     $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
-                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                     $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                     if ($this->form_validation->run() == FALSE) {
                         unset($_POST['id_hito']);
@@ -631,7 +660,7 @@ class Socio extends CI_Controller {
                     switch ($this->input->post('tipo_hito')) {
                         case 'cuantitativo':
                             $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
-                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                             $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                             $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
                             $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
@@ -647,7 +676,7 @@ class Socio extends CI_Controller {
                             break;
                         case 'cualitativo':
                             $this->form_validation->set_rules('id_actividad', 'id_actividad', 'required|numeric');
-                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                            $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                             $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                             if ($this->form_validation->run() == FALSE) {
                                 unset($_POST['id_actividad']);
@@ -692,7 +721,7 @@ class Socio extends CI_Controller {
             if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito']) && isset($_POST['meta_hito']) && isset($_POST['unidad_hito'])) {
                 if ($id_hito == $this->input->post('id_hito')) {
                     $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
-                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                     $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                     $this->form_validation->set_rules('meta_hito', 'meta_hito', 'required|numeric');
                     $this->form_validation->set_rules('unidad_hito', 'unidad_hito', 'required|trim|min_length[1]|max_length[32]');
@@ -738,7 +767,7 @@ class Socio extends CI_Controller {
             if (isset($_POST['id_hito']) && isset($_POST['nombre_hito']) && isset($_POST['descripcion_hito'])) {
                 if ($id_hito == $this->input->post('id_hito')) {
                     $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
-                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[128]');
+                    $this->form_validation->set_rules('nombre_hito', 'nombre_hito', 'required|trim|min_length[5]|max_length[1024]');
                     $this->form_validation->set_rules('descripcion_hito', 'descripcion_hito', 'required|trim|min_length[5]|max_length[1024]');
                     if ($this->form_validation->run() == FALSE) {
                         unset($_POST['id_hito']);
@@ -865,7 +894,7 @@ class Socio extends CI_Controller {
         } else {
             if (isset($_POST['id_hito']) && isset($_POST['titulo_avance_hito']) && isset($_POST['fecha_avance_hito']) && isset($_POST['descripcion_avance_hito'])) {
                 $this->form_validation->set_rules('id_hito', 'id_hito', 'required|numeric');
-                $this->form_validation->set_rules('titulo_avance_hito', 'titulo_avance_hito', 'required|trim|min_length[5]|max_length[128]');
+                $this->form_validation->set_rules('titulo_avance_hito', 'titulo_avance_hito', 'required|trim|min_length[5]|max_length[1024]');
                 $this->form_validation->set_rules('fecha_avance_hito', 'fecha_avance_hito', 'required');
                 $this->form_validation->set_rules('descripcion_avance_hito', 'descripcion_avance_hito', 'required|trim|min_length[5]|max_length[1024]');
                 if ($this->form_validation->run() == FALSE || $id_hito != $_POST['id_hito']) {
