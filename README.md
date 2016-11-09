@@ -1,2 +1,2 @@
 # monitoreo
-Sistema de monitoreo de proyectos
+Sistema de monitoreo del proyecto "Promoción de una cultura de resiliencia"
