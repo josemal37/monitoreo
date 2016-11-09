@@ -24,9 +24,9 @@
             $this->load->view('coordinador/nav', $datos);
             ?>
             <div>
-                <h4 class="text-primary"><?= $efecto->nombre_efecto ?></h4>
-                <p class="text-justify"><?= $efecto->descripcion_efecto ?></p>
                 <h4 class="text-primary">Modificar producto</h4>
+                <p><strong>Efecto:</strong> <?= $efecto->nombre_efecto ?></p>
+                <p><strong>Descripción del efecto:</strong> <?= $efecto->descripcion_efecto ?></p>
                 <form action="<?= base_url() . 'coordinador/modificar_producto/' . $id_prodoc . '/' . $producto->id_producto ?>" id="producto" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">
                         <label for="nombre_producto">Nombre del producto</label>

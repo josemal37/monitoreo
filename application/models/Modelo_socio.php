@@ -21,6 +21,210 @@ class Modelo_socio extends CI_Model {
         parent::__construct();
     }
 
+    public function get_prodoc_completo($id_prodoc) {
+        try {
+            $sql = "SELECT
+                        PRODOC.id_prodoc,
+                        PRODOC.nombre_prodoc,
+                        PRODOC.descripcion_prodoc,
+                        PRODOC.objetivo_global_prodoc,
+                        PRODOC.objetivo_proyecto_prodoc
+                    FROM
+                        PRODOC
+                    WHERE
+                        PRODOC.id_prodoc = ?
+                    ";
+            $query = $this->db->query($sql, Array($id_prodoc));
+            if (!$query) {
+                return false;
+            } else {
+                if ($query->num_rows() == 0) {
+                    return false;
+                } else {
+                    $prodoc = $query->row();
+                    $id_prodoc = $prodoc->id_prodoc;
+                    $prodoc->efectos = $this->get_efectos_prodoc($id_prodoc);
+                    if($prodoc->efectos) {
+                        $i = 0;
+                        foreach($prodoc->efectos as $efecto) {
+                            $prodoc->efectos[$i]->productos = $this->get_productos_efecto($efecto->id_efecto);
+                            if($prodoc->efectos[$i]->productos) {
+                                $j = 0;
+                                foreach($prodoc->efectos[$i]->productos as $producto) {
+                                    $prodoc->efectos[$i]->productos[$j]->metas_cuantitativas = $this->get_metas_producto_cuantitativa($producto->id_producto);
+                                    $prodoc->efectos[$i]->productos[$j]->metas_cualitativas = $this->get_metas_producto_cuantitativa($producto->id_producto);
+                                    $j += 1;
+                                }
+                            }
+                            $i += 1;
+                        }
+                    }
+                    return $prodoc;
+                }
+            }
+        } catch (Exception $ex) {
+            
+        }
+    }
+    
+    public function get_efectos_prodoc($id_prodoc) {
+        if(!is_numeric($id_prodoc)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            EFECTO.id_efecto,
+                            EFECTO.id_prodoc,
+                            EFECTO.nombre_efecto,
+                            EFECTO.descripcion_efecto
+                        FROM
+                            EFECTO
+                        WHERE
+                            EFECTO.id_prodoc = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_prodoc));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function get_productos_efecto($id_efecto) {
+        if(!is_numeric($id_efecto)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            PRODUCTO.id_producto,
+                            PRODUCTO.id_efecto, 
+                            PRODUCTO.nombre_producto,
+                            PRODUCTO.descripcion_producto
+                        FROM
+                            PRODUCTO
+                        WHERE
+                            PRODUCTO.id_efecto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_efecto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function get_metas_producto_cuantitativa($id_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.id_producto,
+                            META_PRODUCTO_CUANTITATIVA.cantidad_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.unidad_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.nombre_meta_producto_cuantitativa,
+                            META_PRODUCTO_CUANTITATIVA.descripcion_meta_producto_cuantitativa,
+                            COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as avance_meta_producto_cuantitativa
+                        FROM
+                            META_PRODUCTO_CUANTITATIVA
+                        LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON
+                            META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa = META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa
+                        LEFT JOIN HITO_CUANTITATIVO ON
+                            META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
+                        LEFT JOIN AVANCE_HITO_CUANTITATIVO ON
+                            HITO_CUANTITATIVO.id_hito_cn = AVANCE_HITO_CUANTITATIVO.id_hito_cn AND
+                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true
+                        WHERE
+                            META_PRODUCTO_CUANTITATIVA.id_producto = ?
+                        GROUP BY META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa
+                        ";
+                $query = $this->db->query($sql, Array($id_producto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function get_metas_producto_cualitativa($id_producto) {
+        if(!is_numeric($id_producto)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            META_PRODUCTO_CUALITATIVA.id_meta_producto_cualitativa,
+                            META_PRODUCTO_CUALITATIVA.id_producto,
+                            META_PRODUCTO_CUALITATIVA.nombre_meta_producto_cualitativa,
+                            META_PRODUCTO_CUALITATIVA.descripcion_meta_producto_cualitativa
+                        FROM
+                            META_PRODUCTO_CUALITATIVA
+                        WHERE
+                            META_PRODUCTO_CUALITATIVA.id_producto = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_producto));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+
+    public function get_id_prodoc() {
+        try {
+            $sql = "SELECT
+                        PRODOC.id_prodoc,
+                        PRODOC.nombre_prodoc,
+                        PRODOC.descripcion_prodoc,
+                        PRODOC.objetivo_global_prodoc,
+                        PRODOC.objetivo_proyecto_prodoc
+                    FROM
+                        PRODOC
+                    ";
+            $query = $this->db->query($sql);
+            if ($query->num_rows() > 0) {
+                $prodoc = $query->row();
+                return $prodoc->id_prodoc;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            redirect(base_url() . 'socio/error');
+        }
+    }
+
     public function get_proyectos_socio() {
         try {
             $this->db->trans_start();

@@ -24,9 +24,17 @@ $nombre_rol = $this->session->userdata('nombre_rol');
                 <li class="dropdown <?php if($activo == "Proyectos activos" || $activo == "Registrar proyecto"): ?>active<?php endif; ?>">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">POA<span class="caret"></span></a>
                     <ul class="dropdown-menu">
+                        <li><a href="<?= base_url() . 'socio/ver_proyecto_gestion_actual'?>">POA gestión actual</a></li>
                         <li><?= anchor(base_url() . 'socio/proyectos_activos', 'POA\'s activos') ?></li>
                         <li><?= anchor(base_url() . 'socio/proyectos_en_edicion', 'POA\'s en edición') ?></li>
                         <li><?= anchor(base_url() . 'socio/proyectos_en_reformulacion', 'POA\'s en reformulación') ?></li>
+                    </ul>
+                </li>
+                <li class="dropdown <?php if($activo == "PRODOC"): ?>active<?php endif; ?>">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">PRODOC<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php $id_prodoc = $this->modelo_socio->get_id_prodoc(); ?>
+                        <li><a href="<?= base_url() . 'socio/ver_prodoc/' . $id_prodoc ?>">Ver PRODOC</a></li>
                     </ul>
                 </li>
                 <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/ver_reportes', 'Ver reportes') ?></li>

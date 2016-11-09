@@ -108,6 +108,14 @@ class Socio extends CI_Controller {
         $this->load->view('socio/vista_inicio_sistema_socio', $datos);
     }
 
+    public function ver_prodoc($id_prodoc) {
+        $this->verificar_sesion();
+
+        $datos = Array();
+        $datos['prodoc'] = $this->modelo_socio->get_prodoc_completo($id_prodoc);
+        $this->load->view('socio/vista_prodoc', $datos);
+    }
+
     public function proyectos_activos() {
         $this->verificar_sesion();
 

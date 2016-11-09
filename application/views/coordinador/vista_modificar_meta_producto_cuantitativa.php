@@ -25,9 +25,9 @@
             $this->load->view('coordinador/nav', $datos);
             ?>
             <div>
-                <h4><?= $producto->nombre_producto ?></h4>
-                <p><?= $producto->descripcion_producto ?></p>
-                <h4>Modificar indicador</h4>
+                <h4 class="text-primary">Modificar indicador</h4>
+                <p><strong>Producto:</strong> <?= $producto->nombre_producto ?></p>
+                <p><strong>Descripción del producto:</strong> <?= $producto->descripcion_producto ?></p>
                 <form action="<?= base_url() . 'coordinador/modificar_meta_producto_cuantitativa/' . $id_prodoc . '/' . $meta_producto_cuantitativa->id_meta_producto_cuantitativa ?>" id="meta_producto_cuantitativa" role="form" method="post" accept-charset="utf-8" autocomplete="off">
                     <div class="form-group">
                         <label for="nombre_meta_producto_cuantitativa">Nombre</label>

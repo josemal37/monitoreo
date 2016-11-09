@@ -193,6 +193,7 @@ class Coordinador extends CI_Controller {
         } else {
             $datos = Array();
             $datos['id_prodoc'] = $id_prodoc;
+            $datos['prodoc'] = $this->modelo_coordinador->get_prodoc($id_prodoc);
             $this->load->view('coordinador/vista_registrar_efecto', $datos);
         }
     }
@@ -216,6 +217,7 @@ class Coordinador extends CI_Controller {
         } else {
             $datos = Array();
             $datos['id_prodoc'] = $id_prodoc;
+            $datos['prodoc'] = $this->modelo_coordinador->get_prodoc($id_prodoc);
             $datos['efecto'] = $this->modelo_coordinador->get_efecto($id_efecto);
             $this->load->view('coordinador/vista_modificar_efecto', $datos);
         }

@@ -25,6 +25,8 @@
             ?>
             <div>
                 <h4 class="text-primary">Modificar efecto</h4>
+                <p><strong>PRODOC:</strong> <?= $prodoc->nombre_prodoc ?></p>
+                <p><strong>Descripcion del PRODOC:</strong> <?= $prodoc->descripcion_prodoc ?></p>
                 <form action="<?= base_url() . 'coordinador/modificar_efecto/' . $id_prodoc . '/' . $efecto->id_efecto ?>" id="efecto" role="form" method="post" accept-charset="utf-8">
                     <div class="form-group">
                         <label for="nombre_efecto">Nombre del efecto</label>
