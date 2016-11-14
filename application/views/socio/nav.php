@@ -34,10 +34,23 @@ $nombre_rol = $this->session->userdata('nombre_rol');
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">PRODOC<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <?php $id_prodoc = $this->modelo_socio->get_id_prodoc(); ?>
-                        <li><a href="<?= base_url() . 'socio/ver_prodoc/' . $id_prodoc ?>">Ver PRODOC</a></li>
+                        <?php if($id_prodoc): ?>
+                            <li><a href="<?= base_url() . 'socio/ver_prodoc/' . $id_prodoc ?>">Ver PRODOC</a></li>
+                        <?php else: ?>
+                            <li class="disabled"><a href="#">Ver PRODOC</a></li>
+                        <?php endif; ?>
                     </ul>
                 </li>
-                <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/ver_reportes', 'Ver reportes') ?></li>
+                <li class="dropdown <?php if($activo == "Reportes"): ?>active<?php endif; ?>">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">Reportes<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php if($id_prodoc): ?>
+                            <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/ver_reporte_prodoc/' . $id_prodoc, 'Reporte PRODOC') ?></li>
+                        <?php else: ?>
+                            <li class="disabled"><a href="#">Reporte PRODOC</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">

@@ -1013,6 +1013,15 @@ class Socio extends CI_Controller {
             echo('true');
         }
     }
+    
+    public function ver_reporte_prodoc($id_prodoc) {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['prodoc'] = $this->modelo_socio->get_prodoc_completo($id_prodoc);
+        $this->load->view('socio/vista_reporte_prodoc', $datos);
+        
+    }
 
     public function error() {
         $this->verificar_sesion();
