@@ -14,10 +14,10 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/amcharts/themes/light.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/amcharts/plugins/export/export.js' ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/Blob.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets\js\amcharts\plugins\export\libs\pdfmake\pdfmake.js' ?>"></script>
-        <script type="text/javascript" src="<?= base_url() . 'assets\js\amcharts\plugins\export\libs\pdfmake\vfs_fonts.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/amcharts/plugins/export/libs/pdfmake/pdfmake.js' ?>"></script>
+        <script type="text/javascript" src="<?= base_url() . 'assets/js/amcharts/plugins/export/libs/pdfmake/vfs_fonts.js' ?>"></script>
         
-        <title>Ver PRODOC</title>
+        <title>Reporte PRODOC</title>
     </head>
     <body>
         <div class="container">
@@ -32,7 +32,6 @@
             $n4 = 1;
             ?>
             <?php if ($prodoc): ?>
-            <p class="text-right"><a onclick="generar_pdf()" class="btn btn-success">Generar PDF</a></p>
                 <h4 id="titulo_prodoc" class="text-justify text-primary"><?= $prodoc->nombre_prodoc ?></h4>
                 <p id="descripcion_prodoc" class="text-justify"><?= $prodoc->descripcion_prodoc ?></p>
                 <h4 id="titulo_objetivo_global" class="text-primary"><?php echo($n1); ?>. Objetivo global</h4>
@@ -115,6 +114,9 @@
                         </div>
                     </div>
                 <?php endif; ?>
+                <div id="contenedor_descarga">
+                    <p class="text-right"><a id="generar_pdf" onclick="generar_pdf()" class="btn btn-success">Generar PDF</a></p>
+                </div>
             <?php else: ?>
                 <div class="panel panel-warning">
                     <div class="panel-heading">
@@ -133,7 +135,33 @@
             });
         </script>
         <script type="text/javascript">
+	$(document).ready(function() {
+            var soportado = false;
+            try {
+                var isFileSaverSupported = typeof Uint8Array != 'undefined' && !!new Blob;
+                if(isFileSaverSupported) {
+                    soportado = true;
+                }
+            } catch (e) {
+                
+            }
+            if(!soportado) {
+                $('#generar_pdf').attr('disabled', 'disabled');
+                $('#contenedor_descarga').append(""+
+                        "<div class='alert alert-danger alert-dismissable'>"+
+                        "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
+                        "<strong>¡Navegador no compatible!</strong> Su navegador no es compatible con la funcionalidad de generación de PDF's."+
+                        "</div>");
+            }
+	});
+	</script>
+        <script type="text/javascript">
             function generar_pdf() {
+                var fecha_actual = new Date();
+                var dia = fecha_actual.getDate();
+                var mes = fecha_actual.getMonth() + 1;
+                var anio = fecha_actual.getFullYear();
+                var fecha = dia + '-' + mes + '-' + anio;
                 var layout = {
                     pageMargins: [40, 50, 40, 50],
                     styles: {
@@ -165,18 +193,36 @@
                             bold: true,
                             margin: [0, 5, 0, 5]
                         },
+                        cabeceraTabla: {
+                            fontSize: 10,
+                            alignment: 'center',
+                            margin: [0, 0, 0, 0],
+                            bold: true
+                        },
                         parrafoNormal: {
                             fontSize: 10,
                             alignment: 'justify',
                             margin: [0, 0, 0, 5]
                         },
-                        header: {
+                        headerLeft: {
                             fontSize: 10,
                             alignment: 'left',
                             margin: [40, 30, 0, 0],
                             color: '#939393'
                         },
-                        footer: {
+                        headerRight: {
+                            fontSize: 10,
+                            alignment: 'right',
+                            margin: [0, 30, 40, 0],
+                            color: '#939393'
+                        },
+                        footerLeft: {
+                            fontSize: 10,
+                            alignment: 'left',
+                            margin: [40, 0, 0, 30],
+                            color: '#939393'
+                        },
+                        footerRight: {
                             fontSize: 10,
                             alignment: 'right',
                             margin: [0, 0, 40, 30],
@@ -210,13 +256,29 @@
                         }
                     ],
                     header: {
-                        text: 'Sistema de monitoreo del proyecto: Promoción de una cultura de resiliencia',
-                        style: 'header'
+                        columns: [
+                            {
+                                text: 'Proyecto: Promoción de una cultura de resiliencia',
+                                style: 'headerLeft'
+                            },
+                            {
+                                text: 'Reporte PRODOC',
+                                style: 'headerRight'
+                            }
+                        ]
                     },
                     footer: function(currentPage, pageCount) {
-                        return { 
-                            text: 'página ' + currentPage,
-                            style: 'footer'
+                        return {
+                            columns: [
+                                {
+                                    text: fecha,
+                                    style: 'footerLeft'
+                                },
+                                {
+                                    text: 'página ' + currentPage,
+                                    style: 'footerRight'
+                                }
+                            ]
                         };
                     }
                 };
@@ -254,7 +316,7 @@
                             $(thead).find('th').each(function(){
                                 cabecera.push({
                                     text: $(this).text(),
-                                    style: 'parrafoNormal'
+                                    style: 'cabeceraTabla'
                                 });
                             });
                             body.push(cabecera);
@@ -278,12 +340,11 @@
                                     body: body
                                 }
                             });
-                            console.log(body);
                         });
                     });
                 });
                 //generar pdf
-                pdfMake.createPdf(layout).open();
+                pdfMake.createPdf(layout).download('Reporte PRODOC ' + fecha + '.pdf');
             }
         </script>
     </body>

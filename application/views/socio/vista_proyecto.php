@@ -36,7 +36,6 @@
                             </div>
                             <div class="panel-collapse collapse on" id="collapse_<?= $actividad->id_actividad ?>">
                                 <div class="panel-body">
-                                    <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <p><strong>Fecha de inicio: </strong><?= $actividad->fecha_inicio_actividad ?></p>
                                     <p><strong>Fecha de fin: </strong><?= $actividad->fecha_fin_actividad ?></p>
                                     <p>
@@ -61,6 +60,7 @@
                                     <?php if(isset($actividad->nombre_producto)): ?>
                                         <p><strong>Producto asociado: </strong><?= $actividad->nombre_producto ?></p>
                                     <?php endif; ?>
+                                    <p class="text-justify"><strong>Descripción: </strong><?= $actividad->descripcion_actividad ?></p>
                                     <?php
                                     $id_actividad = $actividad->id_actividad;
                                     $hitos_cuantitativos = $datos_hitos_cuantitativos[$actividad->nombre_actividad];

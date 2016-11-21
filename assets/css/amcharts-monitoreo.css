@@ -1,0 +1,29 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15-11-2016, 11:02:57 AM
+    Author     : Jose
+*/
+
+.grafico {
+    min-height: 200px;
+}
+
+.grafico_porcentaje_indicadores {
+    min-width: 500px;
+}
+
+.grafico_financiero_actividad {
+    min-width: 200px;
+    max-width: 250px;
+}
+
+.contenedor_grafico {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-color: #eee
+}
+

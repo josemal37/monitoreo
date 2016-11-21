@@ -2507,6 +2507,144 @@ class Modelo_socio extends CI_Model {
             }
         }
     }
+    
+    public function get_reporte_proyecto_completo_activo($id_proyecto) {
+        try {
+            if (!is_numeric($id_proyecto)) {
+                redirect(base_url() . 'socio/error');
+            }
+            $id_institucion = $this->session->userdata('id_institucion');
+            $datos = Array();
+            $this->db->trans_start();
+            $sql = "SELECT 
+                        PROYECTO.id_proyecto, 
+                        PROYECTO.nombre_proyecto, 
+                        PROYECTO.descripcion_proyecto,
+                        PROYECTO.presupuesto_proyecto,
+                        ANIO.id_anio,
+                        ANIO.valor_anio
+                    FROM 
+                        PROYECTO, 
+                        PROYECTO_GLOBAL,
+                        INSTITUCION,
+                        PROYECTO_TIENE_ANIO,
+                        ANIO
+                    WHERE 
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                        PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
+                        PROYECTO.en_edicion = false AND
+                        PROYECTO_GLOBAL.id_institucion = ? AND
+                        PROYECTO.id_proyecto = ?
+                    ";
+            $query_proyecto = $this->db->query($sql, Array($id_institucion, $id_proyecto));
+            if ($query_proyecto->num_rows() == 1) {
+                $proyecto = $query_proyecto->row();
+
+                $actividades = $this->get_actividades_activas_proyecto($id_proyecto);
+
+                if (sizeof($actividades) > 0) {
+                    $i = 0;
+                    foreach ($actividades as $actividad) {
+                        $actividades[$i]->hitos_cuantitativos = $this->get_hitos_cuantitativos_actividad_con_avance($actividad->id_actividad);
+                        $j = 0;
+                        foreach($actividades[$i]->hitos_cuantitativos as $hito_cuantitativo) {
+                            $id_hito = $actividades[$i]->hitos_cuantitativos[$j]->id_hito_cn;
+                            $actividades[$i]->hitos_cuantitativos[$j]->avances = $this->get_avances_aceptados_hito_cuantitativo($id_hito);
+                            $j += 1;
+                        }
+                        $k = 0;
+                        $actividades[$i]->hitos_cualitativos = $this->get_hitos_cualitativos_actividad($actividad->id_actividad);
+                        foreach($actividades[$i]->hitos_cualitativos as $hito_cualitativo) {
+                            $id_hito = $actividades[$i]->hitos_cualitativos[$k]->id_hito_cl;
+                            $actividades[$i]->hitos_cualitativos[$k]->avances = $this->get_avances_aceptados_hito_cualitativo($id_hito);
+                            $k += 1;
+                        }
+                        $actividades[$i]->indicadores_cuantitativos = $this->get_indicadores_cuantitativos($actividad->id_actividad);
+                        $actividades[$i]->indicadores_cualitativos = $this->get_indicadores_cualitativos($actividades[$i]->hitos_cualitativos);
+                        $i += 1;
+                    }
+                }
+                $proyecto->actividades = $actividades;
+            } else {
+                $datos['error'] = 'error_proyecto';
+            }
+            $this->db->trans_complete();
+            return $proyecto;
+        } catch (Exception $ex) {
+            $this->db->trans_rollback();
+            redirect(base_url() . 'socio/error');
+        }
+    }
+    
+    public function get_avances_aceptados_hito_cuantitativo($id_hito) {
+        if(!is_numeric($id_hito)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            AVANCE_HITO_CUANTITATIVO.id_avance_hito_cn,
+                            AVANCE_HITO_CUANTITATIVO.id_hito_cn,
+                            AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn,
+                            AVANCE_HITO_CUANTITATIVO.fecha_avance_hito_cn,
+                            AVANCE_HITO_CUANTITATIVO.descripcion_avance_hito_cn,
+                            AVANCE_HITO_CUANTITATIVO.fecha_registro_avance_hito_cn
+                        FROM
+                            AVANCE_HITO_CUANTITATIVO
+                        WHERE
+                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true AND
+                            AVANCE_HITO_CUANTITATIVO.id_hito_cn = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_hito));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
+    
+    public function get_avances_aceptados_hito_cualitativo($id_hito) {
+        if(!is_numeric($id_hito)) {
+            redirect(base_url() . 'socio/error');
+        } else {
+            try {
+                $sql = "SELECT
+                            AVANCE_HITO_CUALITATIVO.id_avance_hito_cl,
+                            AVANCE_HITO_CUALITATIVO.id_hito_cl,
+                            AVANCE_HITO_CUALITATIVO.fecha_avance_hito_cl,
+                            AVANCE_HITO_CUALITATIVO.titulo_avance_hito_cl,
+                            AVANCE_HITO_CUALITATIVO.descripcion_avance_hito_cl,
+                            AVANCE_HITO_CUALITATIVO.fecha_registro_avance_hito_cl
+                        FROM
+                            AVANCE_HITO_CUALITATIVO
+                        WHERE
+                            AVANCE_HITO_CUALITATIVO.aprobado_avance_hito_cl = true AND
+                            AVANCE_HITO_CUALITATIVO.id_hito_cl = ?
+                        ";
+                $query = $this->db->query($sql, Array($id_hito));
+                if(!$query) {
+                    return false;
+                } else {
+                    if($query->num_rows() == 0) {
+                        return false;
+                    } else {
+                        return $query->result();
+                    }
+                }
+            } catch (Exception $ex) {
+                redirect(base_url() . 'socio/error');
+            }
+        }
+    }
 
     public function sanitizar_cadena($cadena) {
         $cadena = str_replace(array('á', 'à', 'â', 'ã', 'ª', 'ä'), "a", $cadena);

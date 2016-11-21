@@ -1020,7 +1020,28 @@ class Socio extends CI_Controller {
         $datos = Array();
         $datos['prodoc'] = $this->modelo_socio->get_prodoc_completo($id_prodoc);
         $this->load->view('socio/vista_reporte_prodoc', $datos);
+    }
+    
+    public function ver_reporte_gestion_actual() {
+        $this->verificar_sesion();
         
+        $id_proyecto = $this->modelo_socio->get_id_proyecto_completo_gestion_actual();
+        if(!$id_proyecto) {
+            $this->session->set_flashdata('error_proyecto', 'No tiene registrado un POA activo para la gestión actual.');
+            redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
+        } else {
+            $datos['proyecto'] = $this->modelo_socio->get_reporte_proyecto_completo_activo($id_proyecto);
+            if(!isset($datos['error'])) {
+                $this->load->view('socio/vista_reporte_proyecto', $datos);
+            } else {
+                if($datos['error'] == 'error_proyecto') {
+                    $this->session->set_flashdata('error_proyecto', 'No tiene registrado un POA activo para la gestión actual.');
+                    redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
+                } else {
+                    redirect(base_url() . 'socio/error');
+                }
+            }
+        }
     }
 
     public function error() {
