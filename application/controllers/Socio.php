@@ -1030,18 +1030,32 @@ class Socio extends CI_Controller {
             $this->session->set_flashdata('error_proyecto', 'No tiene registrado un POA activo para la gestión actual.');
             redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
         } else {
-            $datos['proyecto'] = $this->modelo_socio->get_reporte_proyecto_completo_activo($id_proyecto);
-            if(!isset($datos['error'])) {
-                $this->load->view('socio/vista_reporte_proyecto', $datos);
+            redirect(base_url() . 'socio/ver_reporte_poa/' . $id_proyecto);
+        }
+    }
+    
+    public function ver_reporte_poa($id_proyecto) {
+        $this->verificar_sesion();
+        
+        $datos['proyecto'] = $this->modelo_socio->get_reporte_proyecto_completo_activo($id_proyecto);
+        if(!isset($datos['error'])) {
+            $this->load->view('socio/vista_reporte_proyecto', $datos);
+        } else {
+            if($datos['error'] == 'error_proyecto') {
+                $this->session->set_flashdata('error_proyecto', 'No tiene registrado un POA activo para la gestión actual.');
+                redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
             } else {
-                if($datos['error'] == 'error_proyecto') {
-                    $this->session->set_flashdata('error_proyecto', 'No tiene registrado un POA activo para la gestión actual.');
-                    redirect(base_url() . 'socio/inicio_sistema_socio', 'refresh');
-                } else {
-                    redirect(base_url() . 'socio/error');
-                }
+                redirect(base_url() . 'socio/error');
             }
         }
+    }
+    
+    public function ver_reportes_poa() {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['proyectos'] = $this->modelo_socio->get_proyectos_socio();
+        $this->load->view('socio/vista_reporte_proyectos_activos', $datos);
     }
 
     public function error() {

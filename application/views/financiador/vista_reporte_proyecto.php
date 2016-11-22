@@ -17,15 +17,15 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/amcharts/plugins/export/export.js' ?>"></script>
 
 
-        <title>Reporte proyecto</title>
+        <title>POA</title>
     </head>
     <body>
         <div class="container">
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Reportes";
-            $this->load->view('socio/nav', $datos);
+            $datos['activo'] = "Proyectos";
+            $this->load->view('financiador/nav', $datos);
             ?>
             <div>
                 <h4 id="titulo_poa" class="text-primary"><?= $proyecto->nombre_proyecto ?></h4>

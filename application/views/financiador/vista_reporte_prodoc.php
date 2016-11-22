@@ -24,8 +24,8 @@
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Reportes";
-            $this->load->view('socio/nav', $datos);
+            $datos['activo'] = "PRODOC";
+            $this->load->view('financiador/nav', $datos);
             $n1 = 1;
             $n2 = 1;
             $n3 = 1;

@@ -45,11 +45,12 @@ $nombre_rol = $this->session->userdata('nombre_rol');
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">Reportes<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <?php if($id_prodoc): ?>
-                            <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'socio/ver_reporte_prodoc/' . $id_prodoc, 'Reporte PRODOC') ?></li>
+                            <li><?= anchor(base_url() . 'socio/ver_reporte_prodoc/' . $id_prodoc, 'Reporte PRODOC') ?></li>
                         <?php else: ?>
                             <li class="disabled"><a href="#">Reporte PRODOC</a></li>
                         <?php endif; ?>
-                            <li><a href="<?= base_url() . 'socio/ver_reporte_gestion_actual'?>">Reporte POA gestión actual</a></li>
+                        <li><a href="<?= base_url() . 'socio/ver_reporte_gestion_actual'?>">Reporte POA gestión actual</a></li>
+                        <li><a href='<?= base_url() . 'socio/ver_reportes_poa'?>'>Reportes POA's activos</a></li>
                     </ul>
                 </li>
             </ul>

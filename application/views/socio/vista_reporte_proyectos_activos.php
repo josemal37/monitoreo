@@ -16,7 +16,7 @@
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Proyectos activos";
+            $datos['activo'] = "Reportes";
             $this->load->view('socio/nav', $datos);
             ?>
             <h4 class="text-primary">POA's activos</h4>
@@ -41,7 +41,7 @@
                                     <td><?= $proyecto->valor_anio ?></td>
                                     <td><?= $proyecto->nombre_proyecto ?></td>
                                     <td><?= $proyecto->descripcion_proyecto ?></td>
-                                    <td><a href="<?= base_url() . 'socio/ver_proyecto/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver POA</a></td>
+                                    <td><a href="<?= base_url() . 'socio/ver_reporte_poa/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver reporte POA</a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
