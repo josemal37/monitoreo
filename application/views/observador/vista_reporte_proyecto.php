@@ -17,16 +17,21 @@
         <script type="text/javascript" src="<?= base_url() . 'assets/js/amcharts/plugins/export/export.js' ?>"></script>
 
 
-        <title>Reporte proyecto</title>
+        <title>POA</title>
     </head>
     <body>
         <div class="container">
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Reportes";
-            $this->load->view('socio/nav', $datos);
+            if(isset($activo)) {
+                $datos['activo'] = $activo;
+            } else {
+                $datos['activo'] = "Proyectos";
+            }
+            $this->load->view('observador/nav', $datos);
             ?>
+            <?php if($proyecto): ?>
             <div>
                 <h4 id="titulo_poa" class="text-primary"><?= $proyecto->nombre_proyecto ?></h4>
                 <p class="text-justify"><strong>Año:</strong> <span id="anio_poa" class="number_integer"><?= $proyecto->valor_anio ?></span></p>
@@ -222,6 +227,16 @@
                     <p class="text-right"><a id="generarPDF" onclick="generarPDF()" class="btn btn-success">Generar PDF</a></p>
                 </div>
             </div>
+            <?php else: ?>
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <strong>Advertencia</strong>
+                </div>
+                <div class="panel-body">
+                    <p>Su institución no tiene registrado un POA para la gestión actual.</p>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
         <script type="text/javascript">
             $(document).ready(function(){

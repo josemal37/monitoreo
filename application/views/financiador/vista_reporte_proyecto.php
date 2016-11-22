@@ -31,6 +31,7 @@
                 <h4 id="titulo_poa" class="text-primary"><?= $proyecto->nombre_proyecto ?></h4>
                 <p class="text-justify"><strong>Año:</strong> <span id="anio_poa" class="number_integer"><?= $proyecto->valor_anio ?></span></p>
                 <p class="text-justify"><strong>Presupuesto:</strong> Bs. <span id="presupuesto_poa" class="number_decimal"><?= $proyecto->presupuesto_proyecto ?></span></p>
+                <p class="text-justify"><strong>Gasto actual:</strong> Bs. <span id="gasto_poa" class="number_decimal"></span></p>
                 <p class="text-justify"><strong>Descripción:</strong> <span id="descripcion_poa"><?= $proyecto->descripcion_proyecto ?></span></p>
             </div>
             <div>
@@ -222,6 +223,16 @@
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var gasto_poa = 0;
+                $(document).find('.valor_gasto_actividad').each(function(){
+                    var gasto_actividad = parseFloat($(this).text());
+                    gasto_poa = gasto_poa + gasto_actividad;
+                });
+                $('#gasto_poa').append(gasto_poa).html();
+            });
+        </script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('.number_decimal').number(true, 2);
@@ -632,6 +643,7 @@
                     //anio y presupuesto
                     var anio = $(document).find("#anio_poa").text();
                     var presupuesto = "Bs. " + $(document).find("#presupuesto_poa").text();
+                    var gastoActual = "Bs. " + $(document).find("#gasto_poa").text();
                     var descripcion = $(document).find("#descripcion_poa").text();
                     layout.content.push({
                         "text": "Datos generales",
@@ -657,6 +669,16 @@
                                     },
                                     {
                                         "text": presupuesto,
+                                        "style": "parrafoNormal"
+                                    }
+                                ],
+                                [
+                                    {
+                                        "text": "Gasto actual:",
+                                        "style": "parrafoNegrita"
+                                    },
+                                    {
+                                        "text": gastoActual,
                                         "style": "parrafoNormal"
                                     }
                                 ],

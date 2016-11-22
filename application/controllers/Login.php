@@ -50,6 +50,9 @@ class Login extends CI_Controller {
             case 'coordinador':
                 redirect(base_url() . 'coordinador');
                 break;
+            case 'socio observador':
+                redirect(base_url() . 'observador');
+                break;
             default:
                 $data['titulo'] = 'Inicio de sesión';
                 $this->load->view('vista_login', $data);
