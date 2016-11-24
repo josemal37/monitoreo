@@ -20,9 +20,6 @@ $nombre_rol = $this->session->userdata('nombre_rol');
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li <?php if ($activo == "Inicio"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'financiador', 'Inicio') ?></li>
-            </ul>
-            <ul class="nav navbar-nav">
                 <li <?php if($activo == "PRODOC"):?>class="active"<?php endif;?>><a href="<?= base_url() . 'financiador/ver_reporte_prodoc'?>">PRODOC</a></li>
             </ul>
             <ul class="nav navbar-nav">

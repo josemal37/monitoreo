@@ -46,7 +46,18 @@ $nombre_rol = $this->session->userdata('nombre_rol');
                 </li>
             </ul>
             <ul class="nav navbar-nav">
-                <li <?php if ($activo == "Reportes"): ?>class="active"<?php endif; ?>><?= anchor(base_url() . 'coordinador/reportes', 'Reportes') ?></li>
+                <li class="dropdown <?php if($activo == "Reportes"): ?>active<?php endif; ?>">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">Reportes<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php if($id_prodoc): ?>
+                            <li><?= anchor(base_url() . 'coordinador/ver_reporte_prodoc/' . $id_prodoc, 'Reporte PRODOC') ?></li>
+                        <?php else: ?>
+                            <li class="disabled"><a href="#">Reporte PRODOC</a></li>
+                        <?php endif; ?>
+                        <li><a href="<?= base_url() . 'coordinador/ver_reportes_gestion_actual'?>">Reporte POA's gestión actual</a></li>
+                        <li><a href='<?= base_url() . 'coordinador/ver_reportes_proyectos'?>'>Reporte Proyectos</a></li>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">

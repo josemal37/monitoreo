@@ -664,31 +664,50 @@ class Coordinador extends CI_Controller {
         $this->modelo_coordinador->modificar_estado_reformulacion_actividad($id_actividad, false);
         redirect(base_url() . 'coordinador/ver_proyecto/' . $id_proyecto);
     }
-
-    public function reportes() {
+    
+    public function ver_reporte_prodoc() {
         $this->verificar_sesion();
-
-        $this->load->view('coordinador/vista_reportes');
-    }
-
-    public function reporte_gastos() {
-        $this->verificar_sesion();
-
+        
         $datos = Array();
-        $datos = $this->modelo_coordinador->get_datos_reporte_financiero();
-        $this->load->view('coordinador/vista_reporte_gastos', $datos);
+        $id_prodoc = $this->modelo_coordinador->get_id_prodoc();
+        $datos['prodoc'] = $this->modelo_coordinador->get_prodoc_completo($id_prodoc);
+        $this->load->view('coordinador/vista_reporte_prodoc', $datos);
     }
-
-    public function reporte_estado_actual_proyecto($id_proyecto = NULL) {
+    
+    public function ver_reportes_gestion_actual() {
         $this->verificar_sesion();
-        if ($id_proyecto != NULL) {
-            //reporte del proyecto
+        
+        $datos = Array();
+        $datos['proyectos'] = $this->modelo_coordinador->get_proyectos_activos_gestion_actual();
+        $this->load->view('coordinador/vista_reporte_proyectos_activos_gestion_actual', $datos);
+    }
+    
+    public function ver_reporte_poa($id_poa) {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['proyecto'] = $this->modelo_coordinador->get_reporte_proyecto_completo_activo($id_poa);
+        if($datos['proyecto']) {
+            $this->load->view('coordinador/vista_reporte_proyecto', $datos);
         } else {
-            //lista de proyectos
-            $datos = Array();
-            $datos['proyectos'] = $this->modelo_coordinador->get_proyectos_activos();
-            $this->load->view('coordinador/vista_proyectos_activos_reporte', $datos);
+            redirect('coordinador/error');
         }
+    }
+    
+    public function ver_reportes_proyectos() {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['proyectos'] = $this->modelo_coordinador->get_proyectos();
+        $this->load->view('coordinador/vista_reportes_proyectos', $datos);
+    }
+    
+    public function ver_reporte_proyecto_global($id_proyecto_global) {
+        $this->verificar_sesion();
+        
+        $datos = Array();
+        $datos['proyecto_global'] = $this->modelo_coordinador->get_proyecto_global_completo($id_proyecto_global);
+        $this->load->view('coordinador/vista_reporte_proyecto_global', $datos);
     }
 
     public function error() {

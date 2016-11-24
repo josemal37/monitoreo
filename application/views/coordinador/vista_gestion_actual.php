@@ -10,7 +10,7 @@
         <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
         <script type="text/javascript" src="<?= base_url() . 'assets/js/jquery.number.js' ?>"></script>
 
-        <title>POA's de la gestión actual</title>
+        <title>POA's gestión actual</title>
     </head>
     <body>
         <div class="container">
@@ -21,15 +21,12 @@
             $this->load->view('coordinador/nav', $datos);
             ?>
             <h4 class="text-primary">
-                Gestión actual 
-                <?php if($gestion_actual): ?>
-                <span class="number_integer"><?= $gestion_actual->valor_anio ?></span>
-                <?php endif; ?>
+                POA's gestión actual
             </h4>
             <?php if ($proyectos): ?>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <strong>POA's de la gestión actual</strong>
+                        <strong>POA's gestión actual</strong>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">

@@ -16,8 +16,8 @@
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Gestion actual";
-            $this->load->view('financiador/nav', $datos);
+            $datos['activo'] = "Reportes";
+            $this->load->view('coordinador/nav', $datos);
             ?>
             <h4 class="text-primary">POA's gestión actual</h4>
             <?php if ($proyectos): ?>
@@ -41,7 +41,7 @@
                                     <td><?= $proyecto->valor_anio ?></td>
                                     <td><?= $proyecto->sigla_institucion ?></td>
                                     <td><?= $proyecto->nombre_proyecto ?></td>
-                                    <td><a href="<?= base_url() . 'financiador/ver_poa/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver POA</a></td>
+                                    <td><a href="<?= base_url() . 'coordinador/ver_reporte_poa/' . $proyecto->id_proyecto ?>" class="btn btn-success btn-xs btn-block">Ver reporte POA</a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
