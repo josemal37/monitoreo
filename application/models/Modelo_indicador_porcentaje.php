@@ -26,11 +26,11 @@ class Modelo_indicador_porcentaje extends Modelo_indicador_cuantitativo {
                     FROM
                         AVANCE_HITO_CUANTITATIVO
                     WHERE
-                        AVANCE_HITO_CUANTITATIVO.id_hito_cn = $id_hito AND
+                        AVANCE_HITO_CUANTITATIVO.id_hito_cn = ? AND
                         AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true AND
                         AVANCE_HITO_CUANTITATIVO.en_revision_avance_hito_cn = false
                     ";
-            $query = $this->db->query($sql);
+            $query = $this->db->query($sql, Array($id_hito));
             if (!$query) {
                 return false;
             } else {

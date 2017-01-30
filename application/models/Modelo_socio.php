@@ -661,11 +661,11 @@ class Modelo_socio extends CI_Model {
                     LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
                     LEFT JOIN META_PRODUCTO_CUANTITATIVA ON META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
                     WHERE
-                        HITO_CUANTITATIVO.id_actividad = $id_actividad
+                        HITO_CUANTITATIVO.id_actividad = ?
                     ORDER BY
                         HITO_CUANTITATIVO.nombre_hito_cn ASC
                     ";
-            $query_indicadores = $this->db->query($sql);
+            $query_indicadores = $this->db->query($sql, Array($id_actividad));
             return $query_indicadores->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'socio/error');
@@ -723,11 +723,11 @@ class Modelo_socio extends CI_Model {
                     FROM
                         HITO_CUALITATIVO
                     WHERE
-                        HITO_CUALITATIVO.id_actividad = $id_actividad
+                        HITO_CUALITATIVO.id_actividad = ?
                     ORDER BY
                         HITO_CUALITATIVO.nombre_hito_cl ASC
                     ";
-            $query_indicadores = $this->db->query($sql);
+            $query_indicadores = $this->db->query($sql, Array($id_actividad));
             return $query_indicadores->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'socio/error');
@@ -896,9 +896,9 @@ class Modelo_socio extends CI_Model {
                         FROM
                             GASTO_ACTIVIDAD
                         WHERE
-                            GASTO_ACTIVIDAD.id_actividad = $id_actividad
+                            GASTO_ACTIVIDAD.id_actividad = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad));
                 if (!$query) {
                     return false;
                 } else {
@@ -1050,9 +1050,10 @@ class Modelo_socio extends CI_Model {
                         PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
                         PROYECTO.id_proyecto_global = PROYECTO_GLOBAL.id_proyecto_global AND
                         PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
-                        ANIO.id_anio = ?
+                        ANIO.id_anio = ? AND
+                        INSTITUCION.id_institucion = ?
                     ";
-            $query = $this->db->query($sql, Array($id_anio));
+            $query = $this->db->query($sql, Array($id_anio, $id_institucion));
             if($query->num_rows() > 0) {
                 $this->session->set_flashdata('poa_gestion_registrado', 'El POA para la gestión seleccionada anteriormente ya fue registrado.');
                 redirect(base_url() . 'socio/registrar_nuevo_proyecto', 'refresh');
@@ -1213,9 +1214,9 @@ class Modelo_socio extends CI_Model {
                         LEFT JOIN PRODUCTO_RECIBE_ACTIVIDAD ON PRODUCTO_RECIBE_ACTIVIDAD.id_actividad = ACTIVIDAD.id_actividad
                         LEFT JOIN PRODUCTO ON PRODUCTO_RECIBE_ACTIVIDAD.id_producto = PRODUCTO.id_producto
                         WHERE
-                            ACTIVIDAD.id_actividad = $id_actividad
+                            ACTIVIDAD.id_actividad = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad));
                 if (!$query) {
                     return false;
                 } else {
@@ -1435,14 +1436,14 @@ class Modelo_socio extends CI_Model {
                         )
                         VALUES
                         (
-                            $id_actividad,
-                            '$nombre_hito',
-                            '$descripcion_hito',
-                            $meta_hito,
-                            '$unidad_hito'
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?
                         )
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad, $nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito));
                 if($aporta_producto == "directo") {
                     $id_hito = $this->db->insert_id();
                     $sql = "INSERT INTO META_ACTIVIDAD_APORTA_META_PRODUCTO_CN
@@ -1472,14 +1473,14 @@ class Modelo_socio extends CI_Model {
             try {
                 $this->db->trans_start();
                 $sql = "UPDATE HITO_CUANTITATIVO SET
-                            HITO_CUANTITATIVO.nombre_hito_cn = '$nombre_hito',
-                            HITO_CUANTITATIVO.descripcion_hito_cn = '$descripcion_hito',
-                            HITO_CUANTITATIVO.meta_hito_cn = $meta_hito,
-                            HITO_CUANTITATIVO.unidad_hito_cn = '$unidad_hito'
+                            HITO_CUANTITATIVO.nombre_hito_cn = ?,
+                            HITO_CUANTITATIVO.descripcion_hito_cn = ?,
+                            HITO_CUANTITATIVO.meta_hito_cn = ?,
+                            HITO_CUANTITATIVO.unidad_hito_cn = ?
                         WHERE
-                            HITO_CUANTITATIVO.id_hito_cn = $id_hito
+                            HITO_CUANTITATIVO.id_hito_cn = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($nombre_hito, $descripcion_hito, $meta_hito, $unidad_hito, $id_hito));
                 if($aporta_producto == "directo") {
                     $sql = "SELECT
                                 META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn,
@@ -1545,9 +1546,9 @@ class Modelo_socio extends CI_Model {
             try {
                 $sql = "DELETE FROM HITO_CUANTITATIVO
                         WHERE
-                            id_hito_cn = $id_hito
+                            id_hito_cn = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -1605,9 +1606,9 @@ class Modelo_socio extends CI_Model {
                         FROM
                             AVANCE_HITO_CUANTITATIVO
                         WHERE
-                            AVANCE_HITO_CUANTITATIVO.id_hito_cn = $id_hito
+                            AVANCE_HITO_CUANTITATIVO.id_hito_cn = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 $datos['avances_hito_cuantitativo'] = $query->result();
                 $i = 0;
                 foreach ($datos['avances_hito_cuantitativo'] as $clave => $avance) {
@@ -1621,9 +1622,9 @@ class Modelo_socio extends CI_Model {
                             FROM
                                 DOCUMENTO_AVANCE_HITO_CUANTITATIVO
                             WHERE
-                                DOCUMENTO_AVANCE_HITO_CUANTITATIVO.id_avance_hito_cn = $id_avance
+                                DOCUMENTO_AVANCE_HITO_CUANTITATIVO.id_avance_hito_cn = ?
                             ";
-                    $query = $this->db->query($sql);
+                    $query = $this->db->query($sql, Array($id_avance));
                     $datos['documentos'][$i] = $query->result();
                     $i = $i + 1;
                 }
@@ -1702,13 +1703,13 @@ class Modelo_socio extends CI_Model {
                                 )
                                 VALUES
                                 (
-                                    $id_avance_hito,
-                                    '$titulo_documento_avance[$i]',
-                                    '$descripcion_documento_avance[$i]',
-                                    '$archivo_documento_avance[$i]'
+                                    ?,
+                                    ?,
+                                    ?,
+                                    ?'
                                 )
                                 ";
-                        $query = $this->db->query($sql);
+                        $query = $this->db->query($sql, Array($id_avance_hito, $titulo_documento_avance[$i], $descripcion_documento_avance[$i], $archivo_documento_avance[$i]));
                     }
                     $this->db->trans_complete();
                 }
@@ -1731,9 +1732,9 @@ class Modelo_socio extends CI_Model {
                         FROM
                             HITO_CUALITATIVO
                         WHERE
-                            HITO_CUALITATIVO.id_hito_cl = $id_hito
+                            HITO_CUALITATIVO.id_hito_cl = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 if (!$query) {
                     return false;
                 } else {
@@ -1762,12 +1763,12 @@ class Modelo_socio extends CI_Model {
                         )
                         VALUES
                         (
-                            $id_actividad,
-                            '$nombre_hito',
-                            '$descripcion_hito'
+                            ?,
+                            ?,
+                            ?
                         )
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad, $nombre_hito, $descripcion_hito));
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -1780,12 +1781,12 @@ class Modelo_socio extends CI_Model {
         } else {
             try {
                 $sql = "UPDATE HITO_CUALITATIVO SET
-                            HITO_CUALITATIVO.nombre_hito_cl = '$nombre_hito',
-                            HITO_CUALITATIVO.descripcion_hito_cl = '$descripcion_hito'
+                            HITO_CUALITATIVO.nombre_hito_cl = ?,
+                            HITO_CUALITATIVO.descripcion_hito_cl = ?
                         WHERE
-                            HITO_CUALITATIVO.id_hito_cl = $id_hito
+                            HITO_CUALITATIVO.id_hito_cl = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($nombre_hito, $descripcion_hito, $id_hito));
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -1799,9 +1800,9 @@ class Modelo_socio extends CI_Model {
             try {
                 $sql = "DELETE FROM HITO_CUALITATIVO
                         WHERE
-                            id_hito_cl = $id_hito
+                            id_hito_cl = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -1825,9 +1826,9 @@ class Modelo_socio extends CI_Model {
                         FROM
                             AVANCE_HITO_CUALITATIVO
                         WHERE
-                            AVANCE_HITO_CUALITATIVO.id_hito_cl = $id_hito
+                            AVANCE_HITO_CUALITATIVO.id_hito_cl = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 if (!$query) {
                     return false;
                 } else {
@@ -1928,9 +1929,9 @@ class Modelo_socio extends CI_Model {
             try {
                 $sql = "DELETE FROM ACTIVIDAD
                         WHERE
-                            id_actividad = $id_actividad
+                            id_actividad = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad));
             } catch (Exception $ex) {
                 redirect(base_url() . 'socio/error');
             }
@@ -2005,14 +2006,14 @@ class Modelo_socio extends CI_Model {
                                 )
                                 VALUES
                                 (
-                                    $id_actividad,
-                                    '$fecha_gasto[$i]',
-                                    '$concepto_gasto[$i]',
-                                    $importe_gasto[$i],
-                                    '$archivos_documento_gastos[$i]'
+                                    ?,
+                                    ?,
+                                    ?,
+                                    ?,
+                                    ?
                                 )
                                 ";
-                        $query = $this->db->query($sql);
+                        $query = $this->db->query($sql, Array($id_actividad, $fecha_gasto[$i], $concepto_gasto[$i], $importe_gasto[$i], $archivos_documento_gastos[$i]));
                     }
                     $this->db->trans_complete();
                 }

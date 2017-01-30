@@ -17,7 +17,7 @@
             <?php $this->load->view('cabecera') ?>
             <?php
             $datos = Array();
-            $datos['activo'] = "Proyectos activos";
+            $datos['activo'] = "Reportes";
             $this->load->view('coordinador/nav', $datos);
             ?>
             <h4 class="text-primary"><?= $proyecto_global->nombre_proyecto_global ?></h4>

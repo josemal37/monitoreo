@@ -65,7 +65,6 @@
                     </div>
                 </div>
             <?php endif; ?>
-            <a href="<?= base_url() . 'coordinador/registrar_proyecto' ?>" class="btn btn-primary">Registrar Proyecto</a>
         </div>
         <script type="text/javascript">
             $(document).ready(function() {

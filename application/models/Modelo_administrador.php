@@ -233,9 +233,9 @@ class Modelo_administrador extends CI_Model {
                 $sql = "UPDATE USUARIO SET
                             USUARIO.activo_usuario = true
                         WHERE
-                            USUARIO.id_usuario = $id_usuario
+                            USUARIO.id_usuario = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_usuario));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }
@@ -250,24 +250,24 @@ class Modelo_administrador extends CI_Model {
                 $sql = "UPDATE USUARIO SET
                             USUARIO.activo_usuario = false
                         WHERE
-                            USUARIO.id_usuario = $id_usuario AND
-                            $id_usuario NOT IN( 
-                                                SELECT
-                                                    U.id_usuario 
-                                                FROM
-                                                    (
-                                                        SELECT
-                                                            USUARIO.id_usuario
-                                                        FROM
-                                                            USUARIO,
-                                                            ROL
-                                                        WHERE
-                                                            USUARIO.id_rol = ROL.id_rol AND
-                                                            ROL.nombre_rol = 'administrador'
-                                                    ) as U
-                                                )
+                            USUARIO.id_usuario = ? AND
+                            ? NOT IN( 
+                                SELECT
+                                    U.id_usuario 
+                                FROM
+                                    (
+                                        SELECT
+                                            USUARIO.id_usuario
+                                        FROM
+                                            USUARIO,
+                                            ROL
+                                        WHERE
+                                            USUARIO.id_rol = ROL.id_rol AND
+                                            ROL.nombre_rol = 'administrador'
+                                    ) as U
+                                )
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_usuario, $id_usuario));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }
@@ -430,9 +430,9 @@ class Modelo_administrador extends CI_Model {
                         FROM
                             INSTITUCION
                         WHERE
-                            INSTITUCION.id_institucion = $id_institucion
+                            INSTITUCION.id_institucion = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_institucion));
                 if (!$query) {
                     return false;
                 } else {
@@ -503,18 +503,18 @@ class Modelo_administrador extends CI_Model {
         }
     }
 
-    public function update_institucion($id_institucion, $nombre_institucion, $sigla_institucion, $presupuesto_institucion) {
+    public function update_institucion($id_institucion, $nombre_institucion, $sigla_institucion) {
         if (!is_numeric($id_institucion)) {
             redirect(base_url() . 'administrador');
         } else {
             try {
                 $sql = "UPDATE INSTITUCION SET
-                            INSTITUCION.nombre_institucion = '$nombre_institucion',
-                            INSTITUCION.sigla_institucion = '$sigla_institucion'
+                            INSTITUCION.nombre_institucion = ?,
+                            INSTITUCION.sigla_institucion = ?
                         WHERE
-                            INSTITUCION.id_institucion = $id_institucion
+                            INSTITUCION.id_institucion = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($nombre_institucion, $sigla_institucion, $id_institucion));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }
@@ -529,9 +529,9 @@ class Modelo_administrador extends CI_Model {
                 $sql = "UPDATE INSTITUCION SET
                             INSTITUCION.activa_institucion = true
                         WHERE
-                            INSTITUCION.id_institucion = $id_institucion
+                            INSTITUCION.id_institucion = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_institucion));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }
@@ -546,9 +546,9 @@ class Modelo_administrador extends CI_Model {
                 $sql = "UPDATE INSTITUCION SET
                             INSTITUCION.activa_institucion = false
                         WHERE
-                            INSTITUCION.id_institucion = $id_institucion
+                            INSTITUCION.id_institucion = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_institucion));
             } catch (Exception $ex) {
                 redirect(base_url() . 'administrador/error');
             }

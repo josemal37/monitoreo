@@ -53,7 +53,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                    <a href="<?= base_url() . 'socio/ver_reportes' ?>">
+                    <a href="<?= base_url() . 'socio/ver_reporte_gestion_actual' ?>">
                         <div class="btn-div">
                             <div class="div-center">
                                 <img src="<?= base_url() . 'assets/images/reporte.png' ?>" style="width: 100%" class="img-responsive">

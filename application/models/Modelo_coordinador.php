@@ -1120,11 +1120,11 @@ class Modelo_coordinador extends CI_Model {
                     LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN ON META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_hito_cn = HITO_CUANTITATIVO.id_hito_cn
                     LEFT JOIN META_PRODUCTO_CUANTITATIVA ON META_PRODUCTO_CUANTITATIVA.id_meta_producto_cuantitativa = META_ACTIVIDAD_APORTA_META_PRODUCTO_CN.id_meta_producto_cuantitativa
                     WHERE
-                        HITO_CUANTITATIVO.id_actividad = $id_actividad
+                        HITO_CUANTITATIVO.id_actividad = ?
                     ORDER BY
                         HITO_CUANTITATIVO.nombre_hito_cn ASC
                     ";
-            $query_indicadores = $this->db->query($sql);
+            $query_indicadores = $this->db->query($sql, Array($id_actividad));
             return $query_indicadores->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'coordinador/error');
@@ -1184,11 +1184,11 @@ class Modelo_coordinador extends CI_Model {
                     FROM
                         HITO_CUALITATIVO
                     WHERE
-                        HITO_CUALITATIVO.id_actividad = $id_actividad
+                        HITO_CUALITATIVO.id_actividad = ?
                     ORDER BY
                         HITO_CUALITATIVO.nombre_hito_cl ASC
                     ";
-            $query_indicadores = $this->db->query($sql);
+            $query_indicadores = $this->db->query($sql, Array($id_actividad));
             return $query_indicadores->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'coordinador/error');
@@ -1289,9 +1289,9 @@ class Modelo_coordinador extends CI_Model {
                         FROM
                             GASTO_ACTIVIDAD
                         WHERE
-                            GASTO_ACTIVIDAD.id_actividad = $id_actividad
+                            GASTO_ACTIVIDAD.id_actividad = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad));
                 if (!$query) {
                     return false;
                 } else {
@@ -1364,9 +1364,9 @@ class Modelo_coordinador extends CI_Model {
                         FROM
                             AVANCE_HITO_CUANTITATIVO
                         WHERE
-                            AVANCE_HITO_CUANTITATIVO.id_hito_cn = $id_hito
+                            AVANCE_HITO_CUANTITATIVO.id_hito_cn = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 $datos['avances_hito_cuantitativo'] = $query->result();
                 $i = 0;
                 foreach ($datos['avances_hito_cuantitativo'] as $clave => $avance) {
@@ -1380,9 +1380,9 @@ class Modelo_coordinador extends CI_Model {
                             FROM
                                 DOCUMENTO_AVANCE_HITO_CUANTITATIVO
                             WHERE
-                                DOCUMENTO_AVANCE_HITO_CUANTITATIVO.id_avance_hito_cn = $id_avance
+                                DOCUMENTO_AVANCE_HITO_CUANTITATIVO.id_avance_hito_cn = ?
                             ";
-                    $query = $this->db->query($sql);
+                    $query = $this->db->query($sql, Array($id_avance));
                     $datos['documentos'][$i] = $query->result();
                     $i = $i + 1;
                 }
@@ -1407,9 +1407,9 @@ class Modelo_coordinador extends CI_Model {
                         FROM
                             HITO_CUALITATIVO
                         WHERE
-                            HITO_CUALITATIVO.id_hito_cl = $id_hito
+                            HITO_CUALITATIVO.id_hito_cl = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 if (!$query) {
                     return false;
                 } else {
@@ -1442,9 +1442,9 @@ class Modelo_coordinador extends CI_Model {
                         FROM
                             AVANCE_HITO_CUALITATIVO
                         WHERE
-                            AVANCE_HITO_CUALITATIVO.id_hito_cl = $id_hito
+                            AVANCE_HITO_CUALITATIVO.id_hito_cl = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito));
                 if (!$query) {
                     return false;
                 } else {
@@ -1476,9 +1476,9 @@ class Modelo_coordinador extends CI_Model {
                         FROM
                             ACTIVIDAD
                         WHERE
-                            ACTIVIDAD.id_actividad = $id_actividad
+                            ACTIVIDAD.id_actividad = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_actividad));
                 if (!$query) {
                     return false;
                 } else {
@@ -1510,15 +1510,15 @@ class Modelo_coordinador extends CI_Model {
                         )
                         VALUES
                         (
-                            $id_hito,
-                            $tipo_indicador,
-                            '$nombre_indicador',
-                            $aceptable_indicador,
-                            $limitado_indicador,
-                            $no_aceptable_indicador
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            ?
                         )
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_hito, $tipo_indicador, $nombre_indicador, $aceptable_indicador, $limitado_indicador, $no_aceptable_indicador));
             } catch (Exception $ex) {
                 redirect(base_url() . 'coordinador/error');
             }
@@ -1557,11 +1557,11 @@ class Modelo_coordinador extends CI_Model {
                 $estado = ($estado) ? 'true' : 'false';
                 $sql = "UPDATE AVANCE_HITO_CUANTITATIVO SET
                             AVANCE_HITO_CUANTITATIVO.en_revision_avance_hito_cn = false,
-                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = $estado
+                            AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = ?
                         WHERE
-                            AVANCE_HITO_CUANTITATIVO.id_avance_hito_cn = $id_avance_hito
+                            AVANCE_HITO_CUANTITATIVO.id_avance_hito_cn = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($estado, $id_avance_hito));
             } catch (Exception $ex) {
                 redirect(base_url() . 'coordinador/error');
             }
@@ -1576,11 +1576,11 @@ class Modelo_coordinador extends CI_Model {
                 $estado = ($estado) ? 'true' : 'false';
                 $sql = "UPDATE AVANCE_HITO_CUALITATIVO SET
                             AVANCE_HITO_CUALITATIVO.en_revision_avance_hito_cl = false,
-                            AVANCE_HITO_CUALITATIVO.aprobado_avance_hito_cl = $estado
+                            AVANCE_HITO_CUALITATIVO.aprobado_avance_hito_cl = ?
                         WHERE
-                            AVANCE_HITO_CUALITATIVO.id_avance_hito_cl = $id_avance_hito
+                            AVANCE_HITO_CUALITATIVO.id_avance_hito_cl = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($estado, $id_avance_hito));
             } catch (Exception $ex) {
                 redirect(base_url() . 'coordinador/error');
             }
@@ -1655,9 +1655,9 @@ class Modelo_coordinador extends CI_Model {
                         FROM
                             INSTITUCION
                         WHERE
-                            INSTITUCION.id_institucion = $id_institucion
+                            INSTITUCION.id_institucion = ?
                         ";
-                $query = $this->db->query($sql);
+                $query = $this->db->query($sql, Array($id_institucion));
                 if (!$query) {
                     return false;
                 } else {

@@ -633,11 +633,11 @@ class Modelo_observador extends CI_Model {
                     FROM
                         HITO_CUALITATIVO
                     WHERE
-                        HITO_CUALITATIVO.id_actividad = $id_actividad
+                        HITO_CUALITATIVO.id_actividad = ?
                     ORDER BY
                         HITO_CUALITATIVO.nombre_hito_cl ASC
                     ";
-            $query_indicadores = $this->db->query($sql);
+            $query_indicadores = $this->db->query($sql, Array($id_actividad));
             return $query_indicadores->result();
         } catch (Exception $ex) {
             redirect(base_url() . 'observador/error');
