@@ -1393,12 +1393,15 @@ class Modelo_socio extends CI_Model {
                             HITO_CUANTITATIVO.descripcion_hito_cn,
                             HITO_CUANTITATIVO.meta_hito_cn,
                             HITO_CUANTITATIVO.unidad_hito_cn,
-                            COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as avance_hito_cn
+                            COALESCE(SUM(AVANCE_HITO_CUANTITATIVO.cantidad_avance_hito_cn), 0) as avance_hito_cn,
+                            M.id_meta_producto_cuantitativa
                         FROM
                             HITO_CUANTITATIVO
                         LEFT JOIN AVANCE_HITO_CUANTITATIVO ON 
                             HITO_CUANTITATIVO.id_hito_cn = AVANCE_HITO_CUANTITATIVO.id_hito_cn AND
                             AVANCE_HITO_CUANTITATIVO.aprobado_avance_hito_cn = true
+                        LEFT JOIN META_ACTIVIDAD_APORTA_META_PRODUCTO_CN M ON
+                            HITO_CUANTITATIVO.id_hito_cn = M.id_hito_cn
                         WHERE
                             HITO_CUANTITATIVO.id_hito_cn = ?
                         GROUP BY
