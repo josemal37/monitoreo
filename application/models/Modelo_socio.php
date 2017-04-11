@@ -1709,7 +1709,7 @@ class Modelo_socio extends CI_Model {
                                     ?,
                                     ?,
                                     ?,
-                                    ?'
+                                    ?
                                 )
                                 ";
                         $query = $this->db->query($sql, Array($id_avance_hito, $titulo_documento_avance[$i], $descripcion_documento_avance[$i], $archivo_documento_avance[$i]));
