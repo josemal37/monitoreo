@@ -845,7 +845,7 @@ class Socio extends CI_Controller {
                 $this->form_validation->set_rules('fecha_avance_hito', 'fecha_avance_hito', 'required');
                 $this->form_validation->set_rules('descripcion_avance_hito', 'descripcion_avance_hito', 'required|trim|min_length[5]|max_length[1024]');
                 if (isset($_POST['con_respaldos'])) {
-                    $this->form_validation->set_rules('titulo_documento_avance[]', 'titulo_documento_avance', 'required|trim|min_length[5]|max_length[64]');
+                    $this->form_validation->set_rules('titulo_documento_avance[]', 'titulo_documento_avance', 'required|trim|min_length[5]|max_length[1024]');
                     $this->form_validation->set_rules('descripcion_documento_avance[]', 'descripcion_documento_avance', 'required|trim|min_length[5]|max_length[1024]');
                 }
                 if ($this->form_validation->run() == FALSE || $id_hito != $_POST['id_hito']) {
