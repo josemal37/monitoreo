@@ -50,7 +50,7 @@ $nombre_rol = $this->session->userdata('nombre_rol');
                             <li class="disabled"><a href="#">Reporte PRODOC</a></li>
                         <?php endif; ?>
                         <li><a href="<?= base_url() . 'socio/ver_reporte_gestion_actual'?>">Reporte POA gestión actual</a></li>
-                        <li><a href='<?= base_url() . 'socio/ver_reportes_poa'?>'>Reportes POA's activos</a></li>
+                        <li><a href='<?= base_url() . 'socio/ver_reportes_poa'?>'>Reportes POA's</a></li>
                     </ul>
                 </li>
             </ul>

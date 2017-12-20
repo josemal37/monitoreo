@@ -265,6 +265,46 @@ class Modelo_socio extends CI_Model {
             redirect(base_url() . 'socio/error');
         }
     }
+
+    public function get_reportes_proyectos_socio() {
+        try {
+            $this->db->trans_start();
+            $id_institucion = $this->session->userdata('id_institucion');
+            $sql = "SELECT 
+                        PROYECTO.id_proyecto, 
+                        PROYECTO.nombre_proyecto, 
+                        PROYECTO.descripcion_proyecto,
+                        PROYECTO.presupuesto_proyecto,
+                        ANIO.valor_anio
+                    FROM 
+                        PROYECTO, 
+                        PROYECTO_GLOBAL,
+                        INSTITUCION,
+                        ANIO,
+                        PROYECTO_TIENE_ANIO
+                    WHERE 
+                        PROYECTO_GLOBAL.id_proyecto_global = PROYECTO.id_proyecto_global AND
+                        PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
+                        PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
+                        PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
+                        PROYECTO_GLOBAL.id_institucion = ?
+                        ";
+            $query = $this->db->query($sql, Array($id_institucion));
+            $this->db->trans_complete();
+            if (!$query) {
+                return false;
+            } else {
+                if ($query->num_rows() == 0) {
+                    return false;
+                } else {
+                    return $query->result();
+                }
+            }
+        } catch (Exception $ex) {
+            $this->db->trans_rollback();
+            redirect(base_url() . 'socio/error');
+        }
+    }
     
     public function get_proyecto_global($id_institucion) {
         if(!is_numeric($id_institucion)) {

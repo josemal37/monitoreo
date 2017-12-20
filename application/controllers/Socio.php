@@ -1054,7 +1054,7 @@ class Socio extends CI_Controller {
         $this->verificar_sesion();
         
         $datos = Array();
-        $datos['proyectos'] = $this->modelo_socio->get_proyectos_socio();
+        $datos['proyectos'] = $this->modelo_socio->get_reportes_proyectos_socio();
         $this->load->view('socio/vista_reporte_proyectos_activos', $datos);
     }
 

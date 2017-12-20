@@ -9,7 +9,7 @@
         <script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.1.0.min.js"); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.js"); ?>"></script>
         
-        <title>POA's activos</title>
+        <title>POA's</title>
     </head>
     <body>
         <div class="container">
@@ -19,11 +19,11 @@
             $datos['activo'] = "Reportes";
             $this->load->view('socio/nav', $datos);
             ?>
-            <h4 class="text-primary">POA's activos</h4>
+            <h4 class="text-primary">POA's</h4>
             <?php if ($proyectos): ?>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong>POA's activos</strong>
+                    <strong>POA's</strong>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered">
