@@ -2517,6 +2517,9 @@ class Modelo_socio extends CI_Model {
             if (!is_numeric($id_proyecto)) {
                 redirect(base_url() . 'socio/error');
             }
+            
+            $proyecto = null;
+            
             $id_institucion = $this->session->userdata('id_institucion');
             $datos = Array();
             $this->db->trans_start();
@@ -2538,7 +2541,6 @@ class Modelo_socio extends CI_Model {
                         PROYECTO_GLOBAL.id_institucion = INSTITUCION.id_institucion AND
                         PROYECTO_TIENE_ANIO.id_proyecto = PROYECTO.id_proyecto AND
                         PROYECTO_TIENE_ANIO.id_anio = ANIO.id_anio AND
-                        PROYECTO.en_edicion = false AND
                         PROYECTO_GLOBAL.id_institucion = ? AND
                         PROYECTO.id_proyecto = ?
                     ";
@@ -2546,7 +2548,7 @@ class Modelo_socio extends CI_Model {
             if ($query_proyecto->num_rows() == 1) {
                 $proyecto = $query_proyecto->row();
 
-                $actividades = $this->get_actividades_activas_proyecto($id_proyecto);
+                $actividades = $this->get_actividades_proyecto($id_proyecto);
 
                 if (sizeof($actividades) > 0) {
                     $i = 0;

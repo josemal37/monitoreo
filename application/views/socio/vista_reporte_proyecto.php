@@ -27,6 +27,7 @@
             $datos['activo'] = "Reportes";
             $this->load->view('socio/nav', $datos);
             ?>
+            <?php if ($proyecto != NULL): ?>
             <div>
                 <h4 id="titulo_poa" class="text-primary"><?= $proyecto->nombre_proyecto ?></h4>
                 <p class="text-justify"><strong>Año:</strong> <span id="anio_poa" class="number_integer"><?= $proyecto->valor_anio ?></span></p>
@@ -222,6 +223,7 @@
                     <p class="text-right"><a id="generarPDF" onclick="generarPDF()" class="btn btn-success">Generar PDF</a></p>
                 </div>
             </div>
+            <?php endif; ?>
         </div>
         <script type="text/javascript">
             $(document).ready(function(){
